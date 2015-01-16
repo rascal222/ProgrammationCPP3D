@@ -1,11 +1,11 @@
 #ifndef PROG_3D_VECTOR_HPP_DEFINED
 #define PROG_3D_VECTOR_HPP_DEFINED
+#include <ostream>
 
-
-#include <iosfwd>
+#include "core-declaration.hpp"
 
 namespace prog_3D {
-    class Point;
+
 
     class Vector {
     private:
