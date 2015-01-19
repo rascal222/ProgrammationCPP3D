@@ -36,24 +36,15 @@ namespace prog_3D {
 
         double getZ();
 
-        double norme();
+        double norm();
 
         double normalize();
 
         double scalar(Vector vector);
 
-        Vector vectorial(Vector vector);
+        Vector cross(Vector vector);
 
         double getAngle(Vector vector);
-
-
-        Vector& operator* (const double x);
-
-        Vector& operator/ (double x);
-
-        Vector& operator+ (Vector& vector);
-
-        Vector& operator- (Vector& vector);
 
     };
 

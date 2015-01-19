@@ -51,14 +51,14 @@ namespace prog_3D
         this->z =z;
     }
 
-    double Vector::norme()
+    double Vector::norm()
     {
         return sqrt(pow(getX(),2)+ pow(getY(), 2)+ pow(getZ(),2));
     }
 
     double Vector::normalize()
     {
-        double n = norme();
+        double n = norm();
         setX(getX()/n);
         setY(getY()/n);
         setZ(getZ()/n);
@@ -71,7 +71,7 @@ namespace prog_3D
     }
 
     /// \brief cross
-    Vector Vector::vectorial(Vector vector)
+    Vector Vector::cross(Vector vector)
     {
         double x = getY()* vector.getZ() - getZ()* vector.getY();
         double y = getZ()* vector.getX() - getX()* vector.getZ();
@@ -81,60 +81,13 @@ namespace prog_3D
 
     double Vector::getAngle(Vector vector)
     {
-        return acos(scalar(vector) / (norme()*vector.norme()));
-    }
-
-
-
-    Vector& Vector::operator* (double x)
-    {
-        Vector rslt(0,0,0);
-        rslt.setX(getX()*x);
-        rslt.setY(getY()*x);
-        rslt.setZ(getZ()*x);
-        return rslt;
-    }
-
-    Vector& Vector::operator/ (double x)
-    {
-        Vector rslt(0,0,0);
-        rslt.setX(getX()/x);
-        rslt.setY(getY()/x);
-        rslt.setZ(getZ()/x);
-        return rslt;
-    }
-
-    Vector& Vector::operator+ (Vector& vector)
-    {
-        Vector rslt(0,0,0);
-        rslt.setX(getX()+vector.getX());
-        rslt.setY(getY()+vector.getY());
-        rslt.setZ(getZ()+vector.getZ());
-        return rslt;
-    }
-
-    Vector& Vector::operator- (Vector& vector)
-    {
-        Vector rslt(0,0,0);
-        rslt.setX(getX()-vector.getX());
-        rslt.setY(getY()-vector.getY());
-        rslt.setZ(getZ()-vector.getZ());
-        return rslt;
+        return acos(scalar(vector) / (norm()*vector.norm()));
     }
 
     std::ostream& operator<<( std::ostream &stream, Vector& vector)
     {
         stream << "{"<<vector.getX()<<","<<vector.getY()<<","<<vector.getZ()<<"}";
         return stream;
-    }
-
-    Vector& operator* (double x,Vector& y)
-    {
-        Vector rslt(0,0,0);
-        rslt.setX(y.getX()*x);
-        rslt.setY(y.getY()*x);
-        rslt.setZ(y.getZ()*x);
-        return rslt;
     }
 
 }

@@ -9,9 +9,10 @@
 // La forme représentée ici est un polygone blanc dessiné sur un fond rouge
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <cmath>
 
 
 /* Dans les salles de TP, vous avez généralement accès aux glut dans C:\Dev. Si ce n'est pas le cas, téléchargez les .h .lib ...
@@ -20,13 +21,15 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 */
 
 #include <GL/glut.h>
+#include "../core/Point.hpp"
+#include "../core/Vector.hpp"
 
 // Définition de la taille de la fenêtre
 #define WIDTH  480
 #define HEIGHT 480
 
 // Définition de la couleur de la fenêtre
-#define RED   1
+#define RED   0
 #define GREEN 0
 #define BLUE  0
 #define ALPHA 1
@@ -35,6 +38,8 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 // Touche echap (Esc) permet de sortir du programme
 #define KEY_ESC 27
 
+using namespace prog_3D;
+using namespace std;
 
 // Entêtes de fonctions
 void init_scene();
@@ -56,7 +61,7 @@ int main(int argc, char **argv)
     // définition et création de la fenêtre graphique, ainsi que son titre
     glutInitWindowSize(WIDTH, HEIGHT);
     glutInitWindowPosition(0, 0);
-    glutCreateWindow("Premier exemple : carré");
+    glutCreateWindow("Premier exemple : carre");
 
     // initialisation de OpenGL et de la scène
     initGL();
@@ -138,6 +143,35 @@ GLvoid window_key(unsigned char key, int x, int y)
 
 
 
+
+void glPoint(Point& p)
+{
+    glVertex3d(p.getX(),p.getY(),p.getZ());
+}
+
+///DEPRECATED
+void glVector(Point& p, Vector& v)
+{
+    glVertex3d(p.getX()+v.getX(), p.getY()+v.getY(),p.getZ());
+}
+
+void drawPoint(Point& p)
+{
+    glBegin(GL_POINTS);
+    glPoint(p);
+    glEnd();
+}
+
+void drawLine(Point& p,Vector& v)
+{
+    glBegin(GL_LINES);
+    glPoint(p);
+    Point p2 = p.apply(v);
+    glPoint(p2);
+    glEnd();
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Fonction que vous allez modifier afin de dessiner
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +182,7 @@ void render_scene()
 
     //  Nous créons ici un polygone. Nous pourrions aussi créer un triangle ou des lignes. Voir ci-dessous les parties
     // en commentaires (il faut commenter le bloc qui ne vous intéresse pas et décommenter celui que vous voulez tester.
-
+/*
     // Création de deux lignes
     glBegin(GL_LINES);
     glVertex3f(-1, -1, 0);
@@ -156,15 +190,17 @@ void render_scene()
     glVertex3f(1, -1, 0);
     glVertex3f(-1, 1, 0);
     glEnd();
+    */
 
+    /*
     // création d'un polygone
-/*	glBegin(GL_POLYGON);
+    	glBegin(GL_POLYGON);
 		glVertex3f(-1, -1, 0);
 		glVertex3f(1, -1, 0);
 		glVertex3f(1, 1, 0);
 		glVertex3f(-1, 1, 0);
 	glEnd();
-*/
+    */
 
 
 /*
@@ -176,6 +212,21 @@ void render_scene()
 	glEnd();
 */
 
+    Point origin(0,0,0);
+    Point p(0,1,0);//Haut gauche
+    Point b(1,1,0);
+    Vector v(1,1,0);
+
+    Point p2 = p.projectOnLine(origin,b);//p.projectOnLine(v);
+
+
+    //drawLine(origin,v);
+    drawPoint(p);
+    drawPoint(p2);
+
+    cout << p2.getX() <<" " << p2.getY() <<" "<< p2.getZ() << endl;
+
 
 
 }
+

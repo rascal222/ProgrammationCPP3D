@@ -15,6 +15,8 @@ int main() {
     cout << x << endl;
     cout << y <<endl;
     cout << z << endl;
+    z.vectorial(z);
+    cout <<  z << endl;
 
 
 

@@ -33,11 +33,13 @@ namespace prog_3D {
 
         double getZ();
 
-        Point projectOnLine(Point& p1Line, Point& p2Line);
+        Point& projectOnLine(Point& p1Line, Point& p2Line);
 
-        Point projectOnLine(Vector& vector);
+        Point& projectOnLine(Vector& vector);
 
-        Point projectOnPlan(Point& pointOnPlane, Vector& normalOfPlan);
+        Point& projectOnPlan(Point& pointOnPlane, Vector& normalOfPlan);
+
+        Point& apply(Vector& vector);
 
     };
 }

@@ -42,11 +42,12 @@ namespace prog_3D {
         return this->z;
     }
 
-    Point Point::projectOnLine(Point& p1Line, Point& p2Line)
+    Point& Point::projectOnLine(Point& p1Line, Point& p2Line)
     {
         Vector ba(p1Line,*this);
         Vector bc(p1Line,p2Line);
-        double ba2Norm = ba.scalar(bc)/ bc.norme();
+        bc.normalize();
+        double ba2Norm = ba.scalar(bc)/ bc.norm();
         return *new Point(
                 p1Line.getX() + bc.getX()*ba2Norm,
                 p1Line.getY() + bc.getY()*ba2Norm,
@@ -54,18 +55,26 @@ namespace prog_3D {
         );
     }
 
-    Point Point::projectOnLine(Vector& vector)
+    Point& Point::projectOnLine(Vector& vector)
     {
 
         //vector bc dans la méthode précédente
         //TODO
-        return *this;
+        Point origin(0,0,0);
+        Vector ba(origin,*this);
+        vector.normalize();
+        double ba2Norm = ba.scalar(vector)/vector.norm();
+       return *new Point(
+                vector.getX()*ba2Norm,
+                vector.getY()*ba2Norm,
+                vector.getZ()*ba2Norm
+       );
     }
 
-    Point Point::projectOnPlan(Point& pointOnPlane, Vector& normalOfPlan)
+    Point& Point::projectOnPlan(Point& pointOnPlane, Vector& normalOfPlan)
     {
         Vector ma(*this,pointOnPlane);
-        double norm = ma.scalar(normalOfPlan)/normalOfPlan.norme();
+        double norm = ma.scalar(normalOfPlan)/normalOfPlan.norm();
 
         return * new Point(
                 getX() - normalOfPlan.getX() * norm,
@@ -73,4 +82,16 @@ namespace prog_3D {
                 getZ() - normalOfPlan.getZ() * norm
         );
     }
+
+    Point& Point::apply(Vector &vector)
+    {
+        return * new Point
+                (
+                        getX() + vector.getX(),
+                        getY() + vector.getY(),
+                        getZ() + vector.getZ()
+                );
+    }
+
+
 }
