@@ -12,7 +12,7 @@ namespace prog_3D {
 
 	Point::Point(Point& p) : Point(p.getX(), p.getY(), p.getZ()) {
 	}
-    Point::Point(const Point p) : Point(p.getX(), p.getY(), p.getZ()) {
+    Point::Point(const Point& p) : Point(p.getX(), p.getY(), p.getZ()) {
     }
 
 	Point::~Point() {
@@ -67,7 +67,7 @@ namespace prog_3D {
         return projectOnLine(point,p);
 	}
 
-	Point Point::projectOnPlan(const Point& pointOnPlane,const Vector& normalOfPlan)
+	Point Point::projectOnPlan(const Point& pointOnPlane,Vector& normalOfPlan)
 	{
 		Vector ma(*this,pointOnPlane);
         normalOfPlan.normalize();
@@ -90,7 +90,7 @@ namespace prog_3D {
 		return p;
 	}
 
-	std::ostream &operator<<( std::ostream &stream,const Point& point)
+	std::ostream& operator<<( std::ostream &stream,const Point& point)
 	{
 		stream <<"Point{"<< point.getX()<<";"<<point.getY()<<";"<<point.getZ()<<"}";
 		return stream;

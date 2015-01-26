@@ -156,6 +156,7 @@ namespace prog_3D {
     */
     std::ostream& operator<<( std::ostream &stream,const Vector& vector);
 
+
     /**
     * \brief Override the operator << for an instance of ostream and a vector
     * @param stream a stream
