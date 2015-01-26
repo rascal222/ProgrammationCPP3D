@@ -6,9 +6,19 @@
 
 namespace prog_3D
 {
+    Vector const Vector::ZERO(0,0,0);
+    Vector const Vector::ONE(1,1,1);
+    Vector const Vector::UP(0,1,0);
+    Vector const Vector::DOWN(0,-1,0);
+    Vector const Vector::FORWARD(1,0,0);
+    Vector const Vector::BACK(-1,0,0);
+    Vector const Vector::LEFT(0,0,-1);
+    Vector const Vector::RIGHT(0,0,1);
+
+
     Vector::Vector() :Vector(0,0,0) {}
 
-    Vector::Vector(Point& p1, Point& p2)
+    Vector::Vector(const Point& p1,const Point& p2)
     {
         this->x = p2.getX() - p1.getX();
         this->y = p2.getY() - p1.getY();
@@ -21,17 +31,17 @@ namespace prog_3D
 
     Vector::~Vector() {}
 
-    double Vector::getX()
+    double Vector::getX() const
     {
         return this->x;
     }
 
-    double Vector::getY()
+    double Vector::getY() const
     {
         return this->y;
     }
 
-    double Vector::getZ()
+    double Vector::getZ() const
     {
         return this->z;
     }
@@ -51,7 +61,7 @@ namespace prog_3D
         this->z =z;
     }
 
-    double Vector::norm()
+    double Vector::norm() const
     {
         return sqrt(pow(getX(),2)+ pow(getY(), 2)+ pow(getZ(),2));
     }
@@ -65,29 +75,59 @@ namespace prog_3D
         return n;
     }
 
-    double Vector::scalar(Vector vector)
+    double Vector::scalar(const Vector& vector) const
     {
         return getX()*vector.getX()+ getY()*vector.getY()+ getZ()*vector.getZ();
     }
 
     /// \brief cross
-    Vector Vector::cross(Vector vector)
+    Vector Vector::cross(const Vector& vector) const
     {
         double x = getY()* vector.getZ() - getZ()* vector.getY();
         double y = getZ()* vector.getX() - getX()* vector.getZ();
         double z = getX()* vector.getY() - getY()* vector.getX();
-        return *new Vector(x,y,z);
+        Vector v(x,y,z);
+        return v;
     }
 
-    double Vector::getAngle(Vector vector)
+    double Vector::getAngle(const Vector& vector) const
     {
         return acos(scalar(vector) / (norm()*vector.norm()));
     }
 
+    void Vector::print(std::ostream& stream)
+    {
+        stream << "Vector{"<<getX()<<","<<getY()<<","<<getZ()<<"}";
+    }
+    Vector& Vector::operator*= (double d)
+    {
+        setX(getX()*d);
+        setY(getY()*d);
+        setZ(getZ()*d);
+        return *this;
+    }
+
+    Vector Vector::operator*(double d)
+    {
+        Vector v(d*getX(),d*getY(),d*getZ());
+        return v;
+    }
+
+
     std::ostream& operator<<( std::ostream &stream, Vector& vector)
     {
-        stream << "{"<<vector.getX()<<","<<vector.getY()<<","<<vector.getZ()<<"}";
+        vector.print(stream);
         return stream;
+    }
+
+    Vector operator*(double d,Vector const& vector)
+    {
+        Vector v(
+                d * vector.getX(),
+                d* vector.getY(),
+                d* vector.getZ()
+        );
+        return v;               ;
     }
 
 }

@@ -2,8 +2,11 @@
 #define PROG_3D_POINT_HPP_DEFINED
 
 #include "core-declaration.hpp"
+#include <ostream>
 
-
+/**
+* \namespace This namespace gathers all classes for 3D programming
+*/
 namespace prog_3D {
 
     class Point {
@@ -17,7 +20,9 @@ namespace prog_3D {
 
         Point(double x, double y, double z);
 
-        Point(Point& p);
+        Point(Point&);
+
+        Point(const Point&);
 
         virtual ~Point();
 
@@ -27,21 +32,28 @@ namespace prog_3D {
 
         void setZ(double z);
 
-        double getX();
+        double getX() const;
 
-        double getY();
+        double getY() const;
 
-        double getZ();
+        double getZ() const;
 
-        Point& projectOnLine(Point& p1Line, Point& p2Line);
+        Point projectOnLine(const Point& p1Line,const Point& p2Line);
 
-        Point& projectOnLine(Vector& vector);
+        Point projectOnLine(const Vector& vector,const Point& point);
 
-        Point& projectOnPlan(Point& pointOnPlane, Vector& normalOfPlan);
+        Point projectOnPlan(const Point& pointOnPlane,Vector& normalOfPlan);
 
-        Point& apply(Vector& vector);
+        Point translate(const Vector& vector);
 
     };
+    /**
+    * \brief Override the operator << for an instance of ostream and a point
+    * @param stream a stream
+    * @param vector a point to show
+    * \return the stream
+    */
+    std::ostream &operator<<( std::ostream &stream, Point& point);
 }
 
 #endif

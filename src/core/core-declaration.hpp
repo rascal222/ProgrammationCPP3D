@@ -7,6 +7,6 @@ namespace prog_3D
 
     class Vector;
 
-
+    class Axis;
 }
 #endif

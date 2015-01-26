@@ -21,6 +21,8 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 */
 
 #include <GL/glut.h>
+#include <GL/glu.h>
+//#include "glut.h"
 #include "../core/Point.hpp"
 #include "../core/Vector.hpp"
 
@@ -143,7 +145,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 
 
 
-
+/// \brief génère un point opengl
 void glPoint(Point& p)
 {
     glVertex3d(p.getX(),p.getY(),p.getZ());
@@ -155,6 +157,7 @@ void glVector(Point& p, Vector& v)
     glVertex3d(p.getX()+v.getX(), p.getY()+v.getY(),p.getZ());
 }
 
+/// \brief dessine une instance de classe Point
 void drawPoint(Point& p)
 {
     glBegin(GL_POINTS);
@@ -162,6 +165,7 @@ void drawPoint(Point& p)
     glEnd();
 }
 
+/// \brief
 void drawLine(Point& p,Vector& v)
 {
     glBegin(GL_LINES);
