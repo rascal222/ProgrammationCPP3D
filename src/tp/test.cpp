@@ -11,7 +11,7 @@ int main()
     Point C(3.5,3.5,0);
 
 
-/*
+
     Point C2 =C.projectOnLine(A,B);
 
     std::cout << C2 << std::endl;
@@ -23,5 +23,5 @@ int main()
     Point M(1,1,1);
 
     Point M2 = M.projectOnPlan(O, n);
-    std::cout << M2 << std::endl;*/
+    std::cout << M2 << std::endl;
 }
