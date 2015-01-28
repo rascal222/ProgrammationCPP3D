@@ -1,7 +1,6 @@
 #ifndef PROG_3D_VECTOR_HPP_DEFINED
 #define PROG_3D_VECTOR_HPP_DEFINED
 #include <ostream>
-
 #include "core-declaration.hpp"
 /**
 * \namespace This namespace gathers all classes for 3D programming
@@ -62,6 +61,8 @@ namespace prog_3D {
         *  @param p Vector to copy
         */
         Vector(Vector& p);
+
+        Vector(const Vector& p);
 
         /// \brief Destructor
         virtual ~Vector();
@@ -135,18 +136,27 @@ namespace prog_3D {
         */
         double getAngle(const Vector& vector) const;
 
-
         /**
-        * \brief Print this vector in the stream
+        * \brief Print this vector in the stream.
         * @param stream the stream where we print this instance
         */
-        void print(std::ostream& stream);
+        void print(std::ostream& stream) const;
 
+        /**
+        * \brief Operator *= double.
+        * @param d a scalar value
+        * \return this vector multiplied by the scalar value
+        */
         Vector& operator*= (double d);
-
-        Vector operator*(double d);
-
+        /**
+        * \brief Operator /= double.
+        * @param d a scalar value
+        * \return this vector divided by the scalar value
+        */
+        Vector& operator/= (double d);
     };
+
+    //SPECIFIC OVERRIDE FUNCTIONS
 
     /**
     * \brief Override the operator << for an instance of ostream and a vector
@@ -158,13 +168,34 @@ namespace prog_3D {
 
 
     /**
-    * \brief Override the operator << for an instance of ostream and a vector
-    * @param stream a stream
-    * @param vector a vector to show
-    * \return the stream
+    * \brief Override the operator * (for multiplication with a scalar for an instance of vector
+    * @param d a scalar value
+    * @param vector a vector
+    * \return the vector multiplied with the scalar
     */
     Vector operator* (double d,Vector const& vector);
+    /**
+    * \brief Override the operator * (for multiplication with a scalar for an instance of vector
+    * @param vector a vector
+    * @param d a scalar value
+    * \return the vector multiplied with the scalar
+    */
+    Vector operator* (Vector const& vector,double d);
 
+    /**
+    * \brief Override the operator / (to divide an instance of vector with a scalar
+    * @param d a scalar value
+    * @param vector a vector
+    * \return the vector divided with the scalar
+    */
+    Vector operator/ (double d,Vector const& vector);
+    /**
+    * \brief Override the operator * (to divide an instance of vector with a scalar
+    * @param vector a vector
+    * @param d a scalar value
+    * \return the vector divided with the scalar
+    */
+    Vector operator/ (Vector const& vector,double d);
 
 
 }

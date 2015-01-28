@@ -40,7 +40,7 @@ namespace prog_3D {
 
         Point projectOnLine(const Point& p1Line,const Point& p2Line);
 
-        Point projectOnLine(const Vector& vector,const Point& point);
+        Point projectOnLine(const Vector& vector,Point& point);
 
         Point projectOnPlan(const Point& pointOnPlane,Vector& normalOfPlan);
 

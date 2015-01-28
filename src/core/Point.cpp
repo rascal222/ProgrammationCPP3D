@@ -1,6 +1,7 @@
 #include "Point.hpp"
 #include "Vector.hpp"
 #include <ostream>
+#include <iostream>
 
 namespace prog_3D {
 
@@ -58,12 +59,10 @@ namespace prog_3D {
 		return p;
 	}
 
-	Point Point::projectOnLine(const Vector& vector,const Point& point)
+	Point Point::projectOnLine(const Vector& vector,Point& point)
 	{
         Point p(0,0,0);
-        p.setX(point.getX()+vector.getX());
-        p.setY(point.getY()+vector.getY());
-        p.setZ(point.getZ()+vector.getZ());
+        p = p.translate(vector);
         return projectOnLine(point,p);
 	}
 
@@ -72,10 +71,11 @@ namespace prog_3D {
 		Vector ma(*this,pointOnPlane);
         normalOfPlan.normalize();
 		double norm = ma.scalar(normalOfPlan)/normalOfPlan.norm();
+
 		Point p(
-				getX() - normalOfPlan.getX() * norm,
-				getY() - normalOfPlan.getY() * norm,
-				getZ() - normalOfPlan.getZ() * norm
+				getX() + normalOfPlan.getX() * norm,
+				getY() + normalOfPlan.getY() * norm,
+				getZ() + normalOfPlan.getZ() * norm
 		);
 		return p;
 	}

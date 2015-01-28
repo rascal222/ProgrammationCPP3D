@@ -165,12 +165,29 @@ void drawPoint(Point& p)
     glEnd();
 }
 
+void drawPoint(Point& p,float r,float g,float b)
+{
+    glColor3f(r,g,b);
+    glBegin(GL_POINTS);
+    glPoint(p);
+    glEnd();
+}
+
+
+void drawPoint(Point& p,float r,float g,float b, float alpha)
+{
+    glColor4f(r,g,b,alpha);
+    glBegin(GL_POINTS);
+    glPoint(p);
+    glEnd();
+}
+
 /// \brief
 void drawLine(Point& p,Vector& v)
 {
     glBegin(GL_LINES);
     glPoint(p);
-    Point p2 = p.apply(v);
+    Point p2 = p.translate(v);
     glPoint(p2);
     glEnd();
 }
@@ -224,9 +241,10 @@ void render_scene()
     Point p2 = p.projectOnLine(origin,b);//p.projectOnLine(v);
 
 
-    //drawLine(origin,v);
     drawPoint(p);
-    drawPoint(p2);
+    drawLine(origin, v);
+    drawPoint(p2,1.0f,0.0f,1.0f);
+
 
     cout << p2.getX() <<" " << p2.getY() <<" "<< p2.getZ() << endl;
 

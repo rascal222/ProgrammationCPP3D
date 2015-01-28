@@ -29,6 +29,8 @@ namespace prog_3D
 
     Vector::Vector(Vector& p) : Vector(p.getX(),p.getY(),p.getZ()) {}
 
+    Vector::Vector(const Vector &p) : Vector(p.getX(),p.getY(),p.getZ()) {}
+
     Vector::~Vector() {}
 
     double Vector::getX() const
@@ -95,7 +97,7 @@ namespace prog_3D
         return acos(scalar(vector) / (norm()*vector.norm()));
     }
 
-    void Vector::print(std::ostream& stream)
+    void Vector::print(std::ostream& stream) const
     {
         stream << "Vector{"<<getX()<<","<<getY()<<","<<getZ()<<"}";
     }
@@ -107,14 +109,18 @@ namespace prog_3D
         return *this;
     }
 
-    Vector Vector::operator*(double d)
+    Vector& Vector::operator/= (double d)
     {
-        Vector v(d*getX(),d*getY(),d*getZ());
-        return v;
+        setX(getX()/d);
+        setY(getY()/d);
+        setZ(getZ()/d);
+        return *this;
     }
 
+    //functions
 
-    std::ostream& operator<<( std::ostream &stream, Vector& vector)
+
+    std::ostream& operator<<( std::ostream &stream, Vector const& vector)
     {
         vector.print(stream);
         return stream;
@@ -127,7 +133,37 @@ namespace prog_3D
                 d* vector.getY(),
                 d* vector.getZ()
         );
-        return v;               ;
+        return v;
     }
+
+    Vector operator*(Vector const& vector, double d) {
+        Vector v(
+                d * vector.getX(),
+                d* vector.getY(),
+                d* vector.getZ()
+        );
+        return v;
+    }
+
+    Vector operator/(double d,Vector const& vector)
+    {
+        Vector v(
+                d / vector.getX(),
+                d / vector.getY(),
+                d / vector.getZ()
+        );
+        return v;
+    }
+
+    Vector operator/(Vector const& vector, double d) {
+        Vector v(
+                d / vector.getX(),
+                d/ vector.getY(),
+                d/ vector.getZ()
+        );
+        return v;
+    }
+
+
 
 }
