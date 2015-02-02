@@ -80,6 +80,7 @@ namespace prog_3D
         return getX()*vector.getX()+ getY()*vector.getY()+ getZ()*vector.getZ();
     }
 
+    /// \brief cross
     Vector Vector::cross(const Vector& vector) const
     {
         double x = getY()* vector.getZ() - getZ()* vector.getY();
@@ -126,7 +127,7 @@ namespace prog_3D
                 d* vector.getY(),
                 d* vector.getZ()
         );
-        return v;
+        return v;               ;
     }
 
 }

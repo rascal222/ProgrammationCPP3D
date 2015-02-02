@@ -73,14 +73,14 @@ namespace prog_3D {
         normalOfPlan.normalize();
 		double norm = ma.scalar(normalOfPlan)/normalOfPlan.norm();
 		Point p(
-				getX() - normalOfPlan.getX() * norm,
-				getY() - normalOfPlan.getY() * norm,
-				getZ() - normalOfPlan.getZ() * norm
+				getX() + normalOfPlan.getX() * norm,
+				getY() + normalOfPlan.getY() * norm,
+				getZ() + normalOfPlan.getZ() * norm
 		);
 		return p;
 	}
 
-	Point Point::translate(const Vector &vector)
+	Point Point::translate(const Vector &vector) const
 	{
 		Point p(
 				getX() + vector.getX(),

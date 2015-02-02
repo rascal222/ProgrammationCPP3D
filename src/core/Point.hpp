@@ -44,7 +44,7 @@ namespace prog_3D {
 
         Point projectOnPlan(const Point& pointOnPlane,Vector& normalOfPlan);
 
-        Point translate(const Vector& vector);
+        Point translate(const Vector& vector) const;
 
     };
     /**
