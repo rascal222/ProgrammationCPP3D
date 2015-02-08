@@ -16,6 +16,7 @@ namespace prog_3D {
         double z;
 
     public:
+        static const Point Origin;
         Point();
 
         Point(double x, double y, double z);
@@ -44,7 +45,7 @@ namespace prog_3D {
 
         Point projectOnPlan(const Point& pointOnPlane,Vector& normalOfPlan);
 
-        Point translate(const Vector& vector);
+        Point translate(const Vector& vector) const;
 
     };
     /**

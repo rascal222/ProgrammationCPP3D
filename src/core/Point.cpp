@@ -5,6 +5,7 @@
 
 namespace prog_3D {
 
+	const Point Point::Origin(0,0,0);
 	Point::Point() : Point(0, 0, 0) {
 	}
 
@@ -13,8 +14,8 @@ namespace prog_3D {
 
 	Point::Point(Point& p) : Point(p.getX(), p.getY(), p.getZ()) {
 	}
-    Point::Point(const Point& p) : Point(p.getX(), p.getY(), p.getZ()) {
-    }
+	Point::Point(const Point& p) : Point(p.getX(), p.getY(), p.getZ()) {
+	}
 
 	Point::~Point() {
 	}
@@ -61,15 +62,15 @@ namespace prog_3D {
 
 	Point Point::projectOnLine(const Vector& vector,Point& point)
 	{
-        Point p(0,0,0);
-        p = p.translate(vector);
-        return projectOnLine(point,p);
+		Point p(0,0,0);
+		p = p.translate(vector);
+		return projectOnLine(point,p);
 	}
 
 	Point Point::projectOnPlan(const Point& pointOnPlane,Vector& normalOfPlan)
 	{
 		Vector ma(*this,pointOnPlane);
-        normalOfPlan.normalize();
+		normalOfPlan.normalize();
 		double norm = ma.scalar(normalOfPlan)/normalOfPlan.norm();
 
 		Point p(
@@ -80,13 +81,13 @@ namespace prog_3D {
 		return p;
 	}
 
-	Point Point::translate(const Vector &vector)
+	Point Point::translate(const Vector &vector) const
 	{
 		Point p(
 				getX() + vector.getX(),
 				getY() + vector.getY(),
 				getZ() + vector.getZ()
-        );
+		);
 		return p;
 	}
 

@@ -8,5 +8,9 @@ namespace prog_3D
     class Vector;
 
     class Axis;
+
+    class Curve;
+
+
 }
 #endif
