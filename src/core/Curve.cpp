@@ -1,4 +1,9 @@
 #include "Curve.hpp"
-Curve::Curve(){}
-Curve::~Curve(){}
+namespace prog_3D {
 
+    Curve::Curve() {
+    }
+
+    Curve::~Curve() {
+    }
+}

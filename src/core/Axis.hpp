@@ -13,6 +13,8 @@ namespace prog_3D
         Vector n;
     public:
         Axis(Point&, Vector&);
+        Axis(const Point&, const Vector&);
+
         virtual ~Axis();
 
         Point& getPoint();

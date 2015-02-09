@@ -20,52 +20,57 @@ namespace prog_3D {
 		this->pointNumber=n;
 	}
 
+    int HermiteCubicCurve::getPointNumber()
+    {
+        return this->pointNumber;
+    }
+
 	HermiteCubicCurve::~HermiteCubicCurve()
 	{
 
 	}
 
-    Point& HermiteCubicCurve::getPoint1()
-    {
-        return this->p1;
-    }
+	Point& HermiteCubicCurve::getPoint1()
+	{
+		return this->p1;
+	}
 
-    Point& HermiteCubicCurve::getPoint2()
-    {
-        return this->p2;
-    }
+	Point& HermiteCubicCurve::getPoint2()
+	{
+		return this->p2;
+	}
 
-    Vector& HermiteCubicCurve::getVector1()
-    {
-        return this->v1;
-    }
+	Vector& HermiteCubicCurve::getVector1()
+	{
+		return this->v1;
+	}
 
-    Vector& HermiteCubicCurve::getVector2()
-    {
-        return this->v2;
-    }
+	Vector& HermiteCubicCurve::getVector2()
+	{
+		return this->v2;
+	}
 
 	std::vector<Point> HermiteCubicCurve::compute()
 	{
 		std::vector<Point> points;
 
-        for(long i=0;i<n;i++)
-        {
-            double u = ((double) i) *1.0 /(double)(n);
+		for(long i=0;i<pointNumber;i++)
+		{
+			double u = ((double) i) *1.0 /(double)(pointNumber-1);
 
-            double f1 = 2 * pow(u,3) - 3 * pow(u,2) + 1;
-            double f2 = -2 * pow(u,3) + 3 * pow(u,2);
-            double f3 = pow(u,3) - 2 * pow(u,2) + u;
-            double f4 = pow(u,3) - pow(u,2);
+			double f1 = 2 * pow(u,3) - 3 * pow(u,2) + 1;
+			double f2 = -2 * pow(u,3) + 3 * pow(u,2);
+			double f3 = pow(u,3) - 2 * pow(u,2) + u;
+			double f4 = pow(u,3) - pow(u,2);
 
-            double x = f1*p1.getX() + f2*p2.getX() + f3*v1.getX() + f4*v2.getX();
-            double y = f1*p1.getY() + f2*p2.getY() + f3*v1.getY() + f4*v2.getY();
-            double z = f1*p1.getZ() + f2*p2.getZ() + f3*v1.getZ() + f4*v2.getZ();
-            Point p(x,y,z);
-            points.push_back(p);
-        }
+			double x = f1*p1.getX() + f2*p2.getX() + f3*v1.getX() + f4*v2.getX();
+			double y = f1*p1.getY() + f2*p2.getY() + f3*v1.getY() + f4*v2.getY();
+			double z = f1*p1.getZ() + f2*p2.getZ() + f3*v1.getZ() + f4*v2.getZ();
+			Point p(x,y,z);
+			points.push_back(p);
+		}
 
-        return points;
+		return points;
 	}
 
 

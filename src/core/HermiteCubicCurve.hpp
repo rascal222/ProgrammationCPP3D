@@ -1,5 +1,5 @@
-#ifndef PROG_3D_CURVE_HPP_DEFINED
-#define PROG_3D_CURVE_HPP_DEFINED
+#ifndef PROG_3D_HERMITE_CUBIC_CURVE_HPP_DEFINED
+#define PROG_3D_HERMITE_CUBIC_CURVE_HPP_DEFINED
 
 #include "core-declaration.hpp"
 #include "Point.hpp"
@@ -11,7 +11,7 @@
 */
 namespace prog_3D {
 
-    class HermiteCubicCurve :public virtual prog_3D::Curve {
+    class HermiteCubicCurve :public virtual Curve {
     private:
         int pointNumber;
         Point p1;
@@ -23,12 +23,13 @@ namespace prog_3D {
 
         void setPointNumber(int n);
 
+        int getPointNumber();
+
         virtual ~HermiteCubicCurve();
 
         virtual std::vector<Point> compute();
 
         Point& getPoint1();
-
 
         Point& getPoint2();
 
