@@ -7,8 +7,14 @@ namespace prog_3D
 
     Axis::Axis(Point& p1, Vector& v1)
     {
-        p=p1;
-        v=v1;
+        this->p=p1;
+        this->n=v1;
+    }
+
+    Axis::Axis(const Point& p1, const Vector& v1)
+    {
+        p=(p1);
+        n=(v1);
     }
 
     Axis::~Axis()
@@ -22,7 +28,7 @@ namespace prog_3D
     }
     Vector& Axis::getVector()
     {
-        return this->v;
+        return this->n;
     }
 
     void Axis::setPoint(Point& p1)
@@ -31,6 +37,6 @@ namespace prog_3D
     }
     void Axis::setVector(Vector&v1)
     {
-        this->v=v1;
+        this->n=v1;
     }
 }

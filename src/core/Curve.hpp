@@ -2,6 +2,7 @@
 #define PROG_3D_CURVE_HPP_DEFINED
 
 #include "core-declaration.hpp"
+#include "Point.hpp"
 #include <vector>
 
 /**
@@ -16,12 +17,6 @@ namespace prog_3D {
         virtual std::vector<Point> compute()=0;
     };
 
-    inline void drawCurve(Curve& curve)
-    {
-        std::vector<Point> points = curve.compute();
-
-
-    }
 }
 
 #endif
