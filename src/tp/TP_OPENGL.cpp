@@ -498,14 +498,11 @@ void render_scene()
         else if(op && (scene==2 || scene==3))
         {
             BezierCurve* c2 = dynamic_cast<BezierCurve*>(c.get());
-            /*
-
-            for(int i=0;i<c2->getControlPoint().size();++i) {
-                glPoint(c2->getControlPoint().at(i));
-            }
-            glColor3f(1.0f,1.0f,1.0f);*/
+            //Draw Control Points Curve
             glColor3f(1.0f,0.0f,0.0f);
             drawCurve(c2->getControlPoint(), op);
+
+            //Need to draw every round of
 
         }
 

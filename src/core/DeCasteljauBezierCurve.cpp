@@ -13,9 +13,6 @@ namespace prog_3D
     std::vector<Point> DeCasteljauBezierCurve::compute()
     {
         std::vector<Point> result;
-        for(int i=0;i<getControlPoint().size();++i)
-            std::cout <<"c"<< getControlPoint().at(i) << std::endl;
-
         for(long i=0;i<getPointsNumber();++i)
         {
             double u = ((double) i) * 1.0 /(double)(getPointsNumber()-1);
