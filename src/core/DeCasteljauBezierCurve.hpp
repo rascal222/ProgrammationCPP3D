@@ -1,30 +1,23 @@
 #ifndef PROG_3D_DECASTELJAU_BEZIER_CURVE_HPP_DEFINED
 #define PROG_3D_DECASTELJAU_BEZIER_CURVE_HPP_DEFINED
 
-#include "core-declaration.hpp"
-#include <ostream>
-#include "Curve.hpp"
-#include <vector>
+#include "BezierCurve.hpp"
+
 /**
 * \namespace This namespace gathers all classes for 3D programming
 */
 namespace prog_3D {
 
-    class DeCasteljauBezierCurve :public virtual Curve
+    class DeCasteljauBezierCurve :public virtual BezierCurve
     {
     private:
-        std::vector<Point> controlPoints;
-        int pointsNumber;
+        virtual Point recursive(std::vector<Point>,double);
     public:
         DeCasteljauBezierCurve(std::vector<Point>,int);
-        void setPointsNumber(int);
-        int getPointsNumber();
-
-
         virtual ~DeCasteljauBezierCurve();
         virtual std::vector<Point> compute();
 
-        std::vector<Point>& getControlPoint();
+
     };
 
 }

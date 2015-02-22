@@ -6,24 +6,14 @@
 
 namespace prog_3D {
 
-	HermiteCubicCurve::HermiteCubicCurve(Point& p1,Point& p2,Vector& v1, Vector& v2,int n) : Curve()
+	HermiteCubicCurve::HermiteCubicCurve(Point& p1,Point& p2,Vector& v1, Vector& v2,int n) : Curve(n)
 	{
-		this->pointNumber=n;
 		this->p1=p1;
 		this->p2=p2;
 		this->v1=v1;
 		this->v2=v2;
 	}
 
-	void HermiteCubicCurve::setPointNumber(int n)
-	{
-		this->pointNumber=n;
-	}
-
-    int HermiteCubicCurve::getPointNumber()
-    {
-        return this->pointNumber;
-    }
 
 	HermiteCubicCurve::~HermiteCubicCurve()
 	{
@@ -54,9 +44,9 @@ namespace prog_3D {
 	{
 		std::vector<Point> points;
 
-		for(long i=0;i<pointNumber;i++)
+		for(long i=0;i< getPointsNumber();i++)
 		{
-			double u = ((double) i) *1.0 /(double)(pointNumber-1);
+			double u = ((double) i) *1.0 /(double)(getPointsNumber()-1);
 
 			double f1 = 2 * pow(u,3) - 3 * pow(u,2) + 1;
 			double f2 = -2 * pow(u,3) + 3 * pow(u,2);

@@ -9,12 +9,19 @@ src/core/Vector.cpp
 src/core/Vector.hpp
 src/core/Point.hpp
 src/core/Axis.hpp
+src/core/Axis.cpp
 src/core/Curve.hpp
 src/core/Curve.cpp
 src/core/HermiteCubicCurve.hpp
 src/core/HermiteCubicCurve.cpp
+src/core/BezierCurve.cpp
+src/core/BezierCurve.hpp
 src/core/BernsteinBezierCurve.hpp
 src/core/BernsteinBezierCurve.cpp
+src/core/DeCasteljauBezierCurve.hpp
+src/core/DeCasteljauBezierCurve.cpp
+
+
 )
 add_executable(Programmation3D ${SOURCE_FILES})
 find_package(OpenGL REQUIRED)

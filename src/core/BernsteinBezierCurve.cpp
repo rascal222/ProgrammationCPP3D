@@ -1,34 +1,18 @@
+#include "Curve.hpp"
 #include "BernsteinBezierCurve.hpp"
 #include <cmath>
+#include "Point.hpp"
 
-
-#ifndef fact_func
-#define fact_func
-double fact(double n)
-{
-    return (n == 1.0 || n == 0.0) ? 1.0 : fact(n - 1.0) * n;
-}
-
-#endif
 namespace prog_3D
 {
-    BernsteinBezierCurve::BernsteinBezierCurve(std::vector<Point> ps,int n): controlPoints(ps),pointsNumber(n){   }
+    BernsteinBezierCurve::BernsteinBezierCurve(std::vector<Point> ps,int n): BezierCurve(ps,n){   }
 
     BernsteinBezierCurve::~BernsteinBezierCurve(){   }
-
-    void BernsteinBezierCurve::setPointsNumber(int n)
-    {
-        this->pointsNumber=n;
-    }
-
-    int BernsteinBezierCurve::getPointsNumber()
-    {
-        return this->pointsNumber;
-    }
 
     std::vector<Point> BernsteinBezierCurve::compute()
     {
         std::vector<Point> result;
+
         for(long i=0;i<getControlPoint().size();++i)
         {
             Point p;
@@ -53,8 +37,5 @@ namespace prog_3D
         return result;
     }
 
-    std::vector<Point> &BernsteinBezierCurve::getControlPoint()
-    {
-        return this->controlPoints;
-    }
+
 }

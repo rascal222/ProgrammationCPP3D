@@ -2,29 +2,12 @@
 #include <cmath>
 
 
-#ifndef fact_func
-#define fact_func
-double fact(double n)
-{
-    return (n == 1.0 || n == 0.0) ? 1.0 : fact(n - 1.0) * n;
-}
-
-#endif
 namespace prog_3D
 {
-    DeCasteljauBezierCurve::DeCasteljauBezierCurve(std::vector<Point> ps,int n): controlPoints(ps),pointsNumber(n){   }
+    DeCasteljauBezierCurve::DeCasteljauBezierCurve(std::vector<Point> ps,int n): BezierCurve(ps,n){   }
 
     DeCasteljauBezierCurve::~DeCasteljauBezierCurve(){   }
 
-    void DeCasteljauBezierCurve::setPointsNumber(int n)
-    {
-        this->pointsNumber=n;
-    }
-
-    int DeCasteljauBezierCurve::getPointsNumber()
-    {
-        return this->pointsNumber;
-    }
 
     std::vector<Point> DeCasteljauBezierCurve::compute()
     {
@@ -33,12 +16,13 @@ namespace prog_3D
         {
             double u = ((double) i) * 1.0 /(double)(getPointsNumber()-1);
 
-            //result.push_back();
+            Point p = recursive(getControlPoint(), u);
+            result.push_back(p);
         }
         return result;
     }
     //FUNCTION RECURSIVE
-    Point DeCasteljauBezierCurve(std::vector<Point> points,double u)
+    Point DeCasteljauBezierCurve::recursive(std::vector<Point> points,double u)
     {
         if(points.size()==1)
             return points.at(0);
@@ -54,12 +38,8 @@ namespace prog_3D
                 Point p;(x,y,z);
                 poin2.push_back(p);
             }
-            return DeCasteljauBezierCurve(poin2, u);
+            return recursive(poin2, u);
         }
     }
 
-    std::vector<Point> &DeCasteljauBezierCurve::getControlPoint()
-    {
-        return this->controlPoints;
-    }
 }

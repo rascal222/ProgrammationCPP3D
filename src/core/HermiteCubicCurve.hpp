@@ -13,17 +13,12 @@ namespace prog_3D {
 
     class HermiteCubicCurve :public virtual Curve {
     private:
-        int pointNumber;
         Point p1;
         Point p2;
         Vector v1;
         Vector v2;
     public:
         HermiteCubicCurve(Point& p1,Point& p2,Vector& v1, Vector& v2,int n);
-
-        void setPointNumber(int n);
-
-        int getPointNumber();
 
         virtual ~HermiteCubicCurve();
 

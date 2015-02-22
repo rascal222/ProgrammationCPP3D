@@ -10,13 +10,22 @@
 */
 namespace prog_3D {
 
-    class Curve {
-    public:
-        Curve();
-        virtual ~Curve();
-        virtual std::vector<Point> compute()=0;
-    };
+	class Curve {
+	private:
+		int pointsNumber;
+	public:
+		Curve();
 
+		Curve(int);
+
+		virtual ~Curve();
+
+		virtual std::vector<Point> compute() = 0;
+
+		virtual void setPointsNumber(int n);
+
+		virtual int getPointsNumber();
+	};
 }
 
 #endif

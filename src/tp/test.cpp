@@ -14,23 +14,11 @@ int main()
 
     Point C2 =C.projectOnLine(A,B);
 
-<<<<<<< HEAD
-    std::cout << C2 << std::endl;
-    Vector v2(1,0,0);
-    Vector t = Vector::UP * 3.0;
-    std::cout << t << std::endl;
-    t*=2;
-    std::cout << t << std::endl;
 
-    Point O(0,0,0);
-    Vector n(0,1,0);
-    Point M(1,1,1);
-=======
 
     Point O(0,0,0);
     Vector n(0,1,0);
     Point M(1,-1,1);
->>>>>>> 6b2255602677cec1483f7c52bc496c591eafafee
 
     Point M2 = M.projectOnPlan(O, n);
     std::cout << M2 << std::endl;

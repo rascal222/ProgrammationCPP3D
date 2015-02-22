@@ -23,14 +23,15 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 */
 
 #include <GL/glut.h>
-#include <term.h>
 
 
 #include "../core/Point.hpp"
 #include "../core/Vector.hpp"
 #include "../core/Curve.hpp"
 #include "../core/HermiteCubicCurve.hpp"
+#include "../core/DeCasteljauBezierCurve.hpp"
 #include "../core/BernsteinBezierCurve.hpp"
+
 
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -66,7 +67,7 @@ int main(int argc, char **argv)
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("Premier exemple : carre");
-	glEnable(GL_LIGHT0);
+	//glEnable(GL_LIGHT0);
 	// initialisation de OpenGL et de la scène
 	initGL();
 	init_scene();
@@ -79,7 +80,7 @@ int main(int argc, char **argv)
 	// la gestion des événements clavier
 	glutKeyboardFunc(&window_key);
 
-	glutKeyboardUpFunc(&window_key);
+	//glutKeyboardUpFunc(&window_key);
 
 	// la boucle prinicipale de gestion des événements utilisateur
 	glutMainLoop();
@@ -154,16 +155,22 @@ GLvoid window_key(unsigned char key, int x, int y)
 			scene=3;
 			c.reset();
 			break;
-
+		case 119: //w
+		std::cout << c->getPointsNumber() << std::endl;
+			if(c->getPointsNumber()>3)
+				c->setPointsNumber(c->getPointsNumber()-1);
+			break;
+		case 120: //x
+			c->setPointsNumber(c->getPointsNumber()+1);
+			break;
 		case 97: // a
-			std::cout << ""<<numModifier << std::endl;
-
-				numModifier--;
+			if(numModifier>0)
+			numModifier--;
 			break;
 		case 122: // z
 			//loop entre les modifier de contrôle
-		   ++numModifier;
-		std::cout << ""<<numModifier << std::endl;
+			if(numModifier<modifierMax)
+		 	  ++numModifier;
 			break;
 		case 101: // e
 			//ADD A CONTROL POINT
@@ -201,6 +208,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 		case 111: // o (haut)
 			if(scene==1)
 			{
+				std::cout << ""<<numModifier << std::endl;
 				HermiteCubicCurve* c2 = dynamic_cast<HermiteCubicCurve*>(c.get());
 				if(numModifier==0)
 				{
@@ -217,7 +225,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 					//Move V0 y++
 					c2->getVector1().setY(c2->getVector1().getY()+.4);
 				}
-				else if(numModifier==2)
+				else if(numModifier==3)
 				{
 					//Move V1 y++
 					c2->getVector2().setY(c2->getVector2().getY()+.4);
@@ -257,7 +265,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 					//Move V0 y++
 					c2->getVector1().setY(c2->getVector1().getY()-.4);
 				}
-				else if(numModifier==2)
+				else if(numModifier==3)
 				{
 					//Move V1 y++
 					c2->getVector2().setY(c2->getVector2().getY()-.4);
@@ -292,7 +300,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 					//Move V0 y++
 					c2->getVector1().setX(c2->getVector1().getX()-.4);
 				}
-				else if(numModifier==2)
+				else if(numModifier==3)
 				{
 					//Move V1 y++
 					c2->getVector2().setX(c2->getVector2().getX()-.4);
@@ -326,7 +334,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 					//Move V0 y++
 					c2->getVector1().setX(c2->getVector1().getX()+.4);
 				}
-				else if(numModifier==2)
+				else if(numModifier==3)
 				{
 					//Move V1 y++
 					c2->getVector2().setX(c2->getVector2().getX()+.4);
@@ -457,6 +465,7 @@ void render_scene()
 		numberOfPoint=10;
 		if(scene==1)
 		{
+			numModifier=0;
 			Point p(4,0,0);
 			Point o = Point::Origin;
 			Vector v0 = Vector::UP;
@@ -466,6 +475,7 @@ void render_scene()
 		}
 		else if(scene==2)
 		{
+			numModifier=0;
 			std::vector<Point> vect;
 			vect.push_back(Point::Origin);
 			Point p(1,4,0);vect.push_back(p);
@@ -475,16 +485,23 @@ void render_scene()
 		}
 		else
 		{
+			numModifier=0;
 			std::vector<Point> vect;
 			vect.push_back(Point::Origin);
 			Point p(1,4,0);vect.push_back(p);
 			Point p2(4,0,0);vect.push_back(p2);
 			modifierMax=2;
-			//c.reset(new CasteljauBezierCurve(vect,numberOfPoint));
+
+			c.reset(new DeCasteljauBezierCurve(vect,numberOfPoint));
 
 		}
 	}
 
-	drawCurve(c->compute(),op);
+	if(c)
+	{
+		drawCurve(c->compute(),true);
+
+	}
+
 	glFlush();
 }
