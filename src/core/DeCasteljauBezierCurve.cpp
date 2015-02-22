@@ -1,5 +1,6 @@
 #include "DeCasteljauBezierCurve.hpp"
 #include <cmath>
+#include <iostream>
 
 
 namespace prog_3D
@@ -12,7 +13,10 @@ namespace prog_3D
     std::vector<Point> DeCasteljauBezierCurve::compute()
     {
         std::vector<Point> result;
-        for(long i=0;i<getControlPoint().size();++i)
+        for(int i=0;i<getControlPoint().size();++i)
+            std::cout <<"c"<< getControlPoint().at(i) << std::endl;
+
+        for(long i=0;i<getPointsNumber();++i)
         {
             double u = ((double) i) * 1.0 /(double)(getPointsNumber()-1);
 
@@ -29,13 +33,14 @@ namespace prog_3D
         else
         {
             std::vector<Point> poin2;
-            for (int k = 0; k < points.size() - 1; ++k)
+            for (int k = 0; k < points.size()-1; ++k)
             {
-
                 double x = points[k].getX()*(1.0-u) + u*points[k+1].getX();
+
                 double y = points[k].getY()*(1.0-u) + u*points[k+1].getY();
                 double z = points[k].getZ()*(1.0-u) + u*points[k+1].getZ();
-                Point p;(x,y,z);
+
+                Point p(x,y,z);
                 poin2.push_back(p);
             }
             return recursive(poin2, u);

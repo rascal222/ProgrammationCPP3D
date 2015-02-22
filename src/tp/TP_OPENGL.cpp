@@ -143,68 +143,75 @@ GLvoid window_key(unsigned char key, int x, int y)
 			exit(1);
 			break;
 			//SCENE;
+        case 9://TAB
+            op=!op;
+            break;
 		case 38://&
+			std::cout << "HermiteCubicCurve"<<std::endl;
 			scene=1;
 			c.reset();
 			break;
 		case 233://é
+			std::cout << "BezierCurve (Bernstein)"<<std::endl;
 			scene=2;
 			c.reset();
 			break;
 		case 34://"
+			std::cout << "BezierCurve (DeCasteljau)"<<std::endl;
 			scene=3;
 			c.reset();
 			break;
 		case 119: //w
-		std::cout << c->getPointsNumber() << std::endl;
+			std::cout << "Decrease number of computed points"<<std::endl;
 			if(c->getPointsNumber()>3)
 				c->setPointsNumber(c->getPointsNumber()-1);
 			break;
 		case 120: //x
+			std::cout << "Increase number of computed points"<<std::endl;
 			c->setPointsNumber(c->getPointsNumber()+1);
 			break;
 		case 97: // a
+			std::cout << "Decrease modifier value"<<std::endl;
 			if(numModifier>0)
-			numModifier--;
+				numModifier--;
+            std::cout << "Current -> "<<numModifier;
 			break;
 		case 122: // z
 			//loop entre les modifier de contrôle
+			std::cout << "Increase modifier value"<<std::endl;
 			if(numModifier<modifierMax)
-		 	  ++numModifier;
+				++numModifier;
+			if(numModifier==modifierMax)
+				numModifier=0;
+            std::cout << "Current -> "<<numModifier;
 			break;
 		case 101: // e
 			//ADD A CONTROL POINT
-			if(scene==2)
+			std::cout <<" Only on Bezier Curve" <<std::endl;
+			if(scene==2 || scene==3)
 			{
-				BernsteinBezierCurve* c2 = dynamic_cast<BernsteinBezierCurve*>(c.get());
+				std::cout << "Add a control point on the last one" << std::endl;
+				BezierCurve* c2 = dynamic_cast<BezierCurve*>(c.get());
 				int size = c2->getControlPoint().size();
 				Point p2 = c2->getControlPoint().at(size-1);
 				Point d(p2.getX(),p2.getY(),p2.getZ());
 				c2->getControlPoint().push_back(d);
 				numModifier=size;
 			}
-			else if(scene==3)
-			{
-				/* DeCasteljauBezierCurve* c2 = dynamic_cast<DeCasteljauBezierCurve*>(c.get());
-				int size = c2->getControlPoint().size();
-				Point p2 = c2->getControlPoint().at(size-1);
-				Point d(p2.getX(),p2.getY(),p2.getZ());
-				c2->getControlPoint().push_back(d);
-				numModifier=size;*/
-			}
 			break;
 			//printf ("La touche %c est active.\n", key);
 		case 114: // r
-			if(scene==2)
+			std::cout <<" Only on Bezier Curve" <<std::endl;
+
+			if(scene==2 || scene==3)
 			{
-				BernsteinBezierCurve* c2 = dynamic_cast<BernsteinBezierCurve*>(c.get());
-				c2->getControlPoint().erase(c2->getControlPoint().begin() + numModifier);
+				std::cout << "Remove the current control point" << std::endl;
+				BezierCurve* c2 = dynamic_cast<BezierCurve*>(c.get());
+                if(c2->getControlPoint().size()>2)
+				    c2->getControlPoint().erase(c2->getControlPoint().begin() + numModifier);
 			}
-			else if(scene==3)
-			{
-				// DeCasteljauBezierCurve* c2 = dynamic_cast<DeCasteljauBezierCurve*>(c.get());
-				// c2->getControlPoint().erase(c2->getControlPoint().begin() + numModifier);
-			} break;
+
+			break;
 		case 111: // o (haut)
 			if(scene==1)
 			{
@@ -231,22 +238,13 @@ GLvoid window_key(unsigned char key, int x, int y)
 					c2->getVector2().setY(c2->getVector2().getY()+.4);
 				}
 			}
-			else if(scene==2)
-			{
-				BernsteinBezierCurve* c2 = dynamic_cast<BernsteinBezierCurve*>(c.get());
-				c2->getControlPoint().at(numModifier).setY(c2->getControlPoint().at(numModifier).getY()+0.4);
-
-				// remove numModifier
-
+			else if(scene==2 || scene==3) {
+				BezierCurve *c2 = dynamic_cast<BezierCurve *>(c.get());
+				c2->getControlPoint().at(numModifier).setY(c2->getControlPoint().at(numModifier).getY() + 0.4);
 			}
-			else if(scene==3)
-			{
-			   // DeCasteljauBezierCurve* c2 = (DeCasteljauBezierCurve*) c.get();
-			   // c2->getControlPoint().at(numModifier).setY(c2->getControlPoint().at(numModifier).getY()+0.4);
-			}
-			printf ("La touche %c est active.\n", key);break;
+
+			break;
 		case 108: // l (bas)
-			printf ("La touche %c est active.\n", key);
 			if(scene==1)
 			{
 				HermiteCubicCurve* c2 = dynamic_cast<HermiteCubicCurve*>( c.get());
@@ -271,14 +269,10 @@ GLvoid window_key(unsigned char key, int x, int y)
 					c2->getVector2().setY(c2->getVector2().getY()-.4);
 				}
 			}
-			else if(scene==2)
+			else if(scene==2 || scene==3)
 			{
-				BernsteinBezierCurve* c2 = dynamic_cast<BernsteinBezierCurve*>( c.get());
+				BezierCurve* c2 = dynamic_cast<BezierCurve*>( c.get());
 				c2->getControlPoint().at(numModifier).setY(c2->getControlPoint().at(numModifier).getY()-0.4);
-			}
-			else if(scene==3)
-			{
-
 			}
 			break;
 		case 107: // k (gauche)
@@ -306,15 +300,12 @@ GLvoid window_key(unsigned char key, int x, int y)
 					c2->getVector2().setX(c2->getVector2().getX()-.4);
 				}
 			}
-			else if(scene==2)
+			else if(scene==2||scene==3)
 			{
-				BernsteinBezierCurve* c2 = dynamic_cast<BernsteinBezierCurve*>( c.get());
+				BezierCurve* c2 = dynamic_cast<BezierCurve*>( c.get());
 				c2->getControlPoint().at(numModifier).setX(c2->getControlPoint().at(numModifier).getX()-0.4);
 			}
-			else if(scene==3)
-			{
-
-			};break;
+			break;
 		case 109: // k (droite)
 			if(scene==1)
 			{
@@ -340,16 +331,12 @@ GLvoid window_key(unsigned char key, int x, int y)
 					c2->getVector2().setX(c2->getVector2().getX()+.4);
 				}
 			}
-			else if(scene==2)
+			else if(scene==2 || scene==3)
 			{
-				BernsteinBezierCurve* c2 = dynamic_cast<BernsteinBezierCurve*>( c.get());
+				BezierCurve* c2 = dynamic_cast<BezierCurve*>( c.get());
 				c2->getControlPoint().at(numModifier).setX(c2->getControlPoint().at(numModifier).getX()+0.4);
 			}
-			else if(scene==3)
-			{
-
-			}
-			;break;
+			break;
 		default:
 			printf ("La touche %d n´est pas active.\n", key);
 			break;
@@ -480,7 +467,7 @@ void render_scene()
 			vect.push_back(Point::Origin);
 			Point p(1,4,0);vect.push_back(p);
 			Point p2(4,0,0);vect.push_back(p2);
-			modifierMax=2;
+			modifierMax=3;
 			c.reset(new BernsteinBezierCurve(vect,numberOfPoint));
 		}
 		else
@@ -490,7 +477,7 @@ void render_scene()
 			vect.push_back(Point::Origin);
 			Point p(1,4,0);vect.push_back(p);
 			Point p2(4,0,0);vect.push_back(p2);
-			modifierMax=2;
+			modifierMax=3;
 
 			c.reset(new DeCasteljauBezierCurve(vect,numberOfPoint));
 
@@ -499,7 +486,29 @@ void render_scene()
 
 	if(c)
 	{
-		drawCurve(c->compute(),true);
+		drawCurve(c->compute(),op);
+        if(scene==1 && op)
+        {
+            HermiteCubicCurve* c2 = dynamic_cast<HermiteCubicCurve*>(c.get());
+            glColor3f(1.0f,0.0f,0.0f);
+            drawLine(c2->getPoint1(), c2->getVector1());
+            drawLine(c2->getPoint2(), c2->getVector2());
+            glColor3f(1.0f,1.0f,1.0f);
+        }
+        else if(op && (scene==2 || scene==3))
+        {
+            BezierCurve* c2 = dynamic_cast<BezierCurve*>(c.get());
+            /*
+
+            for(int i=0;i<c2->getControlPoint().size();++i) {
+                glPoint(c2->getControlPoint().at(i));
+            }
+            glColor3f(1.0f,1.0f,1.0f);*/
+            glColor3f(1.0f,0.0f,0.0f);
+            drawCurve(c2->getControlPoint(), op);
+
+        }
+
 
 	}
 

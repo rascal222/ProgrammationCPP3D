@@ -13,7 +13,7 @@ namespace prog_3D
     {
         std::vector<Point> result;
 
-        for(long i=0;i<getControlPoint().size();++i)
+        for(long i=0;i< getPointsNumber();++i)
         {
             Point p;
             double u = ((double) i) * 1.0 /(double)(getPointsNumber()-1);
