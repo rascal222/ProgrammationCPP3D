@@ -499,10 +499,29 @@ void render_scene()
         {
             BezierCurve* c2 = dynamic_cast<BezierCurve*>(c.get());
             //Draw Control Points Curve
-            glColor3f(1.0f,0.0f,0.0f);
-            drawCurve(c2->getControlPoint(), op);
 
-            //Need to draw every round of
+
+			if(scene==3) {
+				//Need to draw every round of
+				glColor3f(0.0f, 1.0f, 0.0f);
+				for (long i = 0; i < c2->getPointsNumber(); ++i) {
+					double u = ((double) i) * 1.0 / (double) (c2->getPointsNumber() - 1);
+					std::vector<Point> poin2;
+					for (int k = 0; k < c2->getControlPoint().size() - 1; ++k) {
+						double x = c2->getControlPoint()[k].getX() * (1.0 - u) + u * c2->getControlPoint()[k + 1].getX();
+
+						double y = c2->getControlPoint()[k].getY() * (1.0 - u) + u * c2->getControlPoint()[k + 1].getY();
+						double z = c2->getControlPoint()[k].getZ() * (1.0 - u) + u * c2->getControlPoint()[k + 1].getZ();
+
+						Point p(x, y, z);
+						poin2.push_back(p);
+					}
+					drawCurve(poin2, true);
+
+				}
+			}
+			glColor3f(1.0f,0.0f,0.0f);
+			drawCurve(c2->getControlPoint(), op);
 
         }
 
