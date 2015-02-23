@@ -143,9 +143,9 @@ GLvoid window_key(unsigned char key, int x, int y)
 			exit(1);
 			break;
 			//SCENE;
-        case 9://TAB
-            op=!op;
-            break;
+		case 9://TAB
+			op=!op;
+			break;
 		case 38://&
 			std::cout << "HermiteCubicCurve"<<std::endl;
 			scene=1;
@@ -174,7 +174,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 			std::cout << "Decrease modifier value"<<std::endl;
 			if(numModifier>0)
 				numModifier--;
-            std::cout << "Current -> "<<numModifier;
+			std::cout << "Current -> "<<numModifier;
 			break;
 		case 122: // z
 			//loop entre les modifier de contrôle
@@ -183,7 +183,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 				++numModifier;
 			if(numModifier==modifierMax)
 				numModifier=0;
-            std::cout << "Current -> "<<numModifier;
+			std::cout << "Current -> "<<numModifier;
 			break;
 		case 101: // e
 			//ADD A CONTROL POINT
@@ -197,6 +197,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 				Point d(p2.getX(),p2.getY(),p2.getZ());
 				c2->getControlPoint().push_back(d);
 				numModifier=size;
+				modifierMax=c2->getControlPoint().size()+1;
 			}
 			break;
 			//printf ("La touche %c est active.\n", key);
@@ -207,8 +208,10 @@ GLvoid window_key(unsigned char key, int x, int y)
 			{
 				std::cout << "Remove the current control point" << std::endl;
 				BezierCurve* c2 = dynamic_cast<BezierCurve*>(c.get());
-                if(c2->getControlPoint().size()>2)
-				    c2->getControlPoint().erase(c2->getControlPoint().begin() + numModifier);
+				if(c2->getControlPoint().size()>2) {
+					c2->getControlPoint().erase(c2->getControlPoint().begin() + numModifier);
+					modifierMax = c2->getControlPoint().size() - 1;
+				}
 			}
 
 			break;
@@ -414,6 +417,9 @@ void drawCurve(Point tabPointsOfCurve[], long nbPoints)
 	drawCurve(tabPointsOfCurve, nbPoints,false);
 }
 
+
+
+
 void drawCurve(std::vector<Point> tabPointsOfCurve,bool showPoint)
 {
 	for(int i=0;i<tabPointsOfCurve.size()-1;++i) {
@@ -439,6 +445,39 @@ void drawCurve(Curve& curve)
 void drawCurve(Curve& curve,bool debug)
 {
 	drawCurve(curve.compute(), debug);
+}
+
+void drawIntermediate(double u,std::vector<Point> ps,int step)
+{
+    if(ps.size()==1) {
+        drawPoint(ps.at(0));
+        return;
+    }
+    std::vector<Point> poin2;
+    for (int k = 0; k < ps.size() - 1; ++k) {
+        double x = ps[k].getX() * (1.0 - u) + u * ps[k + 1].getX();
+
+        double y = ps[k].getY() * (1.0 - u) + u * ps[k + 1].getY();
+        double z =ps[k].getZ() * (1.0 - u) + u * ps[k + 1].getZ();
+
+        Point p(x, y, z);
+        poin2.push_back(p);
+    }
+    if(step==0)
+        glColor3f(0.0f, 1.0f, 0.0f);
+    else if(step==1)
+        glColor3f(0.0f, 1.0f, 1.0f);
+    else if(step==3)
+        glColor3f(0.0f, 0.0f, 1.0f);
+    else if(step==4)
+        glColor3f(1.0f, 1.0f, 0.0f);
+
+
+    if(poin2.size()>1) {
+        drawCurve(poin2, true);
+    }
+    drawIntermediate(u
+            ,poin2,++step);
 }
 
 
@@ -487,43 +526,36 @@ void render_scene()
 	if(c)
 	{
 		drawCurve(c->compute(),op);
-        if(scene==1 && op)
-        {
-            HermiteCubicCurve* c2 = dynamic_cast<HermiteCubicCurve*>(c.get());
-            glColor3f(1.0f,0.0f,0.0f);
-            drawLine(c2->getPoint1(), c2->getVector1());
-            drawLine(c2->getPoint2(), c2->getVector2());
-            glColor3f(1.0f,1.0f,1.0f);
-        }
-        else if(op && (scene==2 || scene==3))
-        {
-            BezierCurve* c2 = dynamic_cast<BezierCurve*>(c.get());
-            //Draw Control Points Curve
+		if(scene==1 && op)
+		{
+			HermiteCubicCurve* c2 = dynamic_cast<HermiteCubicCurve*>(c.get());
+			glColor3f(1.0f,0.0f,0.0f);
+			drawLine(c2->getPoint1(), c2->getVector1());
+			drawLine(c2->getPoint2(), c2->getVector2());
+			glColor3f(1.0f,1.0f,1.0f);
+		}
+		else if(op && (scene==2 || scene==3))
+		{
+			BezierCurve* c2 = dynamic_cast<BezierCurve*>(c.get());
+			//Draw Control Points Curve
 
 
 			if(scene==3) {
 				//Need to draw every round of
-				glColor3f(0.0f, 1.0f, 0.0f);
+
+
+
 				for (long i = 0; i < c2->getPointsNumber(); ++i) {
 					double u = ((double) i) * 1.0 / (double) (c2->getPointsNumber() - 1);
-					std::vector<Point> poin2;
-					for (int k = 0; k < c2->getControlPoint().size() - 1; ++k) {
-						double x = c2->getControlPoint()[k].getX() * (1.0 - u) + u * c2->getControlPoint()[k + 1].getX();
+                    drawIntermediate(u,c2->getControlPoint(),0);
 
-						double y = c2->getControlPoint()[k].getY() * (1.0 - u) + u * c2->getControlPoint()[k + 1].getY();
-						double z = c2->getControlPoint()[k].getZ() * (1.0 - u) + u * c2->getControlPoint()[k + 1].getZ();
-
-						Point p(x, y, z);
-						poin2.push_back(p);
-					}
-					drawCurve(poin2, true);
 
 				}
 			}
 			glColor3f(1.0f,0.0f,0.0f);
 			drawCurve(c2->getControlPoint(), op);
 
-        }
+		}
 
 
 	}
