@@ -8,13 +8,9 @@
 #include <memory>
 
 
-#include "../surfaces/CylindricSurface.hpp"
-#include "../surfaces/BezierSurface.hpp"
-#include "../surfaces/RuledSurface.hpp"
-#include "../surfaces/SurfacicSquare.hpp"
-#include "../curves/BernsteinBezierCurve.hpp"
-#include "../curves/DeCasteljauBezierCurve.hpp"
+#include "../primitives/Cylinder.hpp"
 #include <GL/glut.h>
+#include "../core/PolarPoint.hpp"
 #include "../core/GlCoreRendering.hpp"
 
 
@@ -55,6 +51,36 @@ int xOrigin = -1;
 //when no key is being presses
 float deltaAngle = 0.0f;
 float deltaMove = 0;
+void mouseButton(int button, int state, int x, int y) {
+
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
+
+		// when the button is released
+		if (state == GLUT_UP) {
+			angle += deltaAngle;
+			xOrigin = -1;
+		}
+		else  {// state = GLUT_DOWN
+			xOrigin = x;
+		}
+	}
+}
+
+void mouseMove(int x, int y) {
+
+	// this will only be true when the left button is down
+	if (xOrigin >= 0) {
+
+		// update deltaAngle
+		deltaAngle = (x - xOrigin) * 0.001f;
+
+		// update camera's direction
+		lx = sin(angle + deltaAngle);
+		lz = -cos(angle + deltaAngle);
+	}
+}
+
 void releaseKey(int key, int x, int y) {
 
 	switch (key) {
@@ -65,44 +91,10 @@ void releaseKey(int key, int x, int y) {
 	}
 }
 
-
-bool op=false;
-std::shared_ptr<SurfacicSquare> bs(new SurfacicSquare(2,2));
-
-GLvoid window_key(unsigned char key, int x, int y)
-{
-	switch(key)
-	{
-		case KEY_ESC:
-			exit(1);
-			break;
-		case 9://TAB
-			op=!op;
-			break;
-		case 43://+
-			bs->setPointNumberForU(bs->getPointNumberForU()+1);
-			break;
-		case 45://-
-			if(bs->getPointNumberForU()>2)
-			bs->setPointNumberForU(bs->getPointNumberForU()-1);
-			break;
-		case 42://*
-			bs->setPointNumberForV(bs->getPointNumberForV()+1);
-			break;
-		case 47:// /
-			if(bs->getPointNumberForV()>2)
-				bs->setPointNumberForV(bs->getPointNumberForV()-1);
-			break;
-		default:
-			printf ("num touche %c %d\n",key,key);
-	}
-	glutPostRedisplay();
-}
-
 int main(int argc, char **argv)
 {
 	// init GLUT and create window
-	init_scene();
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100,100);
@@ -110,14 +102,18 @@ int main(int argc, char **argv)
 	glutCreateWindow("Lighthouse3D - GLUT Tutorial");
 
 	// register callbacks
-	glutDisplayFunc(window_display);
+	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	glutIdleFunc(renderScene);
-	glutKeyboardFunc(window_key);
+	//glutKeyboardFunc(processNormalKeys);
 	glutSpecialFunc(window_special_key);
 	// here are the new entries
 	glutIgnoreKeyRepeat(1);
 	glutSpecialUpFunc(releaseKey);
+
+	// here are the two new functions
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
 
 	// OpenGL init
 	glEnable(GL_DEPTH_TEST);
@@ -153,8 +149,6 @@ void changeSize(int w, int h) {
 	// Get Back to the Modelview
 	glMatrixMode(GL_MODELVIEW);
 }
-
-
 void window_special_key ( int key, int x, int y ) {
 
 	switch (key) {
@@ -163,8 +157,7 @@ void window_special_key ( int key, int x, int y ) {
 		case GLUT_KEY_UP : deltaMove = 0.5f; break;
 		case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
 	}
-	glutPostRedisplay(); // just update here....
-
+	//glutPostRedisplay(); // just update here....
 }
 
 GLvoid initGL()
@@ -172,45 +165,8 @@ GLvoid initGL()
 	glClearColor(RED, GREEN, BLUE, ALPHA);
 }
 
-
 void init_scene()
 {
-	std::vector<Point> vect;
-
-	Point p(0,0,0);vect.push_back(p);
-	Point p2(4,0,0);vect.push_back(p2);
-	Point p3(8,0,0);vect.push_back(p3);
-
-	DeCasteljauBezierCurve curve(vect,2);
-
-	std::vector<Point> vect3;
-	Point pb(0,0,2);vect3.push_back(pb);
-	Point p2b(4,4,2);vect3.push_back(p2b);
-	Point p3b(8,0,2);vect3.push_back(p3b);
-
-	DeCasteljauBezierCurve curve3(vect3,2);
-
-	std::vector<Point> vect4;
-	Point pc(0,0,4);vect4.push_back(pc);
-	Point p2c(4,-4,4);vect4.push_back(p2c);
-	Point p3c(8,0,4);vect4.push_back(p3c);
-
-	DeCasteljauBezierCurve curve4(vect4,2);
-
-	std::vector<Point> vect2;
-	Point pa(0,0,6);vect2.push_back(pa);
-	Point p2a(4,0,6);vect2.push_back(p2a);
-	Point p3a(8,0,6);vect2.push_back(p3a);
-	DeCasteljauBezierCurve curve2(vect2,2);
-
-
-
-	bs->getControlCurves().push_back(curve);
-	bs->getControlCurves().push_back(curve3);
-	bs->getControlCurves().push_back(curve4);
-	bs->getControlCurves().push_back(curve2);
-
-
 }
 
 
@@ -231,6 +187,11 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+
+GLvoid window_key(unsigned char key, int x, int y)
+{
+	glutPostRedisplay();
+}
 
 void computePos(float deltaMove) {
 
@@ -262,17 +223,48 @@ void renderScene()
 			x+lx, y+ly,  z+lz,
 			0.0f, 1.0f,  0.0f);
 
-	glColor3f(0.0f, 1.0f, 1.0f);
 
 
-	bs->draw(false);
-	glColor3f(.0f, 10.0f, .0f);
-	if(op) {
-		for (int i = 0; i < bs->getControlCurves().size(); ++i) {
-			bs->getControlCurves().at(i).setPointsNumber(bs->getPointNumberForU());
-			drawCurve(bs->getControlCurves().at(i).compute(), false);
-		}
-	}
+	Point center = Point::Origin;
+
+
+	PolarPoint p(center,M_PI/4.0,M_PI/4.0,2);
+	PolarPoint p2(center,-M_PI/4.0,M_PI/4.0,2);
+	PolarPoint p3(center,M_PI/4.0,-M_PI/4.0,2);
+	PolarPoint p4(center,-M_PI/4.0,-M_PI/4.0,2);
+
+	PolarPoint pb(center,M_PI/4.0,M_PI/2.0+M_PI/4.0, 2.0);
+	PolarPoint p2b(center,M_PI/2.0+M_PI/4.0,M_PI/2.0+M_PI/4.0,2);
+	PolarPoint p3b(center,M_PI/4.0-M_PI/2.0,M_PI/2.0+M_PI/4.0,2);
+
+	PolarPoint p4b(center,M_PI/4.0,-M_PI/4.0-M_PI/2.0,2);
+
+	PolarPoint pbk(center,0,0,2);
+
+	glColor3f(1.0f,.0f,.0f);
+	drawLine(p,p2);
+	drawLine(p,p4);
+	drawLine(p2,p3);
+	drawLine(p3,p4);
+
+	drawPoint(Point::Origin);
+	drawPoint(pb);
+
+	glColor3f(.0f,1.0f,.0f);
+	drawLine(pb,p2b);
+	drawLine(pb,p3b);
+
+	drawLine(p3b,p4b);
+	drawLine(p2b,p4b);
+
+
+
+	glColor3f(0.0f,.0f,1.0f);
+	drawLine(p,pb);
+	drawLine(p4,p2b);
+	drawLine(p2,p3b);
+	drawLine(p3,p4b);
+
 
 
 	glutSwapBuffers();

@@ -25,6 +25,8 @@ namespace prog_3D {
         virtual Point compute(double u, double v) = 0;
 
         virtual std::vector<std::vector<Point>> compute() = 0;
+        virtual void draw()=0;
+        virtual void draw(bool)=0;
     };
 }
 #endif

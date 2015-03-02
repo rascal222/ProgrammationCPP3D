@@ -80,7 +80,6 @@ namespace prog_3D
             {
                 drawLine(mat.at(i).at(j), mat.at(i+1).at(j));
             }
-
         }
 
         if(showPoints)
@@ -91,7 +90,6 @@ namespace prog_3D
                 {
                     drawPoint(mat.at(i).at(j));
                 }
-
             }
         }
     }

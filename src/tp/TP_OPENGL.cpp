@@ -450,34 +450,34 @@ void drawCurve(Curve& curve,bool debug)
 
 void drawIntermediate(double u,std::vector<Point> ps,int step)
 {
-    if(ps.size()==1) {
-        drawPoint(ps.at(0));
-        return;
-    }
-    std::vector<Point> poin2;
-    for (int k = 0; k < ps.size() - 1; ++k) {
-        double x = ps[k].getX() * (1.0 - u) + u * ps[k + 1].getX();
-        double y = ps[k].getY() * (1.0 - u) + u * ps[k + 1].getY();
-        double z =ps[k].getZ() * (1.0 - u) + u * ps[k + 1].getZ();
+	if(ps.size()==1) {
+		drawPoint(ps.at(0));
+		return;
+	}
+	std::vector<Point> poin2;
+	for (int k = 0; k < ps.size() - 1; ++k) {
+		double x = ps[k].getX() * (1.0 - u) + u * ps[k + 1].getX();
+		double y = ps[k].getY() * (1.0 - u) + u * ps[k + 1].getY();
+		double z =ps[k].getZ() * (1.0 - u) + u * ps[k + 1].getZ();
 
-        Point p(x, y, z);
-        poin2.push_back(p);
-    }
-    if(step==0)
-        glColor3f(0.0f, 1.0f, 0.0f);
-    else if(step==1)
-        glColor3f(0.0f, 1.0f, 1.0f);
-    else if(step==3)
-        glColor3f(0.0f, 0.0f, 1.0f);
-    else if(step==4)
-        glColor3f(1.0f, 1.0f, 0.0f);
+		Point p(x, y, z);
+		poin2.push_back(p);
+	}
+	if(step==0)
+		glColor3f(0.0f, 1.0f, 0.0f);
+	else if(step==1)
+		glColor3f(0.0f, 1.0f, 1.0f);
+	else if(step==3)
+		glColor3f(0.0f, 0.0f, 1.0f);
+	else if(step==4)
+		glColor3f(1.0f, 1.0f, 0.0f);
 
 
-    if(poin2.size()>1) {
-        drawCurve(poin2, true);
-    }
-    drawIntermediate(u
-            ,poin2,++step);
+	if(poin2.size()>1) {
+		drawCurve(poin2, true);
+	}
+	drawIntermediate(u
+			,poin2,++step);
 }
 
 
@@ -547,7 +547,7 @@ void render_scene()
 
 				for (long i = 0; i < c2->getPointsNumber(); ++i) {
 					double u = ((double) i) * 1.0 / (double) (c2->getPointsNumber() - 1);
-                    drawIntermediate(u,c2->getControlPoint(),0);
+					drawIntermediate(u,c2->getControlPoint(),0);
 
 
 				}

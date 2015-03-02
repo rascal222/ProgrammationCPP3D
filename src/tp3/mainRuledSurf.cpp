@@ -94,32 +94,48 @@ void releaseKey(int key, int x, int y) {
         case GLUT_KEY_DOWN : deltaMove = 0;break;
     }
 }
+bool op=false;
+std::shared_ptr<RuledSurface> bs(nullptr);
 
-void drawSnowMan() {
-
-    glColor3f(1.0f, 1.0f, 1.0f);
-
-// Draw Body
-    glTranslatef(0.0f ,0.75f, 0.0f);
-    glutSolidSphere(0.75f,20,20);
-
-// Draw Head
-    glTranslatef(0.0f, 1.0f, 0.0f);
-    glutSolidSphere(0.25f,20,20);
-
-// Draw Eyes
-    glPushMatrix();
-    glColor3f(0.0f,0.0f,0.0f);
-    glTranslatef(0.05f, 0.10f, 0.18f);
-    glutSolidSphere(0.05f,10,10);
-    glTranslatef(-0.1f, 0.0f, 0.0f);
-    glutSolidSphere(0.05f,10,10);
-    glPopMatrix();
-
-// Draw Nose
-    glColor3f(1.0f, 0.5f , 0.5f);
-    glutSolidCone(0.08f,0.5f,10,2);
+GLvoid window_key(unsigned char key, int x, int y)
+{
+    switch(key)
+    {
+        case KEY_ESC:
+            exit(1);
+            break;
+        case 9://TAB
+            op=!op;
+            break;
+        case 43://+
+            bs->setPointNumberForU(bs->getPointNumberForU()+1);
+            break;
+        case 45://-
+            if(bs->getPointNumberForU()>2)
+                bs->setPointNumberForU(bs->getPointNumberForU()-1);
+            break;
+        case 42://*
+            bs->setPointNumberForV(bs->getPointNumberForV()+1);
+            break;
+        case 47:// /
+            if(bs->getPointNumberForV()>2)
+                bs->setPointNumberForV(bs->getPointNumberForV()-1);
+            break;
+        default:
+            printf ("num touche %c %d\n",key,key);
+    }
+    glutPostRedisplay();
 }
+
+void init_scene()
+{
+
+
+
+}
+
+
+
 
 int main(int argc, char **argv)
 {
@@ -135,6 +151,7 @@ int main(int argc, char **argv)
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
     glutIdleFunc(renderScene);
+    glutKeyboardFunc(window_key);
     //glutKeyboardFunc(processNormalKeys);
     glutSpecialFunc(window_special_key);
     // here are the new entries
@@ -195,10 +212,6 @@ GLvoid initGL()
     glClearColor(RED, GREEN, BLUE, ALPHA);
 }
 
-void init_scene()
-{
-}
-
 
 GLvoid window_display()
 {
@@ -218,10 +231,6 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
 }
 
 
-GLvoid window_key(unsigned char key, int x, int y)
-{
-    glutPostRedisplay();
-}
 
 void computePos(float deltaMove) {
 
@@ -252,8 +261,6 @@ void renderScene()
     gluLookAt(	x, y, z,
             x+lx, y+ly,  z+lz,
             0.0f, 1.0f,  0.0f);
-
-
     std::vector<Point> vect3;
     vect3.push_back(Point::Origin);
     Point pb(1,4,0);vect3.push_back(pb);
@@ -262,18 +269,24 @@ void renderScene()
 
 
 
-    std::shared_ptr<BezierCurve> curve3(new DeCasteljauBezierCurve(vect3,100));
+    std::shared_ptr<BezierCurve> curve3(new DeCasteljauBezierCurve(vect3,10));
 
     std::vector<Point> vect2;
     Point pa(1,1,4);vect2.push_back(pa);
     Point p2a(1,-3,7);vect2.push_back(p2a);
     Point p3a(1,3,9);vect2.push_back(p3a);
-    std::shared_ptr<BezierCurve> curve2(new DeCasteljauBezierCurve(vect2,100));
-    glColor3f(0.0f, 1.0f, 1.0f);
-    RuledSurface bs(curve3,curve2,10);
-    bs.draw(true);
-    glColor3f(0.0f, 1.0f, 0.0f);
-    drawCurve(curve3->compute(), true);
-    drawCurve(curve2->compute(),true);
+    std::shared_ptr<BezierCurve> curve2(new DeCasteljauBezierCurve(vect2,10));
+    glColor3f(1.0f, 1.0f, 1.0f);
+    bs.reset(new RuledSurface((curve3),(curve2),10));
+
+   bs->draw();
+    drawCurve(curve3->compute(), op);
+    drawCurve(curve2->compute(),op);
+    if(op) {
+        glColor3f(0.0f, 1.0f, 1.0f);
+        drawCurve(curve3->compute(), op);
+        glColor3f(1.0f,1.0f,.0f);
+        drawCurve(curve2->compute(),op);
+    }
     glutSwapBuffers();
 }

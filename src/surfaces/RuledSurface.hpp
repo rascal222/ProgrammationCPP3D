@@ -11,7 +11,7 @@
 namespace prog_3D
 {
 
-    class RuledSurface: virtual prog_3D::Surface {
+    class RuledSurface: public virtual prog_3D::Surface {
     private:
         std::shared_ptr<Curve> curve1;
         std::shared_ptr<Curve> curve2;

@@ -55,6 +55,71 @@ int xOrigin = -1;
 //when no key is being presses
 float deltaAngle = 0.0f;
 float deltaMove = 0;
+
+void releaseKey(int key, int x, int y) {
+
+    switch (key) {
+        case GLUT_KEY_LEFT :
+        case GLUT_KEY_RIGHT : deltaAngle = 0.0f;break;
+        case GLUT_KEY_UP :
+        case GLUT_KEY_DOWN : deltaMove = 0;break;
+    }
+}
+
+
+
+bool op=false;
+std::shared_ptr<Surface> bs(nullptr);
+
+GLvoid window_key(unsigned char key, int x, int y)
+{
+    switch(key)
+    {
+        case KEY_ESC:
+            exit(1);
+            break;
+        case 9://TAB
+            op=!op;
+            break;
+        case 43://+
+            bs->setPointNumberForU(bs->getPointNumberForU()+1);
+            break;
+        case 45://-
+            if(bs->getPointNumberForU()>2)
+                bs->setPointNumberForU(bs->getPointNumberForU()-1);
+            break;
+        case 42://*
+            bs->setPointNumberForV(bs->getPointNumberForV()+1);
+            break;
+        case 47:// /
+            if(bs->getPointNumberForV()>2)
+                bs->setPointNumberForV(bs->getPointNumberForV()-1);
+            break;
+        default:
+            printf ("num touche %c %d\n",key,key);
+    }
+    glutPostRedisplay();
+}
+
+void init_scene()
+{
+    std::shared_ptr<Axis> axis(new Axis(Point::Origin,Vector(0,0,10)));
+
+    std::vector<Point> vect;
+    vect.push_back(Point::Origin);
+    Point p(1,4,0);vect.push_back(p);
+    Point p2(4,0,0);vect.push_back(p2);
+    Point p3(8,-2,2);vect.push_back(p3);
+
+    std::shared_ptr<BezierCurve> curve(new DeCasteljauBezierCurve(vect,100));
+
+    bs.reset(new CylindricSurface(axis,curve));
+    bs->setPointNumberForU(10);
+    bs->setPointNumberForV(5);
+
+
+}
+
 void mouseButton(int button, int state, int x, int y) {
 
     // only start motion if the left button is pressed
@@ -85,41 +150,7 @@ void mouseMove(int x, int y) {
     }
 }
 
-void releaseKey(int key, int x, int y) {
 
-    switch (key) {
-        case GLUT_KEY_LEFT :
-        case GLUT_KEY_RIGHT : deltaAngle = 0.0f;break;
-        case GLUT_KEY_UP :
-        case GLUT_KEY_DOWN : deltaMove = 0;break;
-    }
-}
-
-void drawSnowMan() {
-
-    glColor3f(1.0f, 1.0f, 1.0f);
-
-// Draw Body
-    glTranslatef(0.0f ,0.75f, 0.0f);
-    glutSolidSphere(0.75f,20,20);
-
-// Draw Head
-    glTranslatef(0.0f, 1.0f, 0.0f);
-    glutSolidSphere(0.25f,20,20);
-
-// Draw Eyes
-    glPushMatrix();
-    glColor3f(0.0f,0.0f,0.0f);
-    glTranslatef(0.05f, 0.10f, 0.18f);
-    glutSolidSphere(0.05f,10,10);
-    glTranslatef(-0.1f, 0.0f, 0.0f);
-    glutSolidSphere(0.05f,10,10);
-    glPopMatrix();
-
-// Draw Nose
-    glColor3f(1.0f, 0.5f , 0.5f);
-    glutSolidCone(0.08f,0.5f,10,2);
-}
 
 int main(int argc, char **argv)
 {
@@ -131,11 +162,12 @@ int main(int argc, char **argv)
     glutInitWindowSize(320,320);
     glutCreateWindow("Lighthouse3D - GLUT Tutorial");
 
+
     // register callbacks
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
     glutIdleFunc(renderScene);
-    //glutKeyboardFunc(processNormalKeys);
+    glutKeyboardFunc(window_key);
     glutSpecialFunc(window_special_key);
     // here are the new entries
     glutIgnoreKeyRepeat(1);
@@ -148,7 +180,7 @@ int main(int argc, char **argv)
     // OpenGL init
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHT0);
-
+    init_scene();
     // enter GLUT event processing cycle
     glutMainLoop();
 
@@ -195,11 +227,6 @@ GLvoid initGL()
     glClearColor(RED, GREEN, BLUE, ALPHA);
 }
 
-void init_scene()
-{
-}
-
-
 GLvoid window_display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -217,11 +244,6 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-
-GLvoid window_key(unsigned char key, int x, int y)
-{
-    glutPostRedisplay();
-}
 
 void computePos(float deltaMove) {
 
@@ -254,22 +276,7 @@ void renderScene()
             0.0f, 1.0f,  0.0f);
 
 
-    std::shared_ptr<Axis> axis(new Axis(Point::Origin,Vector(0,0,10)));
-
-    std::vector<Point> vect;
-    vect.push_back(Point::Origin);
-    Point p(1,4,0);vect.push_back(p);
-    Point p2(4,0,0);vect.push_back(p2);
-    Point p3(8,-2,2);vect.push_back(p3);
-
-    std::shared_ptr<BezierCurve> curve(new DeCasteljauBezierCurve(vect,100));
-
-    CylindricSurface c(axis,curve);
-    c.setPointNumberForU(10);
-    c.setPointNumberForV(5);
-
-    glColor3f(1.0f,0.0f,0.0f);
-    c.draw(true);
+   bs->draw(op);
 
 
     glutSwapBuffers();

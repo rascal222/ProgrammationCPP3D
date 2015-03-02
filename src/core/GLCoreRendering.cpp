@@ -5,6 +5,11 @@ namespace prog_3D {
         glVertex3d(p.getX(), p.getY(), p.getZ());
     }
 
+    void glPoint(const PolarPoint &p) {
+        Point k = p.toCartesian();
+        glPoint(p);
+    }
+
 /// \brief dessine une instance de classe Point
     void drawPoint(const Point &p) {
         glPointSize(5);
@@ -12,6 +17,16 @@ namespace prog_3D {
         glPoint(p);
         glEnd();
     }
+
+    void drawPoint(const PolarPoint& p)
+    {
+        Point p2 = p.toCartesian();
+        glPointSize(5);
+        glBegin(GL_POINTS);
+        glPoint(p2);
+        glEnd();
+    }
+
 
     void drawPoint(Point &p, float r, float g, float b) {
         glColor3f(r, g, b);
@@ -37,12 +52,32 @@ namespace prog_3D {
         glEnd();
     }
 
-    void drawLine(Point &p, Point &p2) {
+
+    void drawLine(Point& p, Point& p2)
+    {
         glBegin(GL_LINES);
         glPoint(p);
         glPoint(p2);
         glEnd();
     }
+
+    void drawLine(const Point& p,const Point& p2)
+    {
+        glBegin(GL_LINES);
+        glPoint(p);
+        glPoint(p2);
+        glEnd();
+    }
+
+    void drawLine(const PolarPoint& p,const PolarPoint& p2)
+    {
+        Point pi = p.toCartesian();
+        Point pj = p2.toCartesian();
+        drawLine(pi, pj);
+    }
+
+
+
 
     void drawCurve(std::vector<Point> tabPointsOfCurve, bool showPoint) {
         for (int i = 0; i < tabPointsOfCurve.size() - 1; ++i) {
@@ -54,7 +89,7 @@ namespace prog_3D {
         }
     }
 
-    void drawSurface(std::vector<std::vector<Point>> vector,bool showPoint)
+    void drawSurface(std::vector< std::vector<Point> > vector,bool showPoint)
     {
         for(int i=0;i< vector.size()-1;++i)
         {
