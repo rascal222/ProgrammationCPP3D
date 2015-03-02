@@ -1,4 +1,4 @@
-#include "Curve.hpp"
+#include "../core/Curve.hpp"
 #include "BezierCurve.hpp"
 
 namespace prog_3D {

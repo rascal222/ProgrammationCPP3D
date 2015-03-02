@@ -1,7 +1,6 @@
 #ifndef PROG_3D_CURVE_HPP_DEFINED
 #define PROG_3D_CURVE_HPP_DEFINED
 
-#include "core-declaration.hpp"
 #include "Point.hpp"
 #include <vector>
 
@@ -19,6 +18,8 @@ namespace prog_3D {
 		Curve(int);
 
 		virtual ~Curve();
+
+		virtual Point compute(double u) = 0;
 
 		virtual std::vector<Point> compute() = 0;
 

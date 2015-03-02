@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Axis.hpp"
 namespace prog_3D
 {
@@ -38,5 +39,16 @@ namespace prog_3D
     void Axis::setVector(Vector&v1)
     {
         this->n=v1;
+    }
+
+    Point Axis::compute(double u)
+    {
+        Point p2 = getPoint().translate(getVector());
+
+        Point p;
+        p.setX( (1.0 - u)* getPoint().getX() + u*p2.getX());
+        p.setY( (1.0 - u)* getPoint().getY() + u*p2.getY());
+        p.setZ( (1.0 - u)* getPoint().getZ() + u*p2.getZ());
+        return p;
     }
 }

@@ -8,8 +8,14 @@
 #include <memory>
 
 
-#include "../primitives/Cylinder.hpp"
+#include "../surfaces/CylindricSurface.hpp"
+#include "../surfaces/BezierSurface.hpp"
+#include "../surfaces/RuledSurface.hpp"
+#include "../surfaces/SurfacicSquare.hpp"
+#include "../curves/BernsteinBezierCurve.hpp"
+#include "../curves/DeCasteljauBezierCurve.hpp"
 #include <GL/glut.h>
+#include "../core/GlCoreRendering.hpp"
 
 
 
@@ -186,7 +192,7 @@ void window_special_key ( int key, int x, int y ) {
 
 GLvoid initGL()
 {
-	glClearColor(RED, GREEN, BLUE, ALPHA);
+    glClearColor(RED, GREEN, BLUE, ALPHA);
 }
 
 void init_scene()
@@ -196,19 +202,19 @@ void init_scene()
 
 GLvoid window_display()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
-	renderScene();
-	glFlush();
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
+    renderScene();
+    glFlush();
 }
 
 GLvoid window_reshape(GLsizei width, GLsizei height)
 {
-	glViewport(0, 0, width, height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-WIDTH/2, WIDTH/2,-HEIGHT/2, HEIGHT/2, -2.0, 100.0);
-	glMatrixMode(GL_MODELVIEW);
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-WIDTH/2, WIDTH/2,-HEIGHT/2, HEIGHT/2, -2.0, 100.0);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 
@@ -247,24 +253,23 @@ void renderScene()
             x+lx, y+ly,  z+lz,
             0.0f, 1.0f,  0.0f);
 
-    // Draw ground
-/*
-    glColor3f(0.9f, 0.9f, 0.9f);
-    glBegin(GL_QUADS);
-    glVertex3f(-100.0f, 0.0f, -100.0f);
-    glVertex3f(-100.0f, 0.0f,  100.0f);
-    glVertex3f( 100.0f, 0.0f,  100.0f);
-    glVertex3f( 100.0f, 0.0f, -100.0f);
-    glEnd();*/
-    // Draw 36 SnowMen
+    std::vector<Point> vect3;
+    Point pb(1,4,0);vect3.push_back(pb);
+    Point p2b(4,0,0);vect3.push_back(p2b);
+    Point p3b(8,-2,2);vect3.push_back(p3b);
 
 
-    Cylinder c;
-    glColor3f(1.0f,0.0f,0.0f);
-    glPushMatrix();
-    glTranslatef(0,0,0);
-    c.draw(true);
-    glPopMatrix();
+    glColor3f(0.0f, 1.0f, 0.0f);
+    std::shared_ptr<DeCasteljauBezierCurve> curve3(new DeCasteljauBezierCurve(vect3,100));
 
+    std::vector<Point> vect2;
+    Point pa(1,1,4);vect2.push_back(pa);
+    Point p2a(1,-3,7);vect2.push_back(p2a);
+    Point p3a(1,3,9);vect2.push_back(p3a);
+    std::shared_ptr<DeCasteljauBezierCurve> curve2(new DeCasteljauBezierCurve(vect2,100));
+    glColor3f(0.0f, 1.0f, 1.0f);
+    BezierSurface bs(curve3,curve2,10,10);
+
+    bs.draw(true);
     glutSwapBuffers();
 }

@@ -5,10 +5,16 @@
 
 namespace prog_3D
 {
-    DeCasteljauBezierCurve::DeCasteljauBezierCurve(std::vector<Point> ps,int n): BezierCurve(ps,n){   }
+    DeCasteljauBezierCurve::DeCasteljauBezierCurve(std::vector<Point> ps,int n): BezierCurve(ps,n),Curve(n){   }
 
     DeCasteljauBezierCurve::~DeCasteljauBezierCurve(){   }
 
+
+    Point DeCasteljauBezierCurve::compute(double u)
+    {
+        Point p = recursive(getControlPoint(), u);
+        return p;
+    }
 
     std::vector<Point> DeCasteljauBezierCurve::compute()
     {
@@ -16,12 +22,13 @@ namespace prog_3D
         for(long i=0;i<getPointsNumber();++i)
         {
             double u = ((double) i) * 1.0 /(double)(getPointsNumber()-1);
-
-            Point p = recursive(getControlPoint(), u);
+            Point p = compute(u);
             result.push_back(p);
         }
         return result;
     }
+
+
     //FUNCTION RECURSIVE
     Point DeCasteljauBezierCurve::recursive(std::vector<Point> points,double u)
     {

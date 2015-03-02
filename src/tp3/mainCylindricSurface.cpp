@@ -8,8 +8,14 @@
 #include <memory>
 
 
-#include "../primitives/Cylinder.hpp"
+#include "../surfaces/CylindricSurface.hpp"
+#include "../surfaces/BezierSurface.hpp"
+#include "../surfaces/RuledSurface.hpp"
+#include "../surfaces/SurfacicSquare.hpp"
+#include "../curves/BernsteinBezierCurve.hpp"
+#include "../curves/DeCasteljauBezierCurve.hpp"
 #include <GL/glut.h>
+#include "../core/GlCoreRendering.hpp"
 
 
 
@@ -186,7 +192,7 @@ void window_special_key ( int key, int x, int y ) {
 
 GLvoid initGL()
 {
-	glClearColor(RED, GREEN, BLUE, ALPHA);
+    glClearColor(RED, GREEN, BLUE, ALPHA);
 }
 
 void init_scene()
@@ -196,19 +202,19 @@ void init_scene()
 
 GLvoid window_display()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
-	renderScene();
-	glFlush();
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
+    renderScene();
+    glFlush();
 }
 
 GLvoid window_reshape(GLsizei width, GLsizei height)
 {
-	glViewport(0, 0, width, height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-WIDTH/2, WIDTH/2,-HEIGHT/2, HEIGHT/2, -2.0, 100.0);
-	glMatrixMode(GL_MODELVIEW);
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-WIDTH/2, WIDTH/2,-HEIGHT/2, HEIGHT/2, -2.0, 100.0);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 
@@ -247,24 +253,24 @@ void renderScene()
             x+lx, y+ly,  z+lz,
             0.0f, 1.0f,  0.0f);
 
-    // Draw ground
-/*
-    glColor3f(0.9f, 0.9f, 0.9f);
-    glBegin(GL_QUADS);
-    glVertex3f(-100.0f, 0.0f, -100.0f);
-    glVertex3f(-100.0f, 0.0f,  100.0f);
-    glVertex3f( 100.0f, 0.0f,  100.0f);
-    glVertex3f( 100.0f, 0.0f, -100.0f);
-    glEnd();*/
-    // Draw 36 SnowMen
 
+    std::shared_ptr<Axis> axis(new Axis(Point::Origin,Vector(0,0,10)));
 
-    Cylinder c;
+    std::vector<Point> vect;
+    vect.push_back(Point::Origin);
+    Point p(1,4,0);vect.push_back(p);
+    Point p2(4,0,0);vect.push_back(p2);
+    Point p3(8,-2,2);vect.push_back(p3);
+
+    std::shared_ptr<BezierCurve> curve(new DeCasteljauBezierCurve(vect,100));
+
+    CylindricSurface c(axis,curve);
+    c.setPointNumberForU(10);
+    c.setPointNumberForV(5);
+
     glColor3f(1.0f,0.0f,0.0f);
-    glPushMatrix();
-    glTranslatef(0,0,0);
     c.draw(true);
-    glPopMatrix();
+
 
     glutSwapBuffers();
 }

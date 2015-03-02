@@ -1,4 +1,3 @@
-#include "core-declaration.hpp"
 #include <ostream>
 #include <vector>
 #include <cmath>
@@ -40,6 +39,20 @@ namespace prog_3D {
 		return this->v2;
 	}
 
+	Point HermiteCubicCurve::compute(double u)
+	{
+		double f1 = 2 * pow(u,3) - 3 * pow(u,2) + 1;
+		double f2 = -2 * pow(u,3) + 3 * pow(u,2);
+		double f3 = pow(u,3) - 2 * pow(u,2) + u;
+		double f4 = pow(u,3) - pow(u,2);
+
+		double x = f1*p1.getX() + f2*p2.getX() + f3*v1.getX() + f4*v2.getX();
+		double y = f1*p1.getY() + f2*p2.getY() + f3*v1.getY() + f4*v2.getY();
+		double z = f1*p1.getZ() + f2*p2.getZ() + f3*v1.getZ() + f4*v2.getZ();
+		Point p(x,y,z);
+		return p;
+	}
+
 	std::vector<Point> HermiteCubicCurve::compute()
 	{
 		std::vector<Point> points;
@@ -47,16 +60,7 @@ namespace prog_3D {
 		for(long i=0;i< getPointsNumber();i++)
 		{
 			double u = ((double) i) *1.0 /(double)(getPointsNumber()-1);
-
-			double f1 = 2 * pow(u,3) - 3 * pow(u,2) + 1;
-			double f2 = -2 * pow(u,3) + 3 * pow(u,2);
-			double f3 = pow(u,3) - 2 * pow(u,2) + u;
-			double f4 = pow(u,3) - pow(u,2);
-
-			double x = f1*p1.getX() + f2*p2.getX() + f3*v1.getX() + f4*v2.getX();
-			double y = f1*p1.getY() + f2*p2.getY() + f3*v1.getY() + f4*v2.getY();
-			double z = f1*p1.getZ() + f2*p2.getZ() + f3*v1.getZ() + f4*v2.getZ();
-			Point p(x,y,z);
+			Point p = compute(u);
 			points.push_back(p);
 		}
 

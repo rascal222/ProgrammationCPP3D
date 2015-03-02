@@ -28,9 +28,10 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 #include "../core/Point.hpp"
 #include "../core/Vector.hpp"
 #include "../core/Curve.hpp"
-#include "../core/HermiteCubicCurve.hpp"
-#include "../core/DeCasteljauBezierCurve.hpp"
-#include "../core/BernsteinBezierCurve.hpp"
+#include "../curves/BezierCurve.hpp"
+#include "../curves/HermiteCubicCurve.hpp"
+#include "../curves/DeCasteljauBezierCurve.hpp"
+#include "../curves/BernsteinBezierCurve.hpp"
 
 
 // Définition de la taille de la fenêtre
@@ -456,7 +457,6 @@ void drawIntermediate(double u,std::vector<Point> ps,int step)
     std::vector<Point> poin2;
     for (int k = 0; k < ps.size() - 1; ++k) {
         double x = ps[k].getX() * (1.0 - u) + u * ps[k + 1].getX();
-
         double y = ps[k].getY() * (1.0 - u) + u * ps[k + 1].getY();
         double z =ps[k].getZ() * (1.0 - u) + u * ps[k + 1].getZ();
 

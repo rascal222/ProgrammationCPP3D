@@ -23,6 +23,8 @@ namespace prog_3D
         void setPoint(Point&);
         void setVector(Vector&);
 
+        virtual Point compute(double u);
+
         static const Axis OX;
         static const Axis OY;
         static const Axis OZ;

@@ -1,10 +1,8 @@
 #ifndef PROG_3D_HERMITE_CUBIC_CURVE_HPP_DEFINED
 #define PROG_3D_HERMITE_CUBIC_CURVE_HPP_DEFINED
 
-#include "core-declaration.hpp"
-#include "Point.hpp"
-#include "Vector.hpp"
-#include "Curve.hpp"
+#include "../core/Vector.hpp"
+#include "../core/Curve.hpp"
 
 /**
 * \namespace This namespace gathers all classes for 3D programming
@@ -22,6 +20,7 @@ namespace prog_3D {
 
         virtual ~HermiteCubicCurve();
 
+        virtual Point compute(double u);
         virtual std::vector<Point> compute();
 
         Point& getPoint1();

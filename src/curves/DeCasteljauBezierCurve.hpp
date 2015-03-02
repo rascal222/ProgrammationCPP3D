@@ -15,7 +15,9 @@ namespace prog_3D {
     public:
         DeCasteljauBezierCurve(std::vector<Point>,int);
         virtual ~DeCasteljauBezierCurve();
+        virtual Point compute(double u);
         virtual std::vector<Point> compute();
+
 
 
     };
