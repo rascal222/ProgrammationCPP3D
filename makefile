@@ -53,9 +53,13 @@ tp3:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS)
 	make dir
 	$(CC) $(F_FLAGS) $^ $(SOURCE_DIR)/$@/$@.cpp -o $@.out $(L_FLAGS)
 
-tp4/Cylinder:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS)
+tp4/Cylinder:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(SOURCE_DIR)/tp4/mainCylinder.cpp
 	make dir
-	$(CC) $(F_FLAGS) $^ $(SOURCE_DIR)/tp4/mainCylinder.cpp -o drawCylinder.out $(L_FLAGS)
+	$(CC) $(F_FLAGS) $^ -o drawCylinder.out $(L_FLAGS)
+
+tp4/Sphere:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(SOURCE_DIR)/tp4/mainSphere.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^  -o drawSphere.out $(L_FLAGS)
 
 tp5/voxel: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS)
 	make dir

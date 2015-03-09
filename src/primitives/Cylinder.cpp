@@ -43,7 +43,7 @@ namespace prog_3D {
 
 			if(debug)
 			{
-				glColor3f(1.0f, 1.0f, 1.0f);
+				glColor3f(1.0f, 0.0f, 0.0f);
 				glBegin(GL_LINES);
 				{
 					glVertex3f(t.getX(), t.getY(), t.getZ());
@@ -63,8 +63,6 @@ namespace prog_3D {
         }
         glEnd();
 
-
-        glColor3f(1.0f, .0f, .0f);
 
 		glBegin(GL_QUAD_STRIP);
 		{

@@ -51,137 +51,112 @@ float deltaAngle = 0.0f;
 float deltaMove = 0;
 void mouseButton(int button, int state, int x, int y) {
 
-    // only start motion if the left button is pressed
-    if (button == GLUT_LEFT_BUTTON) {
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
 
-        // when the button is released
-        if (state == GLUT_UP) {
-            angle += deltaAngle;
-            xOrigin = -1;
-        }
-        else  {// state = GLUT_DOWN
-            xOrigin = x;
-        }
-    }
+		// when the button is released
+		if (state == GLUT_UP) {
+			angle += deltaAngle;
+			xOrigin = -1;
+		}
+		else  {// state = GLUT_DOWN
+			xOrigin = x;
+		}
+	}
 }
 
 void mouseMove(int x, int y) {
 
-    // this will only be true when the left button is down
-    if (xOrigin >= 0) {
+	// this will only be true when the left button is down
+	if (xOrigin >= 0) {
 
-        // update deltaAngle
-        deltaAngle = (x - xOrigin) * 0.001f;
+		// update deltaAngle
+		deltaAngle = (x - xOrigin) * 0.001f;
 
-        // update camera's direction
-        lx = sin(angle + deltaAngle);
-        lz = -cos(angle + deltaAngle);
-    }
+		// update camera's direction
+		lx = sin(angle + deltaAngle);
+		lz = -cos(angle + deltaAngle);
+	}
 }
 
 void releaseKey(int key, int x, int y) {
 
-    switch (key) {
-        case GLUT_KEY_LEFT :
-        case GLUT_KEY_RIGHT : deltaAngle = 0.0f;break;
-        case GLUT_KEY_UP :
-        case GLUT_KEY_DOWN : deltaMove = 0;break;
-    }
+	switch (key) {
+		case GLUT_KEY_LEFT :
+		case GLUT_KEY_RIGHT : deltaAngle = 0.0f;break;
+		case GLUT_KEY_UP :
+		case GLUT_KEY_DOWN : deltaMove = 0;break;
+	}
 }
 
-void drawSnowMan() {
-
-    glColor3f(1.0f, 1.0f, 1.0f);
-
-// Draw Body
-    glTranslatef(0.0f ,0.75f, 0.0f);
-    glutSolidSphere(0.75f,20,20);
-
-// Draw Head
-    glTranslatef(0.0f, 1.0f, 0.0f);
-    glutSolidSphere(0.25f,20,20);
-
-// Draw Eyes
-    glPushMatrix();
-    glColor3f(0.0f,0.0f,0.0f);
-    glTranslatef(0.05f, 0.10f, 0.18f);
-    glutSolidSphere(0.05f,10,10);
-    glTranslatef(-0.1f, 0.0f, 0.0f);
-    glutSolidSphere(0.05f,10,10);
-    glPopMatrix();
-
-// Draw Nose
-    glColor3f(1.0f, 0.5f , 0.5f);
-    glutSolidCone(0.08f,0.5f,10,2);
-}
 
 int main(int argc, char **argv)
 {
-    // init GLUT and create window
+	// init GLUT and create window
 
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowPosition(100,100);
-    glutInitWindowSize(320,320);
-    glutCreateWindow("Lighthouse3D - GLUT Tutorial");
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowPosition(100,100);
+	glutInitWindowSize(320,320);
+	glutCreateWindow("Lighthouse3D - GLUT Tutorial");
 
-    // register callbacks
-    glutDisplayFunc(renderScene);
-    glutReshapeFunc(changeSize);
-    glutIdleFunc(renderScene);
-    //glutKeyboardFunc(processNormalKeys);
-    glutSpecialFunc(window_special_key);
-    // here are the new entries
-    glutIgnoreKeyRepeat(1);
-    glutSpecialUpFunc(releaseKey);
+	// register callbacks
+	glutDisplayFunc(renderScene);
+	glutReshapeFunc(changeSize);
+	glutIdleFunc(renderScene);
+	//glutKeyboardFunc(processNormalKeys);
+	glutSpecialFunc(window_special_key);
+	// here are the new entries
+	glutIgnoreKeyRepeat(1);
+	glutSpecialUpFunc(releaseKey);
 
-    // here are the two new functions
-    glutMouseFunc(mouseButton);
-    glutMotionFunc(mouseMove);
+	// here are the two new functions
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
 
-    // OpenGL init
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHT0);
+	// OpenGL init
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHT0);
 
-    // enter GLUT event processing cycle
-    glutMainLoop();
+	// enter GLUT event processing cycle
+	glutMainLoop();
 
-    return 1;
+	return 1;
 }
 
 void changeSize(int w, int h) {
 
-    // Prevent a divide by zero, when window is too short
-    // (you cant make a window of zero width).
-    if (h == 0)
-        h = 1;
+	// Prevent a divide by zero, when window is too short
+	// (you cant make a window of zero width).
+	if (h == 0)
+		h = 1;
 
-    float ratio =  w * 1.0 / h;
+	float ratio =  w * 1.0 / h;
 
-    // Use the Projection Matrix
-    glMatrixMode(GL_PROJECTION);
+	// Use the Projection Matrix
+	glMatrixMode(GL_PROJECTION);
 
-    // Reset Matrix
-    glLoadIdentity();
+	// Reset Matrix
+	glLoadIdentity();
 
-    // Set the viewport to be the entire window
-    glViewport(0, 0, w, h);
+	// Set the viewport to be the entire window
+	glViewport(0, 0, w, h);
 
-    // Set the correct perspective.
-    gluPerspective(45,ratio,1,100);
+	// Set the correct perspective.
+	gluPerspective(45,ratio,1,100);
 
-    // Get Back to the Modelview
-    glMatrixMode(GL_MODELVIEW);
+	// Get Back to the Modelview
+	glMatrixMode(GL_MODELVIEW);
 }
 void window_special_key ( int key, int x, int y ) {
 
-    switch (key) {
-        case GLUT_KEY_LEFT : deltaAngle = -0.01f; break;
-        case GLUT_KEY_RIGHT : deltaAngle = 0.01f; break;
-        case GLUT_KEY_UP : deltaMove = 0.5f; break;
-        case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
-    }
-    //glutPostRedisplay(); // just update here....
+	switch (key) {
+		case GLUT_KEY_LEFT : deltaAngle = -0.01f; break;
+		case GLUT_KEY_RIGHT : deltaAngle = 0.01f; break;
+		case GLUT_KEY_UP : deltaMove = 0.5f; break;
+		case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
+	}
+	//glutPostRedisplay(); // just update here....
 }
 
 GLvoid initGL()
@@ -214,45 +189,45 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
 
 GLvoid window_key(unsigned char key, int x, int y)
 {
-    glutPostRedisplay();
+	glutPostRedisplay();
 }
 
 void computePos(float deltaMove) {
 
-    x += deltaMove * lx * 0.1f;
-    z += deltaMove * lz * 0.1f;
+	x += deltaMove * lx * 0.1f;
+	z += deltaMove * lz * 0.1f;
 }
 
 void computeDir(float deltaAngle) {
 
-    angle += deltaAngle;
-    lx = sin(angle);
-    lz = -cos(angle);
+	angle += deltaAngle;
+	lx = sin(angle);
+	lz = -cos(angle);
 }
 
 void renderScene()
 {
-    if (deltaMove)
-        computePos(deltaMove);
-    if (deltaAngle)
-        computeDir(deltaAngle);
-    // Clear Color and Depth Buffers
+	if (deltaMove)
+		computePos(deltaMove);
+	if (deltaAngle)
+		computeDir(deltaAngle);
+	// Clear Color and Depth Buffers
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Reset transformations
-    glLoadIdentity();
-    // Set the camera
-    gluLookAt(	x, y, z,
-            x+lx, y+ly,  z+lz,
-            0.0f, 1.0f,  0.0f);
+	// Reset transformations
+	glLoadIdentity();
+	// Set the camera
+	gluLookAt(	x, y, z,
+			x+lx, y+ly,  z+lz,
+			0.0f, 1.0f,  0.0f);
 
-    Cylinder c;
-    glColor3f(1.0f,0.0f,0.0f);
-    glPushMatrix();
-    glTranslatef(0,0,0);
-    c.draw(true);
-    glPopMatrix();
+	Cylinder c;
+	glColor3f(1.0f,0.0f,0.0f);
+	glPushMatrix();
+	glTranslatef(0,0,0);
+	c.draw(true);
+	glPopMatrix();
 
-    glutSwapBuffers();
+	glutSwapBuffers();
 }
