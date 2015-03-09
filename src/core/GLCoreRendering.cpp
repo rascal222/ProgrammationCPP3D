@@ -1,4 +1,3 @@
-#include "GlCoreRendering.hpp"
 namespace prog_3D {
 /// \brief génère un point opengl
     void glPoint(const Point &p) {
@@ -116,4 +115,5 @@ namespace prog_3D {
             }
         }
     }
+
 }

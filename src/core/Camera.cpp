@@ -1,0 +1,5 @@
+Camera::Camera() {
+};
+
+Camera::~Camera() {
+};

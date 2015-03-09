@@ -6,6 +6,7 @@
 #include "Point.hpp"
 #include "PolarPoint.hpp"
 #include "Curve.hpp"
+
 #include <GL/glut.h>
 #include <vector>
 
@@ -25,6 +26,7 @@ namespace prog_3D
     void drawLine(const PolarPoint& p, const PolarPoint& p2);
     void drawCurve(std::vector<Point> tabPointsOfCurve,bool showPoint);
     void drawSurface(std::vector< std::vector<Point> > vector,bool showPoint);
+
 }
 
 #endif

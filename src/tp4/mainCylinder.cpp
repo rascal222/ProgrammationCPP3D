@@ -1,18 +1,3 @@
-
-#include <cstdio>
-#include <cstdlib>
-#include <iostream>
-#include <cmath>
-#include <array>
-#include <algorithm>
-#include <memory>
-
-
-#include "../primitives/Cylinder.hpp"
-#include <GL/glut.h>
-
-
-
 // Définition de la taille de la fenêtre
 #define WIDTH  480
 #define HEIGHT 480
@@ -36,6 +21,9 @@ GLvoid window_display();
 GLvoid changeSize(GLsizei width, GLsizei height);
 GLvoid window_key(unsigned char key, int x, int y);
 GLvoid window_special_key(int key, int x, int y);
+
+int LightPos[4] = {0, 0, 0, 1};
+int MatSpec[4] = {1, 1, 1, 1};
 
 // angle of rotation for the camera direction
 float angle=0.0;
@@ -215,6 +203,17 @@ void renderScene()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	LightPos[0] = 0;
+	LightPos[1] = 0;
+	LightPos[2] = 0;
+	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
+	float LightDif[4] = {.5f, .5f, 1.f, 1.f};
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
+	glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
+	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
 	// Reset transformations
 	glLoadIdentity();
 	// Set the camera
@@ -228,6 +227,7 @@ void renderScene()
 	glTranslatef(0,0,0);
 	c.draw(true);
 	glPopMatrix();
+
 
 	glutSwapBuffers();
 }

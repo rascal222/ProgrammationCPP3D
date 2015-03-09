@@ -61,6 +61,10 @@ tp4/Sphere:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJ
 	make dir
 	$(CC) $(F_FLAGS) $^  -o drawSphere.out $(L_FLAGS)
 
+tp4/Cone:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(SOURCE_DIR)/tp4/mainCone.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^  -o drawCone.out $(L_FLAGS)
+
 tp5/voxel: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS)
 	make dir
 	$(CC) $(F_FLAGS) $^ $(SOURCE_DIR)/$@.cpp -o voxel.out $(L_FLAGS)
