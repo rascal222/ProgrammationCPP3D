@@ -212,10 +212,10 @@ void renderScene()
     if (deltaAngle)
         computeDir(deltaAngle);
     // Clear Color and Depth Buffers
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glMaterialiv(GL_FRONT_AND_BACK,GL_SPECULAR,MatSpec);
-    glMateriali(GL_FRONT_AND_BACK,GL_SHININESS,100);
+    //glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHT0);
+    //glMaterialiv(GL_FRONT_AND_BACK,GL_SPECULAR,MatSpec);
+    //glMateriali(GL_FRONT_AND_BACK,GL_SHININESS,100);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Reset transformations
@@ -230,12 +230,9 @@ void renderScene()
     glMatrixMode(GL_MODELVIEW);
 
     Sphere c;
-    glColor3f(1.0f,0.0f,0.0f);
-    //glPushMatrix();
-    //glTranslatef(0,0,0);
+    glColor3f(1.0f,1.0f,0.0f);
     c.draw(true);
-    //glPopMatrix();
-    glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHTING);
     glColor3f(1.0f,1.0f,1.0f);
     glutSwapBuffers();
 }
