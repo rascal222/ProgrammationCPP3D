@@ -1,3 +1,10 @@
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include "../primitives/Sphere.hpp"
+#include <cmath>
+#include "../core/EulerCamera.hpp"
+#include <GL/glut.h>
+#include <GL/gl.h>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
 #define HEIGHT 480
@@ -31,6 +38,7 @@ float lx=0.0f,lz=-1.0f,ly=0.0f;
 // XZ position of the camera
 float x=0.0f,y=1.0f,z=5.0f;
 int xOrigin = -1;
+
 
 // the key states. These variables will be zero
 //when no key is being presses
@@ -89,7 +97,7 @@ int main(int argc, char **argv)
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
     glutIdleFunc(renderScene);
-    //glutKeyboardFunc(processNormalKeys);
+    glutKeyboardFunc(window_key);
     glutSpecialFunc(window_special_key);
     // here are the new entries
     glutIgnoreKeyRepeat(1);
@@ -171,9 +179,36 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-
+Sphere c;
+bool debug=true;
 GLvoid window_key(unsigned char key, int x, int y)
 {
+    switch(key)
+    {
+        case 9:
+            debug!=debug;
+            if(debug)
+                printf("debug on");
+            else
+                printf("debug off");
+            break;
+        case 43://+
+            c.setMeridians(c.getMeridians()+1);
+            break;
+        case 45://-
+            if(c.getMeridians()>2)
+                c.setMeridians(c.getMeridians()-1);
+            break;
+        case 42://*
+            c.setParalleles(c.getParalleles()+1);
+            break;
+        case 47:// /
+            if(c.getParalleles()>2)
+                c.setParalleles(c.getParalleles()-1);
+            break;
+        default:
+            printf("Key %c %d is offline.",key,key);
+    }
     glutPostRedisplay();
 }
 
@@ -196,19 +231,25 @@ void renderScene()
         computePos(deltaMove);
     if (deltaAngle)
         computeDir(deltaAngle);
+
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    LightPos[0] = 0;
-    LightPos[1] = 0;
-    LightPos[2] = 0;
-    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
-    float LightDif[4] = {.5f, .5f, 1.f, 1.f};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
-    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
-    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
+    if(!debug) {
+        glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
+        glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        LightPos[0] = 0;
+        LightPos[1] = 2;
+        LightPos[2] = 2;
+        glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
+        float LightDif[4] = {0.f, 1.f, 1.f, 1.f};
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
+        glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .05f);
+        GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
+        glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    }
     // Reset transformations
     glLoadIdentity();
     // Set the camera
@@ -219,10 +260,24 @@ void renderScene()
 
     glMatrixMode(GL_MODELVIEW);
 
-    Sphere c;
-    glColor3f(1.0f,1.0f,0.0f);
-    c.draw(true);
-    glDisable(GL_LIGHTING);
+
+    glColor3f(1.0f,1.0f,1.0f);
+    c.draw(debug);
+    if(!debug)
+    {
+        glDisable(GL_LIGHTING);
+    }
+
+    glColor3f(1.0,1.0f,1.0f);
+    glBegin(GL_QUADS);
+    {
+        glVertex3f(-5.f,-5.f,-5.f);
+        glVertex3f(-5.f,-1.f,5.f);
+        glVertex3f(5.f,-1.f,5.f);
+        glVertex3f(5.f,-1.f,-5.f);
+
+    }
+    glEnd();
     glColor3f(1.0f,1.0f,1.0f);
     glutSwapBuffers();
 }

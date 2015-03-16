@@ -1,3 +1,9 @@
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include "../primitives/Cone.hpp"
+#include "../primitives/Cylinder.hpp"
+#include <cmath>
+
 // Définition de la taille de la fenêtre
 #define WIDTH  480
 #define HEIGHT 480
@@ -238,7 +244,6 @@ void renderScene() {
     glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
     glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
-
 
     glMatrixMode(GL_MODELVIEW);
 

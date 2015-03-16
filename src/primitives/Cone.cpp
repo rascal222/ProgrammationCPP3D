@@ -1,3 +1,10 @@
+#include "Cone.hpp"
+#include <cmath>
+#include <vector>
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include "../core/GlCoreRendering.hpp"
+
 namespace prog_3D {
     Cone::Cone() {
         this->apex = Point::Origin;

@@ -9,17 +9,19 @@ namespace prog_3D {
         double length;
         Point *_cached;
     public:
-        Voxel(Point &, double);
+        Voxel(const Point &, double);
 
-        ~Voxel();
+        virtual ~Voxel();
 
-        virtual Point &getCenter() const;
+        virtual Point &getCenter();
 
         virtual double getLength() const;
 
-        virtual std::vector<Point> etVertices() const;
+        virtual Point* getVertices();
 
         virtual void draw(bool);
+
+        virtual void notifyChange();
     };
 }
 #endif

@@ -43,6 +43,7 @@ $(PRIMITIVE_OBJECTS): $(BUILDDIR)/%.o : $(PRIMITIVE_DIR)/%.cpp
 $(SURFACE_OBJECTS): $(BUILDDIR)/%.o : $(SURFACE_DIR)/%.cpp
 	$(CC) $(F_FLAGS) -c $< -o $@
 
+
 clean:
 	rm -f $(BUILDDIR)/*o
 
@@ -65,6 +66,6 @@ tp4/Cone:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJEC
 	make dir
 	$(CC) $(F_FLAGS) $^  -o drawCone.out $(L_FLAGS)
 
-tp5/voxel: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS)
+tp5/voxel: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(SOURCE_DIR)/tp5/voxel.cpp
 	make dir
-	$(CC) $(F_FLAGS) $^ $(SOURCE_DIR)/$@.cpp -o voxel.out $(L_FLAGS)
+	$(CC) $(F_FLAGS) $^ -o voxel.out $(L_FLAGS)

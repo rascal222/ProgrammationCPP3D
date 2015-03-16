@@ -42,9 +42,9 @@ src/primitives/Cylinder.hpp
 )
 
 
-add_executable(Programmation3D ${CORE_FILES} ${CURVE_FILES} src/tp/TP_OPENGL.cpp)
+add_executable(Programmation3D ${CORE_FILES} ${CURVE_FILES} src/tp/TP_OPENGL.cpp src/tp5/Octree.cpp src/tp5/Octree.h)
 
-add_executable(tp3.out ${CORE_FILES} ${CURVE_FILES} ${PRIMITIVES_FILES} src/tp3/tp3.cpp)
+add_executable(Tp3 ${CORE_FILES} ${CURVE_FILES} ${PRIMITIVES_FILES} src/tp3/tp3.cpp)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 

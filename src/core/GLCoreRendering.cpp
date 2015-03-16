@@ -1,3 +1,5 @@
+#include "GlCoreRendering.hpp"
+
 namespace prog_3D {
 /// \brief génère un point opengl
     void glPoint(const Point &p) {
@@ -75,10 +77,8 @@ namespace prog_3D {
         drawLine(pi, pj);
     }
 
-
-
-
-    void drawCurve(std::vector<Point> tabPointsOfCurve, bool showPoint) {
+    void drawCurve(std::vector<Point> tabPointsOfCurve, bool showPoint)
+    {
         for (int i = 0; i < tabPointsOfCurve.size() - 1; ++i) {
             drawLine(tabPointsOfCurve.at(i), tabPointsOfCurve.at(i + 1));
             if (showPoint) {

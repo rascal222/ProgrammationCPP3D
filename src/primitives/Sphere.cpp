@@ -41,19 +41,6 @@ namespace prog_3D {
 		glColor3f(0.0f, 1.0f, 0.0f);
 		drawPoint(south.toCartesian());
 		glColor3f(1.0f,0.0f,0.0f);
-//		for(int j=0;j < paralleles ;++j)
-//		{
-//			std::vector<Point> down;
-//			double angleG = M_PI * j / paralleles;
-//			for (int i = 1; i < meridians; ++i)
-//			{
-//				double angle = 2 * M_PI * i / meridians;
-//
-//				PolarPoint p(center, angleG, angle, rayon);
-//				down.push_back(p.toCartesian());
-//			}
-//			matrix.push_back(down);
-//		}
 
 
 		for (int i = 1; i < meridians-1; ++i)
@@ -77,18 +64,23 @@ namespace prog_3D {
 		}
 
 
-		//MERIDIAN 0
-		if(debug) {
-			glColor3f(1.0f, 0.0f, 1.0f);
-			glBegin(GL_LINE_STRIP);
-			glPoint(north.toCartesian());
-			for (int k = 0; k < matrix.size(); ++k) {
-				glPoint(matrix.at(k).at(0));
-			}
-			glPoint(south.toCartesian());
-			glEnd();
-		}
+		int LightPos[4] = {0, 0, 0, 1};
+		int MatSpec [4] = {1,1,1,1};
+		glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
+		glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		LightPos[0] = 0;
+		LightPos[1] = 2;
+		LightPos[2] = 2;
+		glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
+		float LightDif[4] = {0.f, 1.f, 1.f, 1.f};
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
+		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .05f);
+		GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 
+		glColor3f(1.0f,1.0f,1.0f);
 		//NORTH POLE
 		glBegin(GL_TRIANGLE_FAN);
 		glPoint(north.toCartesian());
@@ -100,7 +92,6 @@ namespace prog_3D {
 		glEnd();
 
 		//SOUTH POLE
-
 		glBegin(GL_TRIANGLE_FAN);
 		glPoint(south.toCartesian());
 		for(int k=0;k<matrix.at(matrix.size()-1).size();++k)
@@ -131,6 +122,21 @@ namespace prog_3D {
 		}
 		glEnd();
 
+		//MERIDIAN 0
+		if(debug) {
+			glDisable(GL_LIGHTING);
+			for(int i=0;i<matrix.at(0).size();++i)
+			{
+				glColor3f(1.0f, 0.0f, 1.0f);
+				glBegin(GL_LINE_STRIP);
+				glPoint(north.toCartesian());
+				for (int k = 0; k < matrix.size(); ++k) {
+					glPoint(matrix.at(k).at(i));
+				}
+				glPoint(south.toCartesian());
+				glEnd();
+			}
+		}
 
 
 

@@ -1,4 +1,3 @@
-
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -12,6 +11,7 @@
 #include <GL/glut.h>
 #include "../core/PolarPoint.hpp"
 #include "../core/GlCoreRendering.hpp"
+#include "../primitives/Voxel.hpp"
 
 
 
@@ -206,6 +206,9 @@ void computeDir(float deltaAngle) {
 	lz = -cos(angle);
 }
 
+Point pK(0,0,0);
+Voxel v(pK,2.0);
+
 void renderScene()
 {
 	if (deltaMove)
@@ -225,47 +228,6 @@ void renderScene()
 
 
 
-	Point center = Point::Origin;
-
-
-	PolarPoint p(center,M_PI/4.0,M_PI/4.0,2);
-	PolarPoint p2(center,-M_PI/4.0,M_PI/4.0,2);
-	PolarPoint p3(center,M_PI/4.0,-M_PI/4.0,2);
-	PolarPoint p4(center,-M_PI/4.0,-M_PI/4.0,2);
-
-	PolarPoint pb(center,M_PI/4.0,M_PI/2.0+M_PI/4.0, 2.0);
-	PolarPoint p2b(center,M_PI/2.0+M_PI/4.0,M_PI/2.0+M_PI/4.0,2);
-	PolarPoint p3b(center,M_PI/4.0-M_PI/2.0,M_PI/2.0+M_PI/4.0,2);
-
-	PolarPoint p4b(center,M_PI/4.0,-M_PI/4.0-M_PI/2.0,2);
-
-	PolarPoint pbk(center,0,0,2);
-
-	glColor3f(1.0f,.0f,.0f);
-	drawLine(p,p2);
-	drawLine(p,p4);
-	drawLine(p2,p3);
-	drawLine(p3,p4);
-
-	drawPoint(Point::Origin);
-	drawPoint(pb);
-
-	glColor3f(.0f,1.0f,.0f);
-	drawLine(pb,p2b);
-	drawLine(pb,p3b);
-
-	drawLine(p3b,p4b);
-	drawLine(p2b,p4b);
-
-
-
-	glColor3f(0.0f,.0f,1.0f);
-	drawLine(p,pb);
-	drawLine(p4,p2b);
-	drawLine(p2,p3b);
-	drawLine(p3,p4b);
-
-
-
+	v.draw(true);
 	glutSwapBuffers();
 }
