@@ -27,6 +27,8 @@ namespace prog_3D {
 
         virtual ~Point();
 
+        void set(double x, double y, double z);
+
         void setX(double x);
 
         void setY(double y);

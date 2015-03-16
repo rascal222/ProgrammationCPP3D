@@ -1,6 +1,5 @@
 #include "Point.hpp"
 #include "Vector.hpp"
-#include <ostream>
 #include <iostream>
 
 namespace prog_3D {
@@ -97,4 +96,9 @@ namespace prog_3D {
 		return stream;
 	}
 
+	void Point::set(double x, double y, double z) {
+		setX(x);
+		setY(y);
+		setZ(z);
+	}
 }
