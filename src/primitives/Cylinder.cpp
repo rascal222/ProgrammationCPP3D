@@ -77,9 +77,20 @@ namespace prog_3D {
 
 		}
 		glEnd();
+	}
 
-
-
-
+	float Cylinder::equation(const Point& point)
+	{
+		float powCenter = pow(p.getX(), 2) + pow(p.getY(), 2) + pow(p.getZ(), 2);
+		float powCylinderAxe = pow(Vector::FORWARD.getX(), 2) + pow(Vector::FORWARD.getY(), 2) + pow(Vector::FORWARD.getZ(), 2);
+		Vector v(Vector::FORWARD);
+		v.setX(v.getX()* p.getX());
+		v.setY(v.getY()* p.getY());
+		v.setZ(v.getZ()* p.getZ());
+		float centerMulti = pow(v.getX()+, 2);
+		float division = centerMulti / powCylinderAxe;
+		float minus = powCenter - division;
+		float powR = pow(rayon, 2);
+		return minus - powR;
 	}
 }

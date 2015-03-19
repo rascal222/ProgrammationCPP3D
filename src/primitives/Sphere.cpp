@@ -139,7 +139,12 @@ namespace prog_3D {
 		}
 
 
-
-
 	}
+
+    float Voxel::equation(const Point& point)
+    {
+        float sum = pow(point.getX() - center.getX(), 2) + pow(point.getY() - center.getY(), 2) + pow(point.getZ() - center.getZ(), 2);
+		float rCarre = pow(rayon, 2);
+		return sum - rCarre;
+    }
 }

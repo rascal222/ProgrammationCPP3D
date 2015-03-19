@@ -22,6 +22,8 @@ namespace prog_3D {
         virtual void draw(bool);
 
         virtual void notifyChange();
+
+        virtual float equation(const Point&);
     };
 }
 #endif

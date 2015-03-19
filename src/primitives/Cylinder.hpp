@@ -18,6 +18,7 @@ namespace prog_3D
 
         virtual void draw();
         virtual void draw(bool);
+        virtual float equation(const Point& point);
     };
 }
 

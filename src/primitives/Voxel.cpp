@@ -83,9 +83,7 @@ namespace prog_3D
     {
         if(_cached== nullptr)
             getVertices();
-        //LEFT FACE
-
-
+        //LEFT FACE x-1
         glColor3f(1.0f,0.0f,.0f);
         glBegin(GL_TRIANGLES);
         {
@@ -102,7 +100,7 @@ namespace prog_3D
         }
         glEnd();
 
-        //BACK FACE            //draw/write 310 321
+        //BACK FACE       y+1     //draw/write 310 321
         glColor3f(1.0f,1.0f,.0f);
 
         glBegin(GL_TRIANGLES);
@@ -139,8 +137,7 @@ namespace prog_3D
         }
         glEnd();
 
-        //BOTTOM OK
-
+        //BOTTOM OK (z+1)
         glColor3f(1.0f,0.0f,1.0f);
 
         glBegin(GL_TRIANGLES);
@@ -158,8 +155,7 @@ namespace prog_3D
         }
         glEnd();
 
-        //RIGHT OK
-
+        //RIGHT OK x+1
         glColor3f(.0f,1.0f,.0f);
         glBegin(GL_TRIANGLES);
         {
@@ -176,7 +172,7 @@ namespace prog_3D
         }
         glEnd();
 
-        //TOP (WRONG FACE x-1)
+        //TOP (NOT z-1 WRONG FACE x-1)
         glColor3f(.0f,1.0f,1.0f);
         glBegin(GL_TRIANGLES);
         {
@@ -194,4 +190,6 @@ namespace prog_3D
         glEnd();
 
     }
+
+
 }
