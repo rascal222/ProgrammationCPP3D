@@ -1,7 +1,6 @@
 #ifndef PROG_3D_BEZIER_CURVE_HPP_DEFINED
 #define PROG_3D_BEZIER_CURVE_HPP_DEFINED
 
-#include "../core/core-declaration.hpp"
 #include <ostream>
 #include "../core/Curve.hpp"
 #include <vector>

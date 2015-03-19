@@ -1,12 +1,12 @@
 #ifndef PROG_3D_VECTOR_HPP_DEFINED
 #define PROG_3D_VECTOR_HPP_DEFINED
 #include <ostream>
-#include "core-declaration.hpp"
 /**
 * \namespace This namespace gathers all classes for 3D programming
 */
 namespace prog_3D {
 
+    class Point;
     /**
         \class Vector
         \brief Implementation of class Vector

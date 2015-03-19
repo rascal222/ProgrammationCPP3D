@@ -6,7 +6,7 @@
 
 class Camera {
 protected:
-    float xEye, yEye, zEye, xTarget, yTarget, zTarget, xViewport, yViewport, zViewport;
+    float xEye, yEye, zEye, xTarget, yTarget, zTarget, xViewport, yViewport, zViewport = 0;
 
 public:
     Camera();

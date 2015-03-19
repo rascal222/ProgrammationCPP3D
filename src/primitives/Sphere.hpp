@@ -1,10 +1,12 @@
 #ifndef PROG_3D_SPHERE_HPP_DEFINED
 #define PROG_3D_SPHERE_HPP_DEFINED
 #include "../core/Point.hpp"
+#include "Shape.hpp"
+
 namespace prog_3D
 {
 
-    class Sphere
+    class Sphere : public Shape
     {
     private :
         float rayon;
@@ -51,6 +53,8 @@ namespace prog_3D
 
         virtual void draw();
         virtual void draw(bool);
+
+        virtual double equation(const Point &point);
     };
 }
 

@@ -33,7 +33,7 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 #include "../curves/DeCasteljauBezierCurve.hpp"
 #include "../curves/BernsteinBezierCurve.hpp"
 
-
+#include "../glWrappers/GlCoreRendering.hpp"
 // Définition de la taille de la fenêtre
 #define WIDTH  480
 #define HEIGHT 480
@@ -351,56 +351,6 @@ GLvoid window_key(unsigned char key, int x, int y)
 
 
 
-/// \brief génère un point opengl
-void glPoint(const Point& p)
-{
-	glVertex3d(p.getX(),p.getY(),p.getZ());
-}
-
-/// \brief dessine une instance de classe Point
-void drawPoint(const Point& p)
-{
-	glPointSize(5);
-	glBegin(GL_POINTS);
-	glPoint(p);
-	glEnd();
-}
-
-void drawPoint(Point& p,float r,float g,float b)
-{
-	glColor3f(r,g,b);
-	glBegin(GL_POINTS);
-	glPoint(p);
-	glEnd();
-}
-
-
-void drawPoint(Point& p,float r,float g,float b, float alpha)
-{
-	glColor4f(r,g,b,alpha);
-	glBegin(GL_POINTS);
-	glPoint(p);
-	glEnd();
-}
-
-/// \brief
-void drawLine(const Point& p,const Vector& v)
-{
-	glBegin(GL_LINES);
-	glPoint(p);
-	Point p2 = p.translate(v);
-	glPoint(p2);
-	glEnd();
-}
-
-void drawLine(Point& p, Point& p2)
-{
-	glBegin(GL_LINES);
-	glPoint(p);
-	glPoint(p2);
-	glEnd();
-}
-
 void drawCurve(Point tabPointsOfCurve[], long nbPoints,bool showPoint)
 {
 	for(int i=0;i<nbPoints-1;++i) {
@@ -420,33 +370,6 @@ void drawCurve(Point tabPointsOfCurve[], long nbPoints)
 
 
 
-
-void drawCurve(std::vector<Point> tabPointsOfCurve,bool showPoint)
-{
-	for(int i=0;i<tabPointsOfCurve.size()-1;++i) {
-		drawLine(tabPointsOfCurve.at(i), tabPointsOfCurve.at(i+1));
-		if(showPoint)
-		{
-			drawPoint(tabPointsOfCurve[i]);
-			drawPoint(tabPointsOfCurve[i + 1]);
-		}
-	}
-}
-
-void drawCurve(std::vector<Point> tabPointsOfCurve)
-{
-	drawCurve(tabPointsOfCurve, false);
-}
-
-void drawCurve(Curve& curve)
-{
-	drawCurve(curve.compute(), false);
-}
-
-void drawCurve(Curve& curve,bool debug)
-{
-	drawCurve(curve.compute(), debug);
-}
 
 void drawIntermediate(double u,std::vector<Point> ps,int step)
 {

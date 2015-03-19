@@ -18,6 +18,9 @@ public:
     virtual void computeEvent(float deltaMove1, float deltaMove2, float deltaAngle1, float deltaAngle2) {
         angleX += deltaAngle1;
         angleY += deltaAngle2;
+        dist += deltaMove1;
+        dist -= deltaMove2;
+
         xEye = dist * -sinf(angleX * (M_PI / 180)) * cosf((angleY) * (M_PI / 180));
         yEye = dist * -sinf((angleY) * (M_PI / 180));
         zEye = -dist * cosf((angleX) * (M_PI / 180)) * cosf((angleY) * (M_PI / 180));

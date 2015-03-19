@@ -1,6 +1,5 @@
 #include "Cylinder.hpp"
-#include "../core/Point.hpp"
-#include <vector>
+#include "../core/Vector.hpp"
 #include <cmath>
 #include <GL/glut.h>
 #include <iostream>
@@ -9,7 +8,7 @@ namespace prog_3D {
 	Cylinder::Cylinder() {
 		center = Point::Origin;
 		rayon = 3.0f;
-		height = 25.0f;
+		height = 5.0f;
 		meridians = 10;
 	}
 
@@ -68,18 +67,29 @@ namespace prog_3D {
 		{
 			for(int i=0;i< meridians;++i) {
 
-				glVertex3f(top.at(i).getX(), top.at(i).getY(), top.at(i).getZ());
-				glVertex3f(down.at(i).getX(), down.at(i).getY(), down.at(i).getZ());
+				glVertex3d(top.at(i).getX(), top.at(i).getY(), top.at(i).getZ());
+				glVertex3d(down.at(i).getX(), down.at(i).getY(), down.at(i).getZ());
 			}
-            glVertex3f(top.at(0).getX(), top.at(0).getY(), top.at(0).getZ());
-            glVertex3f(down.at(0).getX(), down.at(0).getY(), down.at(0).getZ());
+			glVertex3d(top.at(0).getX(), top.at(0).getY(), top.at(0).getZ());
+			glVertex3d(down.at(0).getX(), down.at(0).getY(), down.at(0).getZ());
 
 
 		}
 		glEnd();
+	}
 
-
-
-
+	double Cylinder::equation(const Point &point)
+	{
+		double powCenter = pow(point.getX(), 2) + pow(point.getY(), 2) + pow(point.getZ(), 2);
+		double powCylinderAxe = pow(Vector::RIGHT.getX(), 2) + pow(Vector::RIGHT.getY(), 2) + pow(Vector::RIGHT.getZ(), 2);
+		Vector v(Vector::RIGHT);
+		v.setX(v.getX() * point.getX());
+		v.setY(v.getY() * point.getY());
+		v.setZ(v.getZ() * point.getZ());
+		double centerMulti = pow(v.getX() + v.getX() + v.getZ(), 2);
+		double division = centerMulti / powCylinderAxe;
+		double minus = powCenter - division;
+		double powR = pow(rayon, 2);
+		return minus - powR;
 	}
 }

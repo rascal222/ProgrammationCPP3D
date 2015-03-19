@@ -1,9 +1,6 @@
 #include "BezierSurface.hpp"
-#include "Surface.hpp"
-#include <vector>
-#include <GL/glut.h>
 #include <iostream>
-#include "../core/GlCoreRendering.hpp"
+#include "../glWrappers/GlCoreRendering.hpp"
 
 namespace prog_3D
 {

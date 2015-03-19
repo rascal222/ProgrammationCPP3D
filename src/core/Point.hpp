@@ -1,14 +1,16 @@
 #ifndef PROG_3D_POINT_HPP_DEFINED
 #define PROG_3D_POINT_HPP_DEFINED
 
-#include "core-declaration.hpp"
+
 #include <ostream>
+
 
 /**
 * \namespace This namespace gathers all classes for 3D programming
 */
 namespace prog_3D {
 
+    class Vector;
     class Point {
     private:
         double x;

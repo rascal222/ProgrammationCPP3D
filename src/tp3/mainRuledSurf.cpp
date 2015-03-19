@@ -12,10 +12,9 @@
 #include "../surfaces/BezierSurface.hpp"
 #include "../surfaces/RuledSurface.hpp"
 #include "../surfaces/SurfacicSquare.hpp"
-#include "../curves/BernsteinBezierCurve.hpp"
-#include "../curves/DeCasteljauBezierCurve.hpp"
-#include <GL/glut.h>
-#include "../core/GlCoreRendering.hpp"
+
+#include <GL/freeglut.h>
+#include "../glWrappers/GlCoreRendering.hpp"
 
 
 

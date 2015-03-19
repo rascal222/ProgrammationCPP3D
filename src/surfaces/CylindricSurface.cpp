@@ -1,9 +1,6 @@
 #include "CylindricSurface.hpp"
-#include "Surface.hpp"
-#include <vector>
-#include <GL/glut.h>
 #include <iostream>
-#include "../core/GlCoreRendering.hpp"
+#include "../glWrappers/GlCoreRendering.hpp"
 
 namespace prog_3D {
     CylindricSurface::CylindricSurface(std::shared_ptr<Axis> direct, std::shared_ptr<Curve> g):prog_3D::Surface(4, 2)

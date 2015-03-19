@@ -1,10 +1,7 @@
 #include "Disc.hpp"
-#include "../core/Point.hpp"
 #include "../core/PolarPoint.hpp"
-#include "../core/GlCoreRendering.hpp"
-#include <vector>
+#include "../glWrappers/GlCoreRendering.hpp"
 #include <cmath>
-#include <GL/glut.h>
 #include <iostream>
 namespace prog_3D {
 

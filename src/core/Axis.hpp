@@ -1,6 +1,6 @@
 #ifndef AXIS_HPP_DEFINED
 #define AXIS_HPP_DEFINED
-#include "core-declaration.hpp"
+
 #include "Point.hpp"
 #include "Vector.hpp"
 

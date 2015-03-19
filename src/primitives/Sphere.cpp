@@ -1,10 +1,7 @@
 #include "Sphere.hpp"
-#include "../core/Point.hpp"
 #include "../core/PolarPoint.hpp"
-#include "../core/GlCoreRendering.hpp"
-#include <vector>
+#include "../glWrappers/GlCoreRendering.hpp"
 #include <cmath>
-#include <GL/glut.h>
 #include <iostream>
 namespace prog_3D {
 
@@ -137,9 +134,18 @@ namespace prog_3D {
 				glEnd();
 			}
 		}
-
-
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
 
 
 	}
+
+	double Sphere::equation(const Point &point)
+    {
+		double sum = pow(point.getX() - center.getX(), 2)
+				+ pow(point.getY() - center.getY(), 2)
+				+ pow(point.getZ() - center.getZ(), 2);
+		double rCarre = pow(rayon, 2);
+		return sum - rCarre;
+    }
 }

@@ -1,4 +1,9 @@
 // Définition de la taille de la fenêtre
+
+#include <GL/glut.h>
+#include <cmath>
+#include "../primitives/Cylinder.hpp"
+
 #define WIDTH  480
 #define HEIGHT 480
 

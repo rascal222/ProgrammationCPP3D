@@ -8,6 +8,7 @@ CORE_DIR = $(SOURCE_DIR)/core
 CURVE_DIR = $(SOURCE_DIR)/curves
 PRIMITIVE_DIR = $(SOURCE_DIR)/primitives
 SURFACE_DIR = $(SOURCE_DIR)/surfaces
+GLWRAPPERS_DIR = $(SOURCE_DIR)/glWrappers
 
 SRC_CORE = $(wildcard $(CORE_DIR)/*.cpp)
 CORE_OBJECTS = $(patsubst $(CORE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_CORE))
@@ -20,6 +21,10 @@ PRIMITIVE_OBJECTS = $(patsubst $(PRIMITIVE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_PRIM
 
 SRC_SURFACE = $(wildcard $(SURFACE_DIR)/*.cpp)
 SURFACE_OBJECTS = $(patsubst $(SURFACE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_SURFACE))
+
+SRC_GLWRAPPERS = $(wildcard $(GLWRAPPERS_DIR)/*.cpp)
+GLWRAPPERS_OBJECTS = $(patsubst $(GLWRAPPERS_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_GLWRAPPERS))
+
 all:
 	g++-4.8 -std=c++11 src/tp/TP_OPENGL.cpp src/core/*.cpp -lGL -lglut -lGLU -lm
 	g++-4.8 -std=c++11 -o a.out src/core/*.cpp src/curves/*.cpp src/tp/TP_OPENGL.cpp -lGL -lglut -lGLU -lm
@@ -43,6 +48,8 @@ $(PRIMITIVE_OBJECTS): $(BUILDDIR)/%.o : $(PRIMITIVE_DIR)/%.cpp
 $(SURFACE_OBJECTS): $(BUILDDIR)/%.o : $(SURFACE_DIR)/%.cpp
 	$(CC) $(F_FLAGS) -c $< -o $@
 
+$(GLWRAPPERS_OBJECTS): $(BUILDDIR)/%.o : $(GLWRAPPERS_DIR)/%.cpp
+	$(CC) $(F_FLAGS) -c $< -o $@
 
 clean:
 	rm -f $(BUILDDIR)/*o
@@ -66,6 +73,6 @@ tp4/Cone:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJEC
 	make dir
 	$(CC) $(F_FLAGS) $^  -o drawCone.out $(L_FLAGS)
 
-tp5/voxel: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(SOURCE_DIR)/tp5/voxel.cpp
+tp5/voxel: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(SOURCE_DIR)/tp5/voxel.cpp
 	make dir
 	$(CC) $(F_FLAGS) $^ -o voxel.out $(L_FLAGS)

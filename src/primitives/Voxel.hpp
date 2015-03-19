@@ -2,26 +2,28 @@
 #define VOXEL_HPP_DEFINED
 #include "../core/Point.hpp"
 #include <vector>
+#include <array>
+
 namespace prog_3D {
     class Voxel {
     private:
         Point center;
         double length;
-        Point *_cached;
     public:
+
         Voxel(const Point &, double);
 
         virtual ~Voxel();
 
-        virtual Point &getCenter();
+        virtual const Point &getCenter() const;
 
         virtual double getLength() const;
 
-        virtual Point* getVertices();
+        virtual std::vector<Point> getVertices() const;
 
-        virtual void draw(bool);
+        virtual void draw(bool, bool);
 
-        virtual void notifyChange();
+        virtual std::vector<Voxel> cut();
     };
 }
 #endif

@@ -116,4 +116,29 @@ namespace prog_3D {
         }
     }
 
+    void wireframeTriangle(Point &p, Point &p2, Point &p3) {
+        drawLine(p, p2);
+        drawLine(p2, p3);
+        drawLine(p3, p);
+    }
+
+    void fillTriangle(Point &p, Point &p2, Point &p3) {
+        glBegin(GL_TRIANGLES);
+        glPoint(p);
+        glPoint(p2);
+        glPoint(p3);
+        glEnd();
+    }
+
+    void fillSquare(Point &p, Point &p2, Point &p3, Point &p4) {
+        fillTriangle(p, p2, p3);
+        fillTriangle(p2, p3, p4);
+    }
+
+    void wireframeSquare(Point &p, Point &p2, Point &p3, Point &p4) {
+        drawLine(p, p2);
+        drawLine(p2, p3);
+        drawLine(p3, p4);
+        drawLine(p4, p);
+    }
 }

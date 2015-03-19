@@ -2,9 +2,6 @@
 #include <GL/glut.h>
 #include "../primitives/Sphere.hpp"
 #include <cmath>
-#include "../core/EulerCamera.hpp"
-#include <GL/glut.h>
-#include <GL/gl.h>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
 #define HEIGHT 480

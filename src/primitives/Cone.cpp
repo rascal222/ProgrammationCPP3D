@@ -2,8 +2,7 @@
 #include <cmath>
 #include <vector>
 #include <GL/gl.h>
-#include <GL/glut.h>
-#include "../core/GlCoreRendering.hpp"
+#include "../glWrappers/GlCoreRendering.hpp"
 
 namespace prog_3D {
     Cone::Cone() {

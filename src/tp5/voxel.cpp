@@ -1,17 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
-#include <iostream>
-#include <cmath>
-#include <array>
-#include <algorithm>
-#include <memory>
-
-
 #include "../primitives/Cylinder.hpp"
 #include <GL/glut.h>
 #include "../core/PolarPoint.hpp"
-#include "../core/GlCoreRendering.hpp"
-#include "../primitives/Voxel.hpp"
+#include "../glWrappers/GlCoreRendering.hpp"
+#include "../primitives/Sphere.hpp"
+#include "AdaptativeOctree.hpp"
+#include "../glWrappers/EulerCamera.hpp"
 
 
 
@@ -40,12 +33,9 @@ GLvoid window_key(unsigned char key, int x, int y);
 GLvoid window_special_key(int key, int x, int y);
 
 // angle of rotation for the camera direction
-float angle=0.0;
-// actual vector representing the camera's direction
-float lx=0.0f,lz=-1.0f,ly=0.0f;
-// XZ position of the camera
-float x=0.0f,y=1.0f,z=5.0f;
-int xOrigin = -1;
+float angle = 0.0, angle2 = 0.0;
+
+float xOrigin = -1;
 
 // the key states. These variables will be zero
 //when no key is being presses
@@ -57,11 +47,7 @@ void mouseButton(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON) {
 
 		// when the button is released
-		if (state == GLUT_UP) {
-			angle += deltaAngle;
-			xOrigin = -1;
-		}
-		else  {// state = GLUT_DOWN
+		if (state == GLUT_DOWN) {// state = GLUT_DOWN
 			xOrigin = x;
 		}
 	}
@@ -71,13 +57,9 @@ void mouseMove(int x, int y) {
 
 	// this will only be true when the left button is down
 	if (xOrigin >= 0) {
-
 		// update deltaAngle
-		deltaAngle = (x - xOrigin) * 0.001f;
+		deltaAngle = (x - xOrigin) * 0.01f;
 
-		// update camera's direction
-		lx = sin(angle + deltaAngle);
-		lz = -cos(angle + deltaAngle);
 	}
 }
 
@@ -91,6 +73,11 @@ void releaseKey(int key, int x, int y) {
 	}
 }
 
+EulerCamera eulerCamera(0, 0, 0, 5);
+Point pK(0, 0, 0);
+Voxel v(pK, 6.0);
+Sphere *s = nullptr;
+AdaptativeOctree *ao = nullptr;
 int main(int argc, char **argv)
 {
 	// init GLUT and create window
@@ -102,7 +89,7 @@ int main(int argc, char **argv)
 	glutCreateWindow("Lighthouse3D - GLUT Tutorial");
 
 	// register callbacks
-	glutDisplayFunc(renderScene);
+	glutDisplayFunc(window_display);
 	glutReshapeFunc(changeSize);
 	glutIdleFunc(renderScene);
 	//glutKeyboardFunc(processNormalKeys);
@@ -119,6 +106,7 @@ int main(int argc, char **argv)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHT0);
 
+	init_scene();
 	// enter GLUT event processing cycle
 	glutMainLoop();
 
@@ -152,10 +140,18 @@ void changeSize(int w, int h) {
 void window_special_key ( int key, int x, int y ) {
 
 	switch (key) {
-		case GLUT_KEY_LEFT : deltaAngle = -0.01f; break;
-		case GLUT_KEY_RIGHT : deltaAngle = 0.01f; break;
-		case GLUT_KEY_UP : deltaMove = 0.5f; break;
-		case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
+		case GLUT_KEY_LEFT :
+			deltaAngle = -0.15f;
+			break;
+		case GLUT_KEY_RIGHT :
+			deltaAngle = 0.15f;
+			break;
+		case GLUT_KEY_UP :
+			deltaMove = 0.15f;
+			break;
+		case GLUT_KEY_DOWN :
+			deltaMove = -0.15f;
+			break;
 	}
 	//glutPostRedisplay(); // just update here....
 }
@@ -167,13 +163,14 @@ GLvoid initGL()
 
 void init_scene()
 {
+	s = new Sphere(3, 12, 12, pK);
+	ao = new AdaptativeOctree(v, s, 5);
+	ao->compute();
 }
 
 
 GLvoid window_display()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
 	renderScene();
 	glFlush();
 }
@@ -181,10 +178,14 @@ GLvoid window_display()
 GLvoid window_reshape(GLsizei width, GLsizei height)
 {
 	glViewport(0, 0, width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+
 	glOrtho(-WIDTH/2, WIDTH/2,-HEIGHT/2, HEIGHT/2, -2.0, 100.0);
 	glMatrixMode(GL_MODELVIEW);
+
 }
 
 
@@ -193,41 +194,58 @@ GLvoid window_key(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
-void computePos(float deltaMove) {
 
-	x += deltaMove * lx * 0.1f;
-	z += deltaMove * lz * 0.1f;
+void reper() {
+	glDisable(GL_LIGHTING);
+	drawPoint(Point::Origin);
+	Point p;
+	p = p.translate(Vector::UP);//Y
+	glColor3d(1.0, 0, 0);
+	drawLine(Point::Origin, p);
+
+
+	p = p.translate(Vector::DOWN);//Y
+	p = p.translate(Vector::RIGHT);//X
+	glColor3d(0, 1.0, 0);
+	drawLine(Point::Origin, p);
+
+	p = p.translate(Vector::LEFT);
+	p = p.translate(Vector::FORWARD);
+	glColor3d(0, 0, 1);
+	drawLine(Point::Origin, p);
 }
 
-void computeDir(float deltaAngle) {
-
-	angle += deltaAngle;
-	lx = sin(angle);
-	lz = -cos(angle);
+void lighting() {
+	int LightPos[4] = {0, 4, 3, 1};
+	int MatSpec[4] = {1, 1, 1, 1};
+	// Clear Color and Depth Buffers
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	LightPos[0] = 0;
+	LightPos[1] = 0;
+	LightPos[2] = 0;
+	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
+	float LightDif[4] = {.5f, .5f, 1.f, 1.f};
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
+	glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
+	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
 }
-
-Point pK(0,0,0);
-Voxel v(pK,2.0);
-
 void renderScene()
 {
-	if (deltaMove)
-		computePos(deltaMove);
-	if (deltaAngle)
-		computeDir(deltaAngle);
+	eulerCamera.computeEvent(deltaMove, 0.0f, deltaAngle, 0.0f);
 	// Clear Color and Depth Buffers
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Reset transformations
 	glLoadIdentity();
 	// Set the camera
-	gluLookAt(	x, y, z,
-			x+lx, y+ly,  z+lz,
-			0.0f, 1.0f,  0.0f);
+	lighting();
+	eulerCamera.place();
+
+
+	ao->draw(false, true);
+	//s->draw(true);
 
 
 
-	v.draw(true);
 	glutSwapBuffers();
 }

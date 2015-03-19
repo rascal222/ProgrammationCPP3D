@@ -1,6 +1,5 @@
 #include "SurfacicSquare.hpp"
-#include "../curves/DeCasteljauBezierCurve.hpp"
-#include "../core/GlCoreRendering.hpp"
+#include "../glWrappers/GlCoreRendering.hpp"
 #include <iostream>
 namespace prog_3D {
     SurfacicSquare::SurfacicSquare(int nbU, int nbV) : Surface(nbU,nbV){}
@@ -15,8 +14,6 @@ namespace prog_3D {
     {
         return this->curves;
     }
-
-
 
     std::vector<std::vector<Point>> SurfacicSquare::compute()
     {
