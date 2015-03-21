@@ -28,12 +28,16 @@ public:
     }
 
     double getX() const {
-        return
+        return x;
     }
 
-    double getY() const;
+    double getY() const {
+        return y;
+    }
 
-    double getZ() const;
+    double getZ() const {
+        return z;
+    }
 
     //TODO FINISH QUATERNION CLASS
 };

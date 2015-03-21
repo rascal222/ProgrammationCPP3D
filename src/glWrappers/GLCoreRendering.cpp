@@ -8,7 +8,7 @@ namespace prog_3D {
 
     void glPoint(const PolarPoint &p) {
         Point k = p.toCartesian();
-        glPoint(p);
+        glPoint(k);
     }
 
 /// \brief dessine une instance de classe Point

@@ -24,7 +24,7 @@ namespace prog_3D {
             for(int u=0; u< getPointNumberForU();++u)
             {
 
-                double u2 = (double) u / (double) (getPointNumberForU() - 1.0);
+                double u2 = (double) u / (getPointNumberForU() - 1.0);
                 Point p = getControlCurves().at(i).compute(u2);
                 line.push_back(p);
             }
@@ -60,7 +60,7 @@ namespace prog_3D {
             std::vector<Point> line;
             for(int u=0; u< getPointNumberForU();++u)
             {
-                double u2 = (double) u / (double) (getPointNumberForU() - 1.0);
+                double u2 = (double) u / (getPointNumberForU() - 1.0);
                 Point p = getControlCurves().at(i).compute(u2);
                 line.push_back(p);
             }

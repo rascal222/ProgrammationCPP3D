@@ -114,7 +114,6 @@ GLvoid window_key(unsigned char key, int x, int y)
     {
         case KEY_ESC:
             exit(1);
-            break;
         case 9://TAB
             op=!op;
             break;

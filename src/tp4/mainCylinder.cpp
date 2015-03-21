@@ -1,4 +1,4 @@
-// Définition de la taille de la fenêtre
+// Definition de la taille de la fenêtre
 
 #include <GL/glut.h>
 #include <cmath>

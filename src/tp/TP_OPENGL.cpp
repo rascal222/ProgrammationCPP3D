@@ -142,7 +142,6 @@ GLvoid window_key(unsigned char key, int x, int y)
 	switch (key) {
 		case KEY_ESC:
 			exit(1);
-			break;
 			//SCENE;
 		case 9://TAB
 			op=!op;

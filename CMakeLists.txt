@@ -67,6 +67,14 @@ src/primitives/Shape.hpp
 set(TP5_FILES
 src/tp5/AdaptativeOctree.cpp
 src/tp5/AdaptativeOctree.hpp
+src/tp5/TwoShapeAdaptiveOctree.cpp
+src/tp5/TwoShapeAdaptiveOctree.hpp
+src/tp5/IntersectAdaptiveOctree.cpp
+src/tp5/IntersectAdaptiveOctree.hpp
+src/tp5/DivideAdaptiveOctree.hpp
+src/tp5/DivideAdaptiveOctree.cpp
+src/tp5/UnionAdaptiveOctree.cpp
+src/tp5/UnionAdaptiveOctree.hpp
 )
 
 add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRAPPER_FILES} src/tp/TP_OPENGL.cpp)
@@ -78,6 +86,9 @@ add_executable(Tp4-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${
 add_executable(Tp4-drawSphere ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} src/tp4/mainSphere.cpp)
 add_executable(Tp5-drawVoxelSphere ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/voxel.cpp)
 add_executable(Tp5-drawVoxelCylinder ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainCylinder.cpp)
+add_executable(Tp5-drawIntercept ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainIntersect.cpp)
+add_executable(Tp5-drawDivide ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainDivide.cpp)
+add_executable(Tp5-drawUnions ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainUnion.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -91,3 +102,6 @@ target_link_libraries(Tp4-drawCone ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp4-drawSphere ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp5-drawVoxelSphere ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp5-drawVoxelCylinder ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp5-drawIntercept ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp5-drawDivide ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp5-drawUnions ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )

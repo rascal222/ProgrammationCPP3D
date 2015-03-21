@@ -30,15 +30,24 @@ public:
         return center;
     }
 
+
+    prog_3D::Shape *getShape() const {
+        return shape;
+    }
+
     virtual std::vector<AdaptativeOctree> &getChildrens() {
         return children;
+    }
+
+
+    int getResolution() const {
+        return resolution;
     }
 
     virtual void compute();
 
     virtual void draw(bool debug, bool fillLeaves);
 
-    bool alreadyComputed = false;
 };
 
 

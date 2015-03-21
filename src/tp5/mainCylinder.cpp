@@ -130,7 +130,7 @@ void changeSize(int w, int h) {
     if (h == 0)
         h = 1;
 
-    float ratio = w * 1.0 / h;
+    double ratio = w * 1.0 / h;
 
     // Use the Projection Matrix
     glMatrixMode(GL_PROJECTION);

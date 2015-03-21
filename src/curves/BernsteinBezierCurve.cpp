@@ -18,9 +18,9 @@ namespace prog_3D
         for(long j=0;j<getControlPoint().size();++j)
         {
             double b = (fact(getControlPoint().size()-1) / (fact(j) * fact(getControlPoint().size()-1-j))) * pow(u, j) * pow((1.0-u), getControlPoint().size()-1-j);
-            x+= b*(double) getControlPoint()[j].getX();
-            y+= b*(double) getControlPoint()[j].getY();
-            z+= b*(double) getControlPoint()[j].getZ();
+            x+= b* getControlPoint()[j].getX();
+            y+= b* getControlPoint()[j].getY();
+            z+= b* getControlPoint()[j].getZ();
         }
 
         p.setX(x);

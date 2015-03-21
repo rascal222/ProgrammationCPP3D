@@ -45,8 +45,8 @@ namespace prog_3D {
 				glColor3f(1.0f, 0.0f, 0.0f);
 				glBegin(GL_LINES);
 				{
-					glVertex3f(t.getX(), t.getY(), t.getZ());
-					glVertex3f(d.getX(), d.getY(), d.getZ());
+					glVertex3d(t.getX(), t.getY(), t.getZ());
+					glVertex3d(d.getX(), d.getY(), d.getZ());
 
 				}
 				glEnd();
@@ -56,9 +56,9 @@ namespace prog_3D {
         glBegin(GL_LINE_STRIP);
         {
             for(int i=0;i<meridians;++i)
-                glVertex3f(down.at(i).getX(), down.at(i).getY(), down.at(i).getZ());
+				glVertex3d(down.at(i).getX(), down.at(i).getY(), down.at(i).getZ());
 
-            glVertex3f(down.at(0).getX(), down.at(0).getY(), down.at(0).getZ());
+			glVertex3d(down.at(0).getX(), down.at(0).getY(), down.at(0).getZ());
         }
         glEnd();
 

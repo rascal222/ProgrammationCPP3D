@@ -46,3 +46,11 @@ bool prog_3D::Shape::isOnVoxelBorder(prog_3D::Voxel const &voxel) {
         cptOut++;
     return cptIn != 0 && cptOut != 0;
 }
+
+bool prog_3D::Shape::isOnVoxelBorderCenterOut(prog_3D::Voxel const &voxel) {
+    return isOnVoxelBorder(voxel) && equation(voxel.getCenter()) > 0;
+}
+
+bool prog_3D::Shape::isOnVoxelBorderCenterIn(prog_3D::Voxel const &voxel) {
+    return isOnVoxelBorder(voxel) && equation(voxel.getCenter()) < 0;
+}

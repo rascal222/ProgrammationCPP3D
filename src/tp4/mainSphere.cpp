@@ -183,7 +183,7 @@ GLvoid window_key(unsigned char key, int x, int y)
     switch(key)
     {
         case 9:
-            debug!=debug;
+            debug = !debug;
             if(debug)
                 printf("debug on");
             else

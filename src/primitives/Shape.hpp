@@ -18,6 +18,11 @@ namespace prog_3D {
         virtual bool isVoxelOut(const Voxel &point);
 
         virtual bool isOnVoxelBorder(const Voxel &point);
+
+        virtual bool isOnVoxelBorderCenterOut(const Voxel &point);
+
+        virtual bool isOnVoxelBorderCenterIn(const Voxel &point);
+
     };
 }
 

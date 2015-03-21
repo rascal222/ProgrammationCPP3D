@@ -73,7 +73,6 @@ GLvoid window_key(unsigned char key, int x, int y)
 	{
 		case KEY_ESC:
 			exit(1);
-			break;
 		case 9://TAB
 			op=!op;
 			break;
@@ -134,7 +133,7 @@ void changeSize(int w, int h) {
 	if (h == 0)
 		h = 1;
 
-	float ratio =  w * 1.0 / h;
+	double ratio = w * 1.0 / h;
 
 	// Use the Projection Matrix
 	glMatrixMode(GL_PROJECTION);
@@ -160,6 +159,8 @@ void window_special_key ( int key, int x, int y ) {
 		case GLUT_KEY_RIGHT : deltaAngle = 0.01f; break;
 		case GLUT_KEY_UP : deltaMove = 0.5f; break;
 		case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
+		default:
+			std::cout;
 	}
 	glutPostRedisplay(); // just update here....
 
@@ -266,7 +267,7 @@ void renderScene()
 	bs->draw(false);
 	glColor3f(.0f, 10.0f, .0f);
 	if(op) {
-		for (int i = 0; i < bs->getControlCurves().size(); ++i) {
+		for (unsigned long i = 0; i < bs->getControlCurves().size(); ++i) {
 			bs->getControlCurves().at(i).setPointsNumber(bs->getPointNumberForU());
 			drawCurve(bs->getControlCurves().at(i).compute(), false);
 		}

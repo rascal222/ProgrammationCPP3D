@@ -32,11 +32,8 @@ namespace prog_3D {
         for (int i = 0; i < meridians; ++i)
         {
             double angle = 2* M_PI*i / meridians;
-            double x = rayon * cos(angle) + center.getX();
-            double y = rayon * sin(angle) + center.getY();
 
             PolarPoint p(center,0,angle,rayon);
-            std::cout << p.toCartesian() << std::endl;
             down.push_back(p.toCartesian());
         }
         //Face down
