@@ -47,7 +47,7 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 #define KEY_ESC 27
 
 using namespace prog_3D;
-using namespace std;
+
 
 // Entêtes de fonctions
 void init_scene();

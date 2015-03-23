@@ -1,12 +1,12 @@
-#include "../primitives/Cylinder.hpp"
+
 #include <GL/glut.h>
-#include "../core/PolarPoint.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "../octree/AdaptativeOctree.hpp"
+
 #include "../glWrappers/EulerCamera.hpp"
-#include "../primitives/Sphere.hpp"
-#include "../octree/DivideAdaptiveOctree.hpp"
-#include <cstdio>
+
+#include "../meshing/Mesh.hpp"
+#include "../meshing/OffManipulator.hpp"
+
 
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -25,17 +25,11 @@ using namespace std;
 
 // Entêtes de fonctions
 void init_scene();
-
 void renderScene();
-
 GLvoid initGL();
-
 GLvoid window_display();
-
 GLvoid changeSize(GLsizei width, GLsizei height);
-
 GLvoid window_key(unsigned char key, int x, int y);
-
 GLvoid window_special_key(int key, int x, int y);
 
 // angle of rotation for the camera direction
@@ -47,7 +41,6 @@ float xOrigin = -1;
 //when no key is being presses
 float deltaAngle = 0.0f;
 float deltaMove = 0;
-
 void mouseButton(int button, int state, int x, int y) {
 
     // only start motion if the left button is pressed
@@ -74,38 +67,31 @@ void releaseKey(int key, int x, int y) {
 
     switch (key) {
         case GLUT_KEY_LEFT :
-        case GLUT_KEY_RIGHT :
-            deltaAngle = 0.0f;
-            break;
+        case GLUT_KEY_RIGHT : deltaAngle = 0.0f;break;
         case GLUT_KEY_UP :
-        case GLUT_KEY_DOWN :
-            deltaMove = 0;
-            break;
+        case GLUT_KEY_DOWN : deltaMove = 0;break;
     }
 }
 
-bool debug = false;
 EulerCamera eulerCamera(0, 0, 0, 5);
 Point pK(0, 0, 0);
-Voxel v(pK, 20);
-Cylinder *s = nullptr;
-Sphere *s2 = nullptr;
-DivideAdaptiveOctree *ao = nullptr;
+Mesh m;
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     // init GLUT and create window
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowPosition(100, 100);
-    glutInitWindowSize(320, 320);
+    glutInitWindowPosition(100,100);
+    glutInitWindowSize(320,320);
     glutCreateWindow("Lighthouse3D - GLUT Tutorial");
 
     // register callbacks
     glutDisplayFunc(window_display);
     glutReshapeFunc(changeSize);
     glutIdleFunc(renderScene);
-    glutKeyboardFunc(window_key);
+    //glutKeyboardFunc(processNormalKeys);
     glutSpecialFunc(window_special_key);
     // here are the new entries
     glutIgnoreKeyRepeat(1);
@@ -145,72 +131,64 @@ void changeSize(int w, int h) {
     glViewport(0, 0, w, h);
 
     // Set the correct perspective.
-    gluPerspective(45, ratio, 1, 100);
+    gluPerspective(45,ratio,1,100);
 
     // Get Back to the Modelview
     glMatrixMode(GL_MODELVIEW);
 }
-
-void window_special_key(int key, int x, int y) {
+void window_special_key ( int key, int x, int y ) {
 
     switch (key) {
         case GLUT_KEY_LEFT :
-            deltaAngle = -0.3f;
+            deltaAngle = -0.15f;
             break;
         case GLUT_KEY_RIGHT :
-            deltaAngle = 0.3f;
+            deltaAngle = 0.15f;
             break;
         case GLUT_KEY_UP :
-            deltaMove = 0.3f;
+            deltaMove = 0.15f;
             break;
         case GLUT_KEY_DOWN :
-            deltaMove = -0.3f;
+            deltaMove = -0.15f;
             break;
     }
     //glutPostRedisplay(); // just update here....
 }
 
-GLvoid initGL() {
+GLvoid initGL()
+{
     glClearColor(RED, GREEN, BLUE, ALPHA);
 }
 
-void init_scene() {
-    s = new Cylinder(7, 15, 20, pK);
-    Point p = pK.translate(Vector::FORWARD);
-    for (int i = 0; i < 3; ++i)
-        p = p.translate(Vector::FORWARD);
-    s2 = new Sphere(6, 12, 12, p);
-    ao = new DivideAdaptiveOctree(v, s, s2, 5);
-    ao->compute();
+void init_scene()
+{
+    OffManipulator off;
+    m = off.read("bunny.off");
 }
 
 
-GLvoid window_display() {
+GLvoid window_display()
+{
     renderScene();
     glFlush();
 }
 
-GLvoid window_reshape(GLsizei width, GLsizei height) {
+GLvoid window_reshape(GLsizei width, GLsizei height)
+{
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    glOrtho(-WIDTH / 2, WIDTH / 2, -HEIGHT / 2, HEIGHT / 2, -2.0, 100.0);
+    glOrtho(-WIDTH/2, WIDTH/2,-HEIGHT/2, HEIGHT/2, -2.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
 
 }
 
 
-GLvoid window_key(unsigned char key, int x, int y) {
-    switch (key) {
-        case 9:
-            debug = !debug;
-            break;
-        default:
-            printf("The key '%c' (%d) is off", key, key);
-    }
+GLvoid window_key(unsigned char key, int x, int y)
+{
     glutPostRedisplay();
 }
 
@@ -236,52 +214,40 @@ void reper() {
 }
 
 void lighting() {
-    int LightPos[4] = {3, 3, 0, 1};
-    int LightAmbient[4] = {0, 0, 0, 1};
-    int LightDiffuse[4] = {1, 1, 1, 1};
-
-    float GlobalLightAmbient[4] = {1.f, 1.f, 0.2f, 1.f};
-
+    int LightPos[4] = {0, 4, 3, 1};
     int MatSpec[4] = {1, 1, 1, 1};
-    int MatEmission[4] = {0, 0, 0, 1};
-    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
-    glLightiv(GL_LIGHT0, GL_AMBIENT, LightAmbient);
-    glLightiv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);
-    glLightModelfv(
-            GL_LIGHT_MODEL_AMBIENT, GlobalLightAmbient);
-    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
-
+    // Clear Color and Depth Buffers
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-
-
-    glColorMaterial(GL_COLOR_MATERIAL, GL_AMBIENT_AND_DIFFUSE);
-    glMaterialiv(GL_COLOR_MATERIAL, GL_SPECULAR, MatSpec);
-    glMaterialiv(GL_COLOR_MATERIAL, GL_EMISSION, MatEmission);
+    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
+    float LightDif[4] = {.5f, .5f, 1.f, 1.f};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
+    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
+    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
 }
 
-void renderScene() {
+void renderScene()
+{
     eulerCamera.computeEvent(deltaMove, 0.0f, deltaAngle, 0.0f);
     // Clear Color and Depth Buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     // Set the camera
-    //lighting();
+   // lighting();
     eulerCamera.place();
-    glColor3f(1.f, 1.f, 1.f);
 
-    if (!debug)
-       // lighting();
-
-    ao->draw(false, !debug);
-    if (debug) {
-        s->draw(true);
-        s2->draw(true);
+    for(int i=0;i<m.idTriangles.size();++i)
+    {
+        std::cout << m.idTriangles.size()<<std::endl;
+        std::cout << m.points.size() <<std::endl;
+        prog_3D::wireframeTriangle
+                (
+                m.points.at(m.idTriangles.at(i).getPointId(0)),
+                m.points.at(m.idTriangles.at(i).getPointId(1)),
+                m.points.at(m.idTriangles.at(i).getPointId(2))
+        );
     }
-    //reper();
 
-
-    glDisable(GL_LIGHTING);
     glutSwapBuffers();
 }
-

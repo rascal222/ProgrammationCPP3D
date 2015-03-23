@@ -2,10 +2,10 @@
 #include <GL/glut.h>
 #include "../core/PolarPoint.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "AdaptativeOctree.hpp"
+#include "../octree/AdaptativeOctree.hpp"
 #include "../glWrappers/EulerCamera.hpp"
 #include "../primitives/Sphere.hpp"
-#include "UnionAdaptiveOctree.hpp"
+#include "../octree/UnionAdaptiveOctree.hpp"
 
 
 // Définition de la taille de la fenêtre

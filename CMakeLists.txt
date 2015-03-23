@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.1.3)
 
 project(Programmation3D)
 
@@ -64,17 +64,26 @@ src/primitives/Shape.cpp
 src/primitives/Shape.hpp
 )
 
-set(TP5_FILES
-src/tp5/AdaptativeOctree.cpp
-src/tp5/AdaptativeOctree.hpp
-src/tp5/TwoShapeAdaptiveOctree.cpp
-src/tp5/TwoShapeAdaptiveOctree.hpp
-src/tp5/IntersectAdaptiveOctree.cpp
-src/tp5/IntersectAdaptiveOctree.hpp
-src/tp5/DivideAdaptiveOctree.hpp
-src/tp5/DivideAdaptiveOctree.cpp
-src/tp5/UnionAdaptiveOctree.cpp
-src/tp5/UnionAdaptiveOctree.hpp
+set(OCTREE_FILES
+src/octree/AdaptativeOctree.cpp
+src/octree/AdaptativeOctree.hpp
+src/octree/TwoShapeAdaptiveOctree.cpp
+src/octree/TwoShapeAdaptiveOctree.hpp
+src/octree/IntersectAdaptiveOctree.cpp
+src/octree/IntersectAdaptiveOctree.hpp
+src/octree/DivideAdaptiveOctree.hpp
+src/octree/DivideAdaptiveOctree.cpp
+src/octree/UnionAdaptiveOctree.cpp
+src/octree/UnionAdaptiveOctree.hpp
+)
+
+set(MESHING_FILES
+src/meshing/IdTriangle.hpp
+src/meshing/IdTriangle.cpp
+src/meshing/OffManipulator.cpp
+src/meshing/offManipulator.hpp
+src/meshing/Mesh.cpp
+src/meshing/Mesh.hpp
 )
 
 add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRAPPER_FILES} src/tp/TP_OPENGL.cpp)
@@ -84,11 +93,11 @@ add_executable(Tp3-drawSurfacicSquare ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FIL
 add_executable(Tp4-drawCone ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} src/tp4/mainCone.cpp)
 add_executable(Tp4-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} src/tp4/mainCylinder.cpp)
 add_executable(Tp4-drawSphere ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} src/tp4/mainSphere.cpp)
-add_executable(Tp5-drawVoxelSphere ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/voxel.cpp)
-add_executable(Tp5-drawVoxelCylinder ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainCylinder.cpp)
-add_executable(Tp5-drawIntercept ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainIntersect.cpp)
-add_executable(Tp5-drawDivide ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainDivide.cpp)
-add_executable(Tp5-drawUnions ${TP5_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainUnion.cpp)
+add_executable(Tp5-drawVoxelSphere ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/voxel.cpp)
+add_executable(Tp5-drawVoxelCylinder ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainCylinder.cpp)
+add_executable(Tp5-drawIntercept ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainIntersect.cpp)
+add_executable(Tp5-drawDivide ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainDivide.cpp)
+add_executable(Tp5-drawUnions ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainUnion.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)

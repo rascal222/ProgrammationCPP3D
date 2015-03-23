@@ -2,7 +2,7 @@
 #include <GL/glut.h>
 #include "../core/PolarPoint.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "AdaptativeOctree.hpp"
+#include "../octree/AdaptativeOctree.hpp"
 #include "../glWrappers/EulerCamera.hpp"
 
 

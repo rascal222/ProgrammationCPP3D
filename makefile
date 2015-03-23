@@ -9,6 +9,8 @@ CURVE_DIR = $(SOURCE_DIR)/curves
 PRIMITIVE_DIR = $(SOURCE_DIR)/primitives
 SURFACE_DIR = $(SOURCE_DIR)/surfaces
 GLWRAPPERS_DIR = $(SOURCE_DIR)/glWrappers
+OCTREE_DIR = $(SOURCE_DIR)/octree
+MESHING_DIR = $(SOURCE_DIR)/meshing
 
 SRC_CORE = $(wildcard $(CORE_DIR)/*.cpp)
 CORE_OBJECTS = $(patsubst $(CORE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_CORE))
@@ -24,6 +26,12 @@ SURFACE_OBJECTS = $(patsubst $(SURFACE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_SURFACE)
 
 SRC_GLWRAPPERS = $(wildcard $(GLWRAPPERS_DIR)/*.cpp)
 GLWRAPPERS_OBJECTS = $(patsubst $(GLWRAPPERS_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_GLWRAPPERS))
+
+SRC_OCTREE = $(wildcard $(OCTREE_DIR)/*.cpp)
+OCTREE_OBJECTS = $(patsubst $(OCTREE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_OCTREE))
+
+SRC_MESHING = $(wildcard $(MESHING_DIR)/*.cpp)
+MESHING_OBJECTS = $(patsubst $(MESHING_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_MESHING))
 
 all:
 	g++-4.8 -std=c++11 src/tp/TP_OPENGL.cpp src/core/*.cpp -lGL -lglut -lGLU -lm
@@ -51,28 +59,55 @@ $(SURFACE_OBJECTS): $(BUILDDIR)/%.o : $(SURFACE_DIR)/%.cpp
 $(GLWRAPPERS_OBJECTS): $(BUILDDIR)/%.o : $(GLWRAPPERS_DIR)/%.cpp
 	$(CC) $(F_FLAGS) -c $< -o $@
 
+$(OCTREE_OBJECTS): $(BUILDDIR)/%.o : $(OCTREE_DIR)/%.cpp
+	$(CC) $(F_FLAGS) -c $< -o $@
+
+$(MESHING_OBJECTS): $(BUILDDIR)/%.o : $(MESHING_DIR)/%.cpp
+	$(CC) $(F_FLAGS) -c $< -o $@
+
 clean:
 	rm -f $(BUILDDIR)/*o
 
 dir:
 	mkdir -p $(BUILDDIR)
 
-tp3:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS)
+tp3:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(GLWRAPPERS_OBJECTS)
 	make dir
 	$(CC) $(F_FLAGS) $^ $(SOURCE_DIR)/$@/$@.cpp -o $@.out $(L_FLAGS)
 
-tp4/Cylinder:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(SOURCE_DIR)/tp4/mainCylinder.cpp
+tp4/Cylinder:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(SOURCE_DIR)/tp4/mainCylinder.cpp
 	make dir
 	$(CC) $(F_FLAGS) $^ -o drawCylinder.out $(L_FLAGS)
 
-tp4/Sphere:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(SOURCE_DIR)/tp4/mainSphere.cpp
+tp4/Sphere:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(SOURCE_DIR)/tp4/mainSphere.cpp
 	make dir
 	$(CC) $(F_FLAGS) $^  -o drawSphere.out $(L_FLAGS)
 
-tp4/Cone:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(SOURCE_DIR)/tp4/mainCone.cpp
+tp4/Cone:  $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(SOURCE_DIR)/tp4/mainCone.cpp
 	make dir
 	$(CC) $(F_FLAGS) $^  -o drawCone.out $(L_FLAGS)
 
-tp5/voxel: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(SOURCE_DIR)/tp5/voxel.cpp
+tp5/drawVoxelSphere: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(SOURCE_DIR)/tp5/voxel.cpp
 	make dir
-	$(CC) $(F_FLAGS) $^ -o voxel.out $(L_FLAGS)
+	$(CC) $(F_FLAGS) $^ -o drawVoxelSphere.out $(L_FLAGS)
+
+tp5/drawVoxelCylinder: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(SOURCE_DIR)/tp5/mainCylinder.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o drawVoxelCylinder.out $(L_FLAGS)
+
+tp5/drawVoxelIntersection: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(SOURCE_DIR)/tp5/mainIntersect.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o drawVoxelIntersection.out $(L_FLAGS)
+
+tp5/drawVoxelDivision: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(SOURCE_DIR)/tp5/mainDivide.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o drawVoxelDivision.out $(L_FLAGS)
+
+tp5/drawVoxelUnion: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(SOURCE_DIR)/tp5/mainUnion.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o drawVoxelUnion.out $(L_FLAGS)
+
+tp6/offReader: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(SOURCE_DIR)/tp6/mainOffReader.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o offReader.out $(L_FLAGS)
+

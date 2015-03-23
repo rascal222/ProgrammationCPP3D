@@ -2,10 +2,10 @@
 #include <GL/glut.h>
 #include "../core/PolarPoint.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "AdaptativeOctree.hpp"
+#include "../octree/AdaptativeOctree.hpp"
 #include "../glWrappers/EulerCamera.hpp"
 #include "../primitives/Sphere.hpp"
-#include "IntersectAdaptiveOctree.hpp"
+#include "../octree/IntersectAdaptiveOctree.hpp"
 
 
 // Définition de la taille de la fenêtre
@@ -87,7 +87,7 @@ void releaseKey(int key, int x, int y) {
 bool debug = false;
 EulerCamera eulerCamera(0, 0, 0, 5);
 Point pK(0, 0, 0);
-Voxel v(pK, 20);
+Voxel v(pK, 15);
 Cylinder *s = nullptr;
 Sphere *s2 = nullptr;
 IntersectAdaptiveOctree *ao = nullptr;
