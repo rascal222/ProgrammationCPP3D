@@ -81,7 +81,7 @@ set(MESHING_FILES
 src/meshing/IdTriangle.hpp
 src/meshing/IdTriangle.cpp
 src/meshing/OffManipulator.cpp
-src/meshing/offManipulator.hpp
+src/meshing/OffManipulator.hpp
 src/meshing/Mesh.cpp
 src/meshing/Mesh.hpp
 )
@@ -98,6 +98,7 @@ add_executable(Tp5-drawVoxelCylinder ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES
 add_executable(Tp5-drawIntercept ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainIntersect.cpp)
 add_executable(Tp5-drawDivide ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainDivide.cpp)
 add_executable(Tp5-drawUnions ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainUnion.cpp)
+add_executable(Tp6-drawOffReader ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} ${MESHING_FILES} src/tp6/mainOffReader.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -114,3 +115,4 @@ target_link_libraries(Tp5-drawVoxelCylinder ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} 
 target_link_libraries(Tp5-drawIntercept ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp5-drawDivide ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp5-drawUnions ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp6-drawOffReader ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )

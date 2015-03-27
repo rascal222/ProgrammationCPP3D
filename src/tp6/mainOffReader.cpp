@@ -151,6 +151,8 @@ void window_special_key ( int key, int x, int y ) {
         case GLUT_KEY_DOWN :
             deltaMove = -0.15f;
             break;
+        default:
+            break;
     }
     //glutPostRedisplay(); // just update here....
 }
@@ -237,15 +239,15 @@ void renderScene()
    // lighting();
     eulerCamera.place();
 
-    for(int i=0;i<m.idTriangles.size();++i)
+    for(unsigned long i=0;i<m.idTriangles.size();++i)
     {
         std::cout << m.idTriangles.size()<<std::endl;
         std::cout << m.points.size() <<std::endl;
         prog_3D::wireframeTriangle
                 (
-                m.points.at(m.idTriangles.at(i).getPointId(0)),
-                m.points.at(m.idTriangles.at(i).getPointId(1)),
-                m.points.at(m.idTriangles.at(i).getPointId(2))
+                m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
+                m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),
+                m.points.at((unsigned long)m.idTriangles.at(i).getPointId(2))
         );
     }
 
