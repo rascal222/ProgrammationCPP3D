@@ -124,6 +124,10 @@ namespace prog_3D {
 
     void fillTriangle(Point &p, Point &p2, Point &p3) {
         glBegin(GL_TRIANGLES);
+        Vector v(p,p2);
+        Vector v2(p,p3);
+        Vector n = v.cross(v2);
+        glNormal3f(n.getX(),n.getY(),n.getZ());
         glPoint(p);
         glPoint(p2);
         glPoint(p3);

@@ -137,10 +137,10 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
         case KEY_ESC:
             exit(1); break;
         case 43:
-            factor*=1.00001f;
+            factor+=0.5;
             break; // +
         case 45:
-            factor*=0.99999f;
+            factor-=0.5;
             break; // --
         case 97: // a
         case 122: // z
@@ -164,6 +164,65 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
 Point pK(0, 0, 0);
 Mesh m;
 std::string file("bunny.off");
+void
+initLightAndMaterial(void)
+{
+    static float ambient[] =
+            {0.1, 0.1, 0.1, 1.0};
+    static float diffuse[] =
+            {0.5, 1.0, 1.0, 1.0};
+    static float position[] =
+            {(float)borderSize,(float)borderSize,(float)borderSize, 0.0};
+
+    static float front_mat_shininess[] =
+            {60.0};
+    static float front_mat_specular[] =
+            {0.2, 0.2, 0.2, 1.0};
+    static float front_mat_diffuse[] =
+            {0.5, 0.5, 0.28, 1.0};
+    static float back_mat_shininess[] =
+            {60.0};
+    static float back_mat_specular[] =
+            {0.5, 0.5, 0.2, 1.0};
+    static float back_mat_diffuse[] =
+            {1.0, 0.2, 0.2, 1.0};
+
+    static float lmodel_ambient[] =
+            {1.0, 1.0, 1.0, 1.0};
+
+    static float lmodel_twoside[] =
+            {GL_TRUE};
+
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+    glMaterialfv(GL_FRONT, GL_SHININESS, front_mat_shininess);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, front_mat_specular);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_mat_diffuse);
+    glMaterialfv(GL_BACK, GL_SHININESS, back_mat_shininess);
+    glMaterialfv(GL_BACK, GL_SPECULAR, back_mat_specular);
+    glMaterialfv(GL_BACK, GL_DIFFUSE, back_mat_diffuse);
+
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+    glLightModelfv(GL_LIGHT_MODEL_TWO_SIDE, lmodel_twoside);
+
+    glShadeModel(GL_SMOOTH);
+}
+
+void lighting() {
+    static int LightPos[4] = {0, 4, 3, 1};
+    static int MatSpec[4] = {1, 1, 1, 1};
+    // Clear Color and Depth Buffers
+    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
+    static float LightDif[4] = {.5f, .5f, 1.f, 1.f};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
+    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
+    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
+}
+
 
 int main(int argc, char **argv)
 {
@@ -180,7 +239,9 @@ int main(int argc, char **argv)
     glutInitWindowSize(WIDTH,HEIGHT);
     glutCreateWindow("TP6");
     initGL();
+    //initLightAndMaterial();
     init_scene();
+
     // register callbacks
     glutDisplayFunc(window_display);
     glutReshapeFunc(changeSize);
@@ -222,10 +283,12 @@ void changeSize(int w, int h) {
 GLvoid initGL()
 {
     glClearColor(RED, GREEN, BLUE, ALPHA);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_BLEND);
-    //glEnable(GL_LIGHT0);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    initLightAndMaterial();
 }
 
 
@@ -348,8 +411,6 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //glOrtho(-borderSize, borderSize,-borderSize,borderSize,-borderSize,borderSize);
-    glOrtho(-1,-1,2*down,2*up,-1,100);
     glMatrixMode(GL_MODELVIEW);
 
 }
@@ -362,7 +423,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 
 
 void reper() {
-    glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHTING);
     drawPoint(Point::Origin);
     Point p;
     p = p.translate(Vector::UP);//Y
@@ -379,28 +440,17 @@ void reper() {
     drawLine(Point::Origin, p);
 }
 
-void lighting() {
-    int LightPos[4] = {0, 4, 3, 1};
-    int MatSpec[4] = {1, 1, 1, 1};
-    // Clear Color and Depth Buffers
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
-    float LightDif[4] = {.5f, .5f, 1.f, 1.f};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
-    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
-    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
-}
+
+
+
 
 void renderScene()
 {
     // Set the camera
     glColor3f(1.0f,1.0f,1.0f);
-
     for(unsigned long i=0;i<m.idTriangles.size();++i)
     {
-        prog_3D::wireframeTriangle
+        prog_3D::fillTriangle
                 (
                 m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
                 m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),
