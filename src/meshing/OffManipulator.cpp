@@ -20,7 +20,6 @@ Mesh OffManipulator::read(std::string name)
         std::cout << "File not found" <<std::endl;
         exit(0);
     }
-    std::cout << "IS OPEN" <<std::endl;
     std::string header;
     std::getline(input,header);
     if(header.compare("OFF")!=0)
@@ -28,11 +27,9 @@ Mesh OffManipulator::read(std::string name)
         std::cout << "Not Off Format File"<<std::endl;
         exit(2);
     }
-    std::cout << "Recognized files" << std::endl;
 
     std::string values;
     std::getline(input,values);
-    std::cout << "values : "<<values<<std::endl;
 
     std::stringstream ss(values);
 
@@ -42,8 +39,6 @@ Mesh OffManipulator::read(std::string name)
     while( std::getline(ss,token,' ')) {
         tokens.push_back(token);
     }
-    if(tokens.size()>3)
-        std::cout << "More than 3 tokens"<<std::endl;
 
     pointNb = atoi(tokens.at(0).c_str());
     triangleNb = atoi(tokens.at(1).c_str());
@@ -52,36 +47,36 @@ Mesh OffManipulator::read(std::string name)
     for(int i=0; i<pointNb;++i)
     {
         values.clear();
-        ss.clear();
         tokens.clear();
         std::getline(input,values);
-        ss << values;
-        while( std::getline(ss,token,' '))
+
+        //Tokenize in 3 double token
+        unsigned pos;
+        pos = values.find(' ');
+        std::string first = values.substr(0, pos);
+        std::string second = values.substr(pos + 1);
+        pos = second.find(' ');
+        std::string third = second.substr(pos+1);
+        second = second.substr(0,pos);
+        double val;
+        tokens.push_back(first);
+        tokens.push_back(second);
+        tokens.push_back(third);
+        std::vector<double> xyz;
+        for(int k=0;k<3;++k)
         {
-            tokens.push_back(token);
-        }
-        if(tokens.size() == 3)
-        {
-            std::vector<double> xyz;
-            for(int k=0;k<3;++k)
+            std::stringstream ss2(tokens.at(k));
+            if ( !( ss2 >> val ) )
             {
-                std::stringstream ss2(tokens.at(k));
-                double val;
-                if ( !( ss2 >> val ) )
-                {
-                    std::cerr << "Not a double"<<std::endl;
-                    exit(3);
-                }
-                else
-                {
-                    xyz.push_back(val);
-                }
-
+                std::cerr << "Not a double"<<std::endl;
+                exit(3);
             }
-            prog_3D::Point p(xyz.at(0),xyz.at(1),xyz.at(2));
-            m.points.push_back(p);
+            else
+                xyz.push_back(val);
         }
 
+        prog_3D::Point p(xyz.at(0),xyz.at(1),xyz.at(2));
+        m.points.push_back(p);
     }
 
     for(int i=0;i<triangleNb-1;++i)
@@ -90,15 +85,23 @@ Mesh OffManipulator::read(std::string name)
         ss.clear();
         tokens.clear();
         std::getline(input,values);
-        //3 8 3758 9 //nb points
-        ss << values;
-        std::cout << values<<std::endl;
-        while( std::getline(ss,token,' '))
-        {
-            tokens.push_back(token);
-        }
-        int n=atoi(tokens.at(0).c_str());
+        unsigned pos;
+        pos = values.find(' ');
+        std::string first = values.substr(0, pos);
+        std::string second = values.substr(pos + 1);
+        pos = second.find(' ');
+        std::string third = second.substr(pos+1);
+        second = second.substr(0,pos);
+        pos = third.find(' ');
+        std::string four = third.substr(pos+1);
+        third = third.substr(0,pos);
+        double val;
+        tokens.push_back(first);
+        tokens.push_back(second);
+        tokens.push_back(third);
+        tokens.push_back(four);
 
+        int n=atoi(tokens.at(0).c_str());
         if(n==3)//Triangle
         {
             std::array<int,3> tab;
@@ -109,6 +112,7 @@ Mesh OffManipulator::read(std::string name)
             m.idTriangles.push_back(tri);
         }
     }
+    std::cout <<"end read"<<std::endl;
     return m;
 }
 

@@ -1,8 +1,10 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
+#include "../glWrappers/EulerCamera.hpp"
 #include "../primitives/Cone.hpp"
 #include "../primitives/Cylinder.hpp"
 #include <cmath>
+#include <iostream>
 
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -36,54 +38,67 @@ GLvoid window_special_key(int key, int x, int y);
 
 int LightPos[4] = {0, 4, 3, 1};
 int MatSpec[4] = {1, 1, 1, 1};
-// angle of rotation for the camera direction
-float angle = 0.0;
-float angle2 = 0.0;
-// actual vector representing the camera's direction
-float lx = 0.0f, lz = -1.0f, ly = 0.0f;
-// XZ position of the camera
-float x = 0.0f, y = 1.0f, z = 5.0f;
-float r = 5.0f;
-int xOrigin = -1;
-
 // the key states. These variables will be zero
 //when no key is being presses
 float deltaAngle1 = 0.0f;
 float deltaAngle2 = 0.0f;
 float deltaMove = 0;
+EulerCamera eulerCamera(0, 0, 0, 5);
+int xOrigin = -1;
+int yOrigin = -1;
 
 void mouseButton(int button, int state, int x, int y) {
-
     // only start motion if the left button is pressed
-    if (button == GLUT_LEFT_BUTTON) {
-
+    if (button == GLUT_LEFT_BUTTON)
+    {
         // when the button is released
-        if (state == GLUT_UP) {
-            angle += deltaAngle1;
+        if (state == GLUT_DOWN) {// state = GLUT_DOWN
+            xOrigin = x;//Click position
+            yOrigin = y;
+        }
+        else {
+            yOrigin = -1;
             xOrigin = -1;
+            deltaAngle1 = 0.0f;
+            deltaAngle2 = 0.0f;
         }
-        else {// state = GLUT_DOWN
-            xOrigin = x;
-        }
+
     }
+    else if(button == 3 && state ==1)//DEZOOM
+        eulerCamera.computeEvent(0.05f,0,0,0);
+    else if(button =4 && state == 1)//ZOOM
+        eulerCamera.computeEvent(-0.05f,0.f,0.f,0.f);
+    //glutPostRedisplay();
 }
 
 void mouseMove(int x, int y) {
+    // this will only be true when the left button is down
+    if (xOrigin >= 0) { //Click
+        // update deltaAngle
+        deltaAngle1 = (x - xOrigin) * 0.01f;
+    }
+    else
+        deltaAngle1=0.0f;
 
+    if(yOrigin >= 0)
+    {
+        deltaAngle2 = (y - yOrigin) * 0.01f;
+    }
+    else
+        deltaAngle2 = 0.0f;
 
+    //glutPostRedisplay();
 }
 
 void releaseKey(int key, int x, int y) {
+
     switch (key) {
         case GLUT_KEY_LEFT :
-        case GLUT_KEY_RIGHT :
-            deltaAngle1 = 0.0f;
-            break;
+        case GLUT_KEY_RIGHT : deltaAngle1 = 0.0f;break;
         case GLUT_KEY_UP :
-        case GLUT_KEY_DOWN :
-            deltaAngle2 = 0.0f;
-            break;
+        case GLUT_KEY_DOWN : deltaAngle2 = 0.0f;break;
     }
+    //glutPostRedisplay();
 }
 
 int main(int argc, char **argv) {
@@ -95,10 +110,12 @@ int main(int argc, char **argv) {
     glutInitWindowSize(320, 320);
     glutCreateWindow("Lighthouse3D - GLUT Tutorial");
 
+    initGL();
+    init_scene();
     // register callbacks
-    glutDisplayFunc(renderScene);
+    glutDisplayFunc(window_display);
     glutReshapeFunc(changeSize);
-    glutIdleFunc(renderScene);
+    glutIdleFunc(window_display);
     //glutKeyboardFunc(processNormalKeys);
     glutSpecialFunc(window_special_key);
     // here are the new entries
@@ -148,20 +165,21 @@ void window_special_key(int key, int x, int y) {
 
     switch (key) {
         case GLUT_KEY_LEFT :
-            deltaAngle1 = -0.50f;
+            eulerCamera.setXTarget(eulerCamera.getXtarget()-0.01f);
             break;
         case GLUT_KEY_RIGHT :
-            deltaAngle1 = 0.50f;
+            eulerCamera.setXTarget(eulerCamera.getXtarget()+0.01f);
             break;
         case GLUT_KEY_UP :
-            deltaAngle2 = 0.5f;
+            eulerCamera.setZTarget(eulerCamera.getZtarget()+0.01f);
             break;
         case GLUT_KEY_DOWN :
-            deltaAngle2 = -0.5f;
+            eulerCamera.setZTarget(eulerCamera.getZtarget()-0.01f);
             break;
     }
-    //glutPostRedisplay(); // just update here....
+    glutPostRedisplay(); // just update here....
 }
+
 
 GLvoid initGL() {
     glClearColor(RED, GREEN, BLUE, ALPHA);
@@ -172,8 +190,10 @@ void init_scene() {
 
 
 GLvoid window_display() {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
+    eulerCamera.computeEvent(deltaMove,0.0f,deltaAngle1,deltaAngle2);
+    eulerCamera.place();
     renderScene();
     glFlush();
 }
@@ -193,40 +213,10 @@ GLvoid window_key(unsigned char key, int x, int y) {
 
 
 
-void computeDir(float deltaAngle1, float deltaAngle2) {
-
-
-    angle += deltaAngle1 * 10;
-    angle2 += deltaAngle2 * 1;
-}
-
-void renderScene() {
-    if (deltaAngle1 || deltaAngle2)
-        computeDir(deltaAngle1, deltaAngle2);
-
-    // Clear Color and Depth Buffers
+void renderScene()
+{
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Reset transformations
-    glLoadIdentity();
-    // Set the camera
-
-
-
-// Calculate the camera position using the distance and angles
-    float camX = r * -sinf(angle * (M_PI / 180)) * cosf((angle2) * (M_PI / 180));
-    float camY = r * -sinf((angle2) * (M_PI / 180));
-    float camZ = -r * cosf((angle) * (M_PI / 180)) * cosf((angle2) * (M_PI / 180));
-
-// Set the camera position and lookat point
-    gluLookAt(camX, camY, camZ,   // Camera position
-            0.0, 0.0, 0.0,    // Look at point
-            0.0, 1.0, 0.0);   // Up vector
-
     LightPos[0] = 0;
     LightPos[1] = 0;
     LightPos[2] = 0;
@@ -236,12 +226,9 @@ void renderScene() {
     glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
     glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
-
-    glMatrixMode(GL_MODELVIEW);
-
     Point top(0, 0, 0);
     Vector ax = Vector::UP;
-    Cone c(0.5, 2, 6, top, ax);
+    Cone c(0.5, 2, 12, top, ax);
     glColor3f(1.0f, 1.0f, 1.0f);
     c.draw(true);
 
