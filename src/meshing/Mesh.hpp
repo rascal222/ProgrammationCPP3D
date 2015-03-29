@@ -16,6 +16,9 @@ public:
     std::vector<prog_3D::IdTriangle> idTriangles;
     Mesh();
     ~Mesh();
+    virtual float* getPointVector();
+    virtual unsigned int* getIdVector();
+    virtual float* getNormalVector();
 };
 
 

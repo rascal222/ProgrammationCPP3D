@@ -442,27 +442,51 @@ void reper() {
 
 
 
-
+unsigned int* elements= nullptr;
+float* points=nullptr;
+float* normal=nullptr;
 
 void renderScene()
 {
     // Set the camera
     glColor3f(1.0f,1.0f,1.0f);
+
     for(unsigned long i=0;i<m.idTriangles.size();++i)
     {
         prog_3D::fillTriangle
                 (
-                m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
-                m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),
-                m.points.at((unsigned long)m.idTriangles.at(i).getPointId(2))
-        );
+                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
+                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),
+                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(2))
+                );
     }
 
+    if(elements== nullptr)
+    {
+        elements = m.getIdVector();//Return triangle indexes
+        points = m.getPointVector();//Return 3coordinates points
+        normal = m.getNormalVector();//Return 3coordinates normals
+    }
+    /*
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glVertexPointer(3, GL_FLOAT,0,points);
+    glNormalPointer (GL_FLOAT, 0,normal);
+ //   glDrawElements(GL_TRIANGLES,3*m.idTriangles.size(),GL_UNSIGNED_INT​,elements);
+    glDrawElements(GL_TRIANGLES,3 * m.idTriangles.size(),GL_UNSIGNED_INT,elements);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    int vao;
+    glGenVertexArrays(1,&vao)
+    glbindVertexArray(&vao);
+    */
     glColor3f(1.0f,.0f,.0f);
     drawPoint(Point::Origin);
     glColor3f(.0f,1.0f,.0f);
     drawPoint(meanCenter);
     glColor3f(.0f,1.0f,1.0f);
+
+
     drawPoint(center);
     reper();
 
