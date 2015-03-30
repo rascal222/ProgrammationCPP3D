@@ -27,7 +27,8 @@ namespace prog_3D {
 		draw(false);
 	}
 
-	void Cylinder::draw(bool debug) {
+	std::vector<std::vector<Point>> Cylinder::compute()
+	{
 		std::vector<Point> top;
 		std::vector<Point> down;
 
@@ -40,18 +41,19 @@ namespace prog_3D {
 			top.push_back(t);
 			down.push_back(d);
 
-			if(debug)
-			{
-				glColor3f(1.0f, 0.0f, 0.0f);
-				glBegin(GL_LINES);
-				{
-					glVertex3d(t.getX(), t.getY(), t.getZ());
-					glVertex3d(d.getX(), d.getY(), d.getZ());
-
-				}
-				glEnd();
-			}
 		}
+		std::vector<std::vector<Point>> r;
+		r.push_back(top);
+		r.push_back(down);
+		return r;
+	}
+
+	void Cylinder::draw(bool debug) {
+
+		std::vector<std::vector<Point>> r = compute();
+		std::vector<Point> top=r.at(0);
+		std::vector<Point> down=r.at(1);
+
         //Face down
         glBegin(GL_LINE_STRIP);
         {
@@ -63,7 +65,7 @@ namespace prog_3D {
         glEnd();
 
 
-		glBegin(GL_QUAD_STRIP);
+		glBegin(GL_TRIANGLE_STRIP);
 		{
 			for(int i=0;i< meridians;++i) {
 

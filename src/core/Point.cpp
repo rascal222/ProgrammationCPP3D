@@ -101,4 +101,8 @@ namespace prog_3D {
 		setY(y);
 		setZ(z);
 	}
+
+	bool Point::operator==(const Point &point) const {
+		return getX()==point.getX() && getY()==point.getY() && getZ()==point.getZ();
+	}
 }

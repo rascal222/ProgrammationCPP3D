@@ -11,6 +11,7 @@ SURFACE_DIR = $(SOURCE_DIR)/surfaces
 GLWRAPPERS_DIR = $(SOURCE_DIR)/glWrappers
 OCTREE_DIR = $(SOURCE_DIR)/octree
 MESHING_DIR = $(SOURCE_DIR)/meshing
+TP7_DIR = $(SOURCE_DIR)/tp7
 
 SRC_CORE = $(wildcard $(CORE_DIR)/*.cpp)
 CORE_OBJECTS = $(patsubst $(CORE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_CORE))
@@ -32,6 +33,9 @@ OCTREE_OBJECTS = $(patsubst $(OCTREE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_OCTREE))
 
 SRC_MESHING = $(wildcard $(MESHING_DIR)/*.cpp)
 MESHING_OBJECTS = $(patsubst $(MESHING_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_MESHING))
+
+SRC_TP7 = $(wildcard $(TP7_DIR)/*.cpp)
+TP7_OBJECTS = $(patsubst $(TP7_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_TP7))
 
 all:
 	g++-4.8 -std=c++11 src/tp/TP_OPENGL.cpp src/core/*.cpp -lGL -lglut -lGLU -lm
@@ -63,6 +67,9 @@ $(OCTREE_OBJECTS): $(BUILDDIR)/%.o : $(OCTREE_DIR)/%.cpp
 	$(CC) $(F_FLAGS) -c $< -o $@
 
 $(MESHING_OBJECTS): $(BUILDDIR)/%.o : $(MESHING_DIR)/%.cpp
+	$(CC) $(F_FLAGS) -c $< -o $@
+
+$(TP7_OBJECTS): $(BUILDDIR)/%.o : $(TP7_DIR)/%.cpp
 	$(CC) $(F_FLAGS) -c $< -o $@
 
 clean:
@@ -111,3 +118,6 @@ tp6/offReader: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_O
 	make dir
 	$(CC) $(F_FLAGS) $^ -o offReader.out $(L_FLAGS)
 
+tp7/TopoMeshing: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(TP7_OBJECTS)
+	make dir
+	$(CC) $(F_FLAGS) $^ -o topo.out $(L_FLAGS)

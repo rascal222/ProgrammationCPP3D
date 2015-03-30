@@ -73,7 +73,7 @@ void mouseButton(int button, int state, int x, int y) {
     }
     else if(button == 3 && state ==1)//DEZOOM
         eulerCamera.computeEvent(0.05f,0,0,0);
-    else if(button =4 && state == 1)//ZOOM
+    else if(button ==4 && state == 1)//ZOOM
         eulerCamera.computeEvent(-0.05f,0.f,0.f,0.f);
     glutPostRedisplay();
 }
@@ -86,14 +86,14 @@ void mouseMove(int x, int y) {
     }
     else
         deltaAngle1=0.0f;
-/*
+
     if(yOrigin >= 0)
     {
         deltaAngle2 = (y - yOrigin) * 0.001f;
     }
     else
         deltaAngle2 = 0.0f;
-*/
+
     glutPostRedisplay();
 }
 
@@ -171,21 +171,21 @@ initLightAndMaterial(void)
             {0.1, 0.1, 0.1, 1.0};
     static float diffuse[] =
             {0.5, 1.0, 1.0, 1.0};
-    static float position[] =
-            {(float)borderSize,(float)borderSize,(float)borderSize, 0.0};
+static float position[] =
+        {(float)borderSize,(float)borderSize,(float)borderSize, 0.0};
 
-    static float front_mat_shininess[] =
-            {60.0};
-    static float front_mat_specular[] =
-            {0.2, 0.2, 0.2, 1.0};
-    static float front_mat_diffuse[] =
-            {0.5, 0.5, 0.28, 1.0};
-    static float back_mat_shininess[] =
-            {60.0};
-    static float back_mat_specular[] =
-            {0.5, 0.5, 0.2, 1.0};
-    static float back_mat_diffuse[] =
-            {1.0, 0.2, 0.2, 1.0};
+static float front_mat_shininess[] =
+        {60.0};
+static float front_mat_specular[] =
+        {0.2, 0.2, 0.2, 1.0};
+static float front_mat_diffuse[] =
+        {0.5, 0.5, 0.28, 1.0};
+static float back_mat_shininess[] =
+        {60.0};
+static float back_mat_specular[] =
+        {0.5, 0.5, 0.2, 1.0};
+static float back_mat_diffuse[] =
+        {1.0, 0.2, 0.2, 1.0};
 
     static float lmodel_ambient[] =
             {1.0, 1.0, 1.0, 1.0};
@@ -298,6 +298,8 @@ void init_scene()
     OffManipulator off;
     m = off.read(file);
     //init
+    //CREATE MESH_CAMERA_BASED
+    //TODO PUT THIS IN A CLASS FOR ANY MESH
     left2 = m.points.at(0).getX();
     right2 = m.points.at(0).getX();
     up = m.points.at(0).getY();
@@ -380,12 +382,6 @@ void init_scene()
     eulerCamera.setZTarget(centerZ);
     eulerCamera.setYViewport(1);
     eulerCamera.setDist(borderSize/2);
-
-    //eulerCamera.setXTarget(meanX);
-    //eulerCamera.setYTarget(meanY);
-    //eulerCamera.setZTarget(meanZ);
-
-
 }
 
 
@@ -395,6 +391,7 @@ GLvoid window_display()
     //Setting projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    //TODO LINK THIS IN FUNCTION OF MESH
     glOrtho(-factor*borderSize, factor*borderSize,-factor*borderSize,factor*borderSize,-factor*borderSize,factor*borderSize);
     //Setting Model viewer
     glMatrixMode(GL_MODELVIEW);

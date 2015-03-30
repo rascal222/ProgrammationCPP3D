@@ -51,6 +51,8 @@ namespace prog_3D {
 
         Point translate(const Vector& vector) const;
 
+        bool operator==(const Point& point) const;
+
     };
     /**
     * \brief Override the operator << for an instance of ostream and a point

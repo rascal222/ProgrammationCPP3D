@@ -86,7 +86,7 @@ src/meshing/Mesh.cpp
 src/meshing/Mesh.hpp
 )
 
-add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRA²    PPER_FILES} src/tp/TP_OPENGL.cpp)
+add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRAPPER_FILES} src/tp/TP_OPENGL.cpp)
 add_executable(Tp3-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES} src/tp3/mainCylindricSurface.cpp)
 add_executable(Tp3-drawRuledSurface ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES} src/tp3/mainRuledSurf.cpp)
 add_executable(Tp3-drawSurfacicSquare ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES} src/tp3/tp3.cpp)

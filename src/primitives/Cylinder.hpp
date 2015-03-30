@@ -22,6 +22,8 @@ namespace prog_3D
         virtual void draw(bool);
 
         virtual double equation(const Point &point);
+
+        std::vector<std::vector<Point>> compute();
     };
 }
 

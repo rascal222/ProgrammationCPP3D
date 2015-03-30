@@ -19,6 +19,12 @@ namespace prog_3D {
         IdTriangle(std::array<int, 3> &points) : points(points) {
         };
 
+        IdTriangle(int p1, int p2, int p3) {
+            points[0]=p1;
+            points[1]=p2;
+            points[2]=p3;
+        };
+
         ~IdTriangle();
 
         int getPointId(int id)

@@ -28,39 +28,37 @@ namespace prog_3D {
 		draw(false);
 	}
 
-	void Sphere::draw(bool debug) {
-
+	std::vector<std::vector<Point>> Sphere::compute()
+	{
 		std::vector<std::vector<Point>> matrix;
-
 		PolarPoint north(center,0,0,rayon);
 		PolarPoint south(center,M_PI,M_PI,rayon);
-		drawPoint(north.toCartesian());
-		glColor3f(0.0f, 1.0f, 0.0f);
-		drawPoint(south.toCartesian());
-		glColor3f(1.0f,0.0f,0.0f);
-
+		std::vector<Point> vnorth;
+		std::vector<Point> vsouth;
+		vnorth.push_back(north.toCartesian());
 
 		for (int i = 1; i < meridians-1; ++i)
 		{
 			std::vector<Point> down;
 			double angle =  (double) (M_PI * i) /(double) (meridians-1.0);
-			if(debug)
-				glBegin(GL_LINE_STRIP);
 			for(int j=0;j < paralleles-1;++j)
 			{
 				double angleG = ((double) (2*M_PI * j) / (double) (paralleles-1.0));
 				PolarPoint p(center, angleG,angle, rayon);
 				down.push_back(p.toCartesian());
-				if(debug)
-					glPoint(p.toCartesian());
 			}
-			if(debug)
-				glPoint(down.at(0));
-			glEnd();
 			matrix.push_back(down);
 		}
+		vsouth.push_back(south.toCartesian());
+		return matrix;
+	}
 
 
+	void Sphere::draw(bool debug) {
+
+		std::vector<std::vector<Point>> matrix = compute();
+		Point north = matrix.at(0).at(0);
+		Point south = matrix.at(matrix.size()-1).at(0);
 		int LightPos[4] = {0, 0, 0, 1};
 		int MatSpec [4] = {1,1,1,1};
 		glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
@@ -80,64 +78,41 @@ namespace prog_3D {
 		glColor3f(1.0f,1.0f,1.0f);
 		//NORTH POLE
 		glBegin(GL_TRIANGLE_FAN);
-		glPoint(north.toCartesian());
-		for(int k=0;k<matrix.at(0).size();++k)
-		{
-			glPoint(matrix.at(0).at(k));
-		}
 		glPoint(matrix.at(0).at(0));
+		for(int k=0;k<matrix.at(1).size();++k)
+		{
+			glPoint(matrix.at(1).at(k));
+		}
+		glPoint(matrix.at(1).at(0));
 		glEnd();
 
 		//SOUTH POLE
 		glBegin(GL_TRIANGLE_FAN);
-		glPoint(south.toCartesian());
-		for(int k=0;k<matrix.at(matrix.size()-1).size();++k)
-		{
-			glPoint(matrix.at(matrix.size()-1).at(k));
-		}
 		glPoint(matrix.at(matrix.size()-1).at(0));
+		for(int k=0;k<matrix.at(matrix.size()-2).size();++k)
+		{
+			glPoint(matrix.at(matrix.size()-2).at(k));
+		}
+		glPoint(matrix.at(matrix.size()-2).at(0));
 		glEnd();
 
-
-
-		for(int i=0;i<matrix.at(0).size()-1;++i)
+		for(unsigned int i=0;i<matrix.at(1).size()-1;++i)
 		{
 			glBegin(GL_TRIANGLE_STRIP);
-			for (int k = 0; k < matrix.size(); ++k)
+			for (unsigned int k = 1; k < matrix.size()-1; ++k)
 			{
 				glPoint(matrix.at(k).at(i));
 				glPoint(matrix.at(k).at((i+1)));
 			}
 			glEnd();
 		}
-
 		glBegin(GL_TRIANGLE_STRIP);
-		for (int k = 0; k < matrix.size(); ++k)
+		for (unsigned int k = 1; k < matrix.size()-1; ++k)
 		{
-			glPoint(matrix.at(k).at(matrix.at(0).size()-1));
+			glPoint(matrix.at(k).at(matrix.at(1).size()-1));
 			glPoint(matrix.at(k).at((0)));
 		}
 		glEnd();
-
-		//MERIDIAN 0
-		if(debug) {
-			glDisable(GL_LIGHTING);
-			for(int i=0;i<matrix.at(0).size();++i)
-			{
-				glColor3f(1.0f, 0.0f, 1.0f);
-				glBegin(GL_LINE_STRIP);
-				glPoint(north.toCartesian());
-				for (int k = 0; k < matrix.size(); ++k) {
-					glPoint(matrix.at(k).at(i));
-				}
-				glPoint(south.toCartesian());
-				glEnd();
-			}
-		}
-		glDisable(GL_LIGHTING);
-		glDisable(GL_LIGHT0);
-
-
 	}
 
 	double Sphere::equation(const Point &point)
