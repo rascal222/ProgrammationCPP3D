@@ -15,6 +15,42 @@ public:
 
     virtual void computeEvent(float deltaMove1, float deltaMove2, float deltaAngle1, float deltaAngle2) = 0;
 
+    virtual void setXEye(float xEye) {
+        Camera::xEye = xEye;
+    }
+
+    virtual void setYEye(float yEye) {
+        Camera::yEye = yEye;
+    }
+
+    virtual void setZEye(float zEye) {
+        Camera::zEye = zEye;
+    }
+
+    virtual void setXTarget(float xTarget) {
+        Camera::xTarget = xTarget;
+    }
+
+    virtual void setYTarget(float yTarget) {
+        Camera::yTarget = yTarget;
+    }
+
+    virtual void setZTarget(float zTarget) {
+        Camera::zTarget = zTarget;
+    }
+
+    virtual void setXViewport(float xViewport) {
+        Camera::xViewport = xViewport;
+    }
+
+    virtual void setYViewport(float yViewport) {
+        Camera::yViewport = yViewport;
+    }
+
+    virtual void setZViewport(float zViewport) {
+        Camera::zViewport = zViewport;
+    }
+
     virtual float getXeye() {
         return xEye;
     }

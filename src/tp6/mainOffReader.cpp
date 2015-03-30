@@ -6,8 +6,8 @@
 
 #include "../meshing/Mesh.hpp"
 #include "../meshing/OffManipulator.hpp"
-
-
+#include "../primitives/Sphere.hpp"
+#include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
 #define HEIGHT 480
@@ -17,12 +17,9 @@
 #define GREEN 0
 #define BLUE  0
 #define ALPHA 1
-
 #define KEY_ESC 27
-
 using namespace prog_3D;
 using namespace std;
-
 // Entêtes de fonctions
 void init_scene();
 void renderScene();
@@ -32,81 +29,233 @@ GLvoid changeSize(GLsizei width, GLsizei height);
 GLvoid window_key(unsigned char key, int x, int y);
 GLvoid window_special_key(int key, int x, int y);
 
-// angle of rotation for the camera direction
-float angle = 0.0, angle2 = 0.0;
-
-float xOrigin = -1;
-
-// the key states. These variables will be zero
-//when no key is being presses
-float deltaAngle = 0.0f;
+//Camera variables
+float deltaAngle1 = 0.0f;
+float deltaAngle2 = 0.0f;
 float deltaMove = 0;
+EulerCamera eulerCamera(0, 0, 0, 5);
+int xOrigin = -1;
+int yOrigin = -1;
+
+//Ortho variables
+double left2 = -WIDTH/2;
+double right2 = WIDTH/2;
+double up = HEIGHT/2;
+double down = -HEIGHT/2;
+double near = -2.0;
+double far = 100;
+double meanX=0;
+double meanY=0;
+double meanZ=0;
+double borderSize=WIDTH/2;
+double factor = 1.5;
+Point center,meanCenter;
+
+
+
+
 void mouseButton(int button, int state, int x, int y) {
-
     // only start motion if the left button is pressed
-    if (button == GLUT_LEFT_BUTTON) {
-
+    if (button == GLUT_LEFT_BUTTON)
+    {
         // when the button is released
         if (state == GLUT_DOWN) {// state = GLUT_DOWN
-            xOrigin = x;
+            xOrigin = x;//Click position
+            yOrigin = y;
         }
+        else {
+            yOrigin = -1;
+            xOrigin = -1;
+            deltaAngle1 = 0.0f;
+            deltaAngle2 = 0.0f;
+        }
+
     }
+    else if(button == 3 && state ==1)//DEZOOM
+        eulerCamera.computeEvent(0.05f,0,0,0);
+    else if(button =4 && state == 1)//ZOOM
+        eulerCamera.computeEvent(-0.05f,0.f,0.f,0.f);
+    glutPostRedisplay();
 }
 
 void mouseMove(int x, int y) {
-
     // this will only be true when the left button is down
-    if (xOrigin >= 0) {
+    if (xOrigin >= 0) { //Click
         // update deltaAngle
-        deltaAngle = (x - xOrigin) * 0.01f;
-
+        deltaAngle1 = (x - xOrigin) * 0.001f;
     }
+    else
+        deltaAngle1=0.0f;
+/*
+    if(yOrigin >= 0)
+    {
+        deltaAngle2 = (y - yOrigin) * 0.001f;
+    }
+    else
+        deltaAngle2 = 0.0f;
+*/
+    glutPostRedisplay();
 }
 
 void releaseKey(int key, int x, int y) {
 
     switch (key) {
         case GLUT_KEY_LEFT :
-        case GLUT_KEY_RIGHT : deltaAngle = 0.0f;break;
+        case GLUT_KEY_RIGHT : deltaAngle1 = 0.0f;break;
         case GLUT_KEY_UP :
-        case GLUT_KEY_DOWN : deltaMove = 0;break;
+        case GLUT_KEY_DOWN : deltaAngle2 = 0.0f;break;
     }
+    //glutPostRedisplay();
 }
 
-EulerCamera eulerCamera(0, 0, 0, 5);
+
+void window_special_key(int key, int x, int y) {
+
+    switch (key) {
+        case GLUT_KEY_LEFT :
+            //eulerCamera.setXTarget(eulerCamera.getXtarget()-0.01f);
+            break;
+        case GLUT_KEY_RIGHT :
+            //eulerCamera.setXTarget(eulerCamera.getXtarget()+0.01f);
+            break;
+        case GLUT_KEY_UP :
+            //eulerCamera.setZTarget(eulerCamera.getZtarget()+0.01f);
+            break;
+        case GLUT_KEY_DOWN :
+           // eulerCamera.setZTarget(eulerCamera.getZtarget()-0.01f);
+            break;
+    }
+    //glutPostRedisplay(); // just update here....
+}
+
+
+
+
+GLvoid window_normal_key(unsigned char key, int x, int y)
+{
+    switch (key) {
+        case KEY_ESC:
+            exit(1); break;
+        case 43:
+            factor+=0.5;
+            break; // +
+        case 45:
+            factor-=0.5;
+            break; // --
+        case 97: // a
+        case 122: // z
+        case 101: // e
+        case 114: // r
+        case 111: // o
+        case 108: // l
+        case 107: // k
+        case 109: // k (droite)
+        case 113: // q
+        case 115: // s
+        default:
+            printf ("La touche %c (%d) n´est pas active.\n", key,key);
+            break;
+    }
+    glutPostRedisplay();
+}
+
+
+
 Point pK(0, 0, 0);
 Mesh m;
+std::string file("bunny.off");
+void
+initLightAndMaterial(void)
+{
+    static float ambient[] =
+            {0.1, 0.1, 0.1, 1.0};
+    static float diffuse[] =
+            {0.5, 1.0, 1.0, 1.0};
+    static float position[] =
+            {(float)borderSize,(float)borderSize,(float)borderSize, 0.0};
+
+    static float front_mat_shininess[] =
+            {60.0};
+    static float front_mat_specular[] =
+            {0.2, 0.2, 0.2, 1.0};
+    static float front_mat_diffuse[] =
+            {0.5, 0.5, 0.28, 1.0};
+    static float back_mat_shininess[] =
+            {60.0};
+    static float back_mat_specular[] =
+            {0.5, 0.5, 0.2, 1.0};
+    static float back_mat_diffuse[] =
+            {1.0, 0.2, 0.2, 1.0};
+
+    static float lmodel_ambient[] =
+            {1.0, 1.0, 1.0, 1.0};
+
+    static float lmodel_twoside[] =
+            {GL_TRUE};
+
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+    glMaterialfv(GL_FRONT, GL_SHININESS, front_mat_shininess);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, front_mat_specular);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_mat_diffuse);
+    glMaterialfv(GL_BACK, GL_SHININESS, back_mat_shininess);
+    glMaterialfv(GL_BACK, GL_SPECULAR, back_mat_specular);
+    glMaterialfv(GL_BACK, GL_DIFFUSE, back_mat_diffuse);
+
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+    glLightModelfv(GL_LIGHT_MODEL_TWO_SIDE, lmodel_twoside);
+
+    glShadeModel(GL_SMOOTH);
+}
+
+void lighting() {
+    static int LightPos[4] = {0, 4, 3, 1};
+    static int MatSpec[4] = {1, 1, 1, 1};
+    // Clear Color and Depth Buffers
+    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
+    static float LightDif[4] = {.5f, .5f, 1.f, 1.f};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
+    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
+    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
+}
+
 
 int main(int argc, char **argv)
 {
     // init GLUT and create window
 
+    if(argc==2)
+    {
+        file.clear();
+        file.append(argv[1]);
+    }
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100,100);
-    glutInitWindowSize(320,320);
-    glutCreateWindow("Lighthouse3D - GLUT Tutorial");
+    glutInitWindowSize(WIDTH,HEIGHT);
+    glutCreateWindow("TP6");
+    initGL();
+    //initLightAndMaterial();
+    init_scene();
 
     // register callbacks
     glutDisplayFunc(window_display);
     glutReshapeFunc(changeSize);
-    glutIdleFunc(renderScene);
-    //glutKeyboardFunc(processNormalKeys);
+    glutIdleFunc(window_display);
+    glutKeyboardFunc(window_normal_key);
     glutSpecialFunc(window_special_key);
     // here are the new entries
     glutIgnoreKeyRepeat(1);
     glutSpecialUpFunc(releaseKey);
-
     // here are the two new functions
     glutMouseFunc(mouseButton);
     glutMotionFunc(mouseMove);
-
     // OpenGL init
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHT0);
 
-    init_scene();
-    // enter GLUT event processing cycle
     glutMainLoop();
 
     return 1;
@@ -118,57 +267,140 @@ void changeSize(int w, int h) {
     // (you cant make a window of zero width).
     if (h == 0)
         h = 1;
-
     double ratio = w * 1.0 / h;
-
     // Use the Projection Matrix
     glMatrixMode(GL_PROJECTION);
-
     // Reset Matrix
     glLoadIdentity();
-
     // Set the viewport to be the entire window
     glViewport(0, 0, w, h);
-
     // Set the correct perspective.
     gluPerspective(45,ratio,1,100);
-
     // Get Back to the Modelview
     glMatrixMode(GL_MODELVIEW);
-}
-void window_special_key ( int key, int x, int y ) {
-
-    switch (key) {
-        case GLUT_KEY_LEFT :
-            deltaAngle = -0.15f;
-            break;
-        case GLUT_KEY_RIGHT :
-            deltaAngle = 0.15f;
-            break;
-        case GLUT_KEY_UP :
-            deltaMove = 0.15f;
-            break;
-        case GLUT_KEY_DOWN :
-            deltaMove = -0.15f;
-            break;
-    }
-    //glutPostRedisplay(); // just update here....
 }
 
 GLvoid initGL()
 {
     glClearColor(RED, GREEN, BLUE, ALPHA);
+    glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    initLightAndMaterial();
 }
+
+
 
 void init_scene()
 {
     OffManipulator off;
-    m = off.read("bunny.off");
+    m = off.read(file);
+    //init
+    left2 = m.points.at(0).getX();
+    right2 = m.points.at(0).getX();
+    up = m.points.at(0).getY();
+    down = m.points.at(0).getY();
+    far = m.points.at(0).getZ();
+    near = m.points.at(0).getZ();
+
+    //Compute Clipping plan
+    for(int i=1;i<m.points.size();++i)
+    {
+        //Most left negative
+        if(m.points.at(i).getX() < left2)
+            left2 = m.points.at(i).getX();
+
+        //Most right positive
+        if(m.points.at(i).getX() > right2)
+            right2 = m.points.at(i).getX();
+
+        if(m.points.at(i).getY() < down)
+            down = m.points.at(i).getY();
+
+        if(m.points.at(i).getY() > up)
+            up = m.points.at(i).getY();
+
+        if(m.points.at(i).getZ() < near)
+            near = m.points.at(i).getZ();
+
+        if(m.points.at(i).getZ() > far)
+            far = m.points.at(i).getZ();
+
+        //Compute mean center
+        meanX += m.points.at(i).getX();
+        meanY += m.points.at(i).getY();
+        meanZ += m.points.at(i).getZ();
+    }
+    //Give mean center
+    meanX/=m.points.size();
+    meanY/=m.points.size();
+    meanZ/=m.points.size();
+
+    meanCenter.set(meanX,meanY,meanZ);
+    //Center
+    double centerX =  (right2 + left2) / 2.0;
+    double centerY = (up + down) / 2.0;
+    double centerZ = (far + near) / 2.0;
+    Point k (centerX,centerY,centerZ);
+    center = k;
+    std::cout << "Mean coordinates : " << meanX <<";"<<meanY<<";"<<meanZ<< std::endl;
+    std::cout << "Center coordinates (Max+Min/2.0) : "<< centerX <<";"<<centerY<<";"<<centerZ<< std::endl;
+    std::cout << "minX : " << left2 << std::endl;
+    std::cout << "maxX : " << right2 << std::endl;
+    std::cout << "minY : " << down << std::endl;
+    std::cout << "maxY : " << up << std::endl;
+    std::cout << "near : " << near << std::endl;
+    std::cout << "far : " << far << std::endl;
+    std::cout << -(right2-left2)
+            << std::endl << (right2-left2) <<std::endl
+    << -(up-down) << std::endl << (up-down)<< std::endl <<-(far-near)<<std::endl<<(far-near)<<std::endl;
+    //Compute the border size of mesh in function of center
+    borderSize = 0;
+    Vector v(center.getX(),center.getY(),center.getZ());
+    v*=-1.0;
+    for(int i=0;i<m.points.size();++i)
+    {
+        Point p = m.points.at(i).translate(v);
+        if(fabs(p.getX()) > borderSize)
+            borderSize = fabs(p.getX());
+        if(fabs(p.getY())> borderSize)
+            borderSize = fabs(p.getY());
+        if(fabs(p.getZ())> borderSize)
+            borderSize = fabs(p.getZ());
+    }
+
+
+    std::cout << "bestSize" << borderSize << std::endl;
+    //Prepare Camera
+
+    eulerCamera.setXTarget(centerX);
+    eulerCamera.setYTarget(centerY);
+    eulerCamera.setZTarget(centerZ);
+    eulerCamera.setYViewport(1);
+    eulerCamera.setDist(borderSize/2);
+
+    //eulerCamera.setXTarget(meanX);
+    //eulerCamera.setYTarget(meanY);
+    //eulerCamera.setZTarget(meanZ);
+
+
 }
 
 
 GLvoid window_display()
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //Setting projection
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-factor*borderSize, factor*borderSize,-factor*borderSize,factor*borderSize,-factor*borderSize,factor*borderSize);
+    //Setting Model viewer
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    eulerCamera.computeEvent(deltaMove,0.0f,deltaAngle1,deltaAngle2);
+    eulerCamera.place();
     renderScene();
     glFlush();
 }
@@ -177,11 +409,8 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
 {
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
-    glOrtho(-WIDTH/2, WIDTH/2,-HEIGHT/2, HEIGHT/2, -2.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
 
 }
@@ -194,14 +423,12 @@ GLvoid window_key(unsigned char key, int x, int y)
 
 
 void reper() {
-    glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHTING);
     drawPoint(Point::Origin);
     Point p;
     p = p.translate(Vector::UP);//Y
     glColor3d(1.0, 0, 0);
     drawLine(Point::Origin, p);
-
-
     p = p.translate(Vector::DOWN);//Y
     p = p.translate(Vector::RIGHT);//X
     glColor3d(0, 1.0, 0);
@@ -213,41 +440,55 @@ void reper() {
     drawLine(Point::Origin, p);
 }
 
-void lighting() {
-    int LightPos[4] = {0, 4, 3, 1};
-    int MatSpec[4] = {1, 1, 1, 1};
-    // Clear Color and Depth Buffers
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
-    float LightDif[4] = {.5f, .5f, 1.f, 1.f};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
-    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
-    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
-}
+
+
+unsigned int* elements= nullptr;
+float* points=nullptr;
+float* normal=nullptr;
 
 void renderScene()
 {
-    eulerCamera.computeEvent(deltaMove, 0.0f, deltaAngle, 0.0f);
-    // Clear Color and Depth Buffers
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
     // Set the camera
-   // lighting();
-    eulerCamera.place();
+    glColor3f(1.0f,1.0f,1.0f);
 
-    for(int i=0;i<m.idTriangles.size();++i)
+    for(unsigned long i=0;i<m.idTriangles.size();++i)
     {
-        std::cout << m.idTriangles.size()<<std::endl;
-        std::cout << m.points.size() <<std::endl;
-        prog_3D::wireframeTriangle
+        prog_3D::fillTriangle
                 (
-                m.points.at(m.idTriangles.at(i).getPointId(0)),
-                m.points.at(m.idTriangles.at(i).getPointId(1)),
-                m.points.at(m.idTriangles.at(i).getPointId(2))
-        );
+                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
+                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),
+                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(2))
+                );
     }
+
+    if(elements== nullptr)
+    {
+        elements = m.getIdVector();//Return triangle indexes
+        points = m.getPointVector();//Return 3coordinates points
+        normal = m.getNormalVector();//Return 3coordinates normals
+    }
+    /*
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glVertexPointer(3, GL_FLOAT,0,points);
+    glNormalPointer (GL_FLOAT, 0,normal);
+ //   glDrawElements(GL_TRIANGLES,3*m.idTriangles.size(),GL_UNSIGNED_INT​,elements);
+    glDrawElements(GL_TRIANGLES,3 * m.idTriangles.size(),GL_UNSIGNED_INT,elements);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    int vao;
+    glGenVertexArrays(1,&vao)
+    glbindVertexArray(&vao);
+    */
+    glColor3f(1.0f,.0f,.0f);
+    drawPoint(Point::Origin);
+    glColor3f(.0f,1.0f,.0f);
+    drawPoint(meanCenter);
+    glColor3f(.0f,1.0f,1.0f);
+
+
+    drawPoint(center);
+    reper();
 
     glutSwapBuffers();
 }
