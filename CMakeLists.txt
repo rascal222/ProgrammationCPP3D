@@ -81,10 +81,26 @@ set(MESHING_FILES
 src/meshing/IdTriangle.hpp
 src/meshing/IdTriangle.cpp
 src/meshing/OffManipulator.cpp
-src/meshing/offManipulator.hpp
+src/meshing/OffManipulator.hpp
 src/meshing/Mesh.cpp
 src/meshing/Mesh.hpp
+src/meshing/AutoCenter.h
+src/meshing/AutoCenter.cpp
 )
+
+set(TP7_FILES
+src/tp7/FigureConverter.hpp
+src/tp7/FigureConverter.cpp
+src/tp7/TopoEdge.cpp
+src/tp7/TopoEdge.h
+src/tp7/TopoMesh.h
+src/tp7/TopoMesh.cpp
+src/tp7/TopoFace.h
+src/tp7/TopoFace.cpp
+src/tp7/TopoPoint.cpp
+src/tp7/TopoPoint.h
+)
+
 
 add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRAPPER_FILES} src/tp/TP_OPENGL.cpp)
 add_executable(Tp3-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES} src/tp3/mainCylindricSurface.cpp)
@@ -98,6 +114,8 @@ add_executable(Tp5-drawVoxelCylinder ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES
 add_executable(Tp5-drawIntercept ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainIntersect.cpp)
 add_executable(Tp5-drawDivide ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainDivide.cpp)
 add_executable(Tp5-drawUnions ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainUnion.cpp)
+add_executable(Tp6 ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} ${MESHING_FILES} src/tp6/mainOffReader.cpp)
+add_executable(Tp7 ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -114,3 +132,5 @@ target_link_libraries(Tp5-drawVoxelCylinder ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} 
 target_link_libraries(Tp5-drawIntercept ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp5-drawDivide ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp5-drawUnions ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp6 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp7 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
