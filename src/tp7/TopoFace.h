@@ -8,7 +8,8 @@
 #include <vector>
 #include "../core/Vector.hpp"
 #include "TopoEdge.h"
-
+#include <cmath>
+#include <iostream>
 
 class TopoFace {
 
@@ -25,6 +26,13 @@ public:
 
     virtual std::vector<TopoPoint*> getVertices();
 
+
+    static double computeDihedralAngle(TopoFace* face1, TopoFace* face2)
+    {
+        prog_3D::Vector n1 = face1->getNormal();
+        prog_3D::Vector n2 = face2->getNormal();
+        return fabs(n1.getAngle(n2));
+    }
 };
 
 

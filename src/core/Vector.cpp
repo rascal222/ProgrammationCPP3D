@@ -2,6 +2,7 @@
 #include "Point.hpp"
 #include <cmath>
 #include <ostream>
+#include <iostream>
 
 
 namespace prog_3D
@@ -93,7 +94,11 @@ namespace prog_3D
 
     double Vector::getAngle(const Vector& vector) const
     {
-        return acos(scalar(vector) / (norm()*vector.norm()));
+        Vector v1(vector);
+        Vector v2(*this);
+        v1.normalize();
+        v2.normalize();
+        return acos(v1.scalar(v2) / (v1.norm()*v2.norm()));
     }
 
     void Vector::print(std::ostream& stream) const

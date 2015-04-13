@@ -102,20 +102,42 @@ src/tp7/TopoPoint.h
 )
 
 
-add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRAPPER_FILES} src/tp/TP_OPENGL.cpp)
-add_executable(Tp3-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES} src/tp3/mainCylindricSurface.cpp)
-add_executable(Tp3-drawRuledSurface ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES} src/tp3/mainRuledSurf.cpp)
-add_executable(Tp3-drawSurfacicSquare ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES} src/tp3/tp3.cpp)
-add_executable(Tp4-drawCone ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} src/tp4/mainCone.cpp)
-add_executable(Tp4-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} src/tp4/mainCylinder.cpp)
-add_executable(Tp4-drawSphere ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} src/tp4/mainSphere.cpp)
-add_executable(Tp5-drawVoxelSphere ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/voxel.cpp)
-add_executable(Tp5-drawVoxelCylinder ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainCylinder.cpp)
-add_executable(Tp5-drawIntercept ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainIntersect.cpp)
-add_executable(Tp5-drawDivide ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainDivide.cpp)
-add_executable(Tp5-drawUnions ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}  src/tp5/mainUnion.cpp)
-add_executable(Tp6 ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} ${MESHING_FILES} src/tp6/mainOffReader.cpp)
-add_executable(Tp7 ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7.cpp)
+add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRAPPER_FILES}
+src/tp/TP_OPENGL.cpp)
+add_executable(Tp3-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES}
+src/tp3/mainCylindricSurface.cpp)
+add_executable(Tp3-drawRuledSurface ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES}
+src/tp3/mainRuledSurf.cpp)
+add_executable(Tp3-drawSurfacicSquare ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES}
+src/tp3/tp3.cpp)
+add_executable(Tp4-drawCone ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+src/tp4/mainCone.cpp)
+add_executable(Tp4-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+src/tp4/mainCylinder.cpp)
+add_executable(Tp4-drawSphere ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+src/tp4/mainSphere.cpp)
+add_executable(Tp5-drawVoxelSphere ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+src/tp5/voxel.cpp)
+add_executable(Tp5-drawVoxelCylinder ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+  src/tp5/mainCylinder.cpp)
+add_executable(Tp5-drawIntercept ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+  src/tp5/mainIntersect.cpp)
+add_executable(Tp5-drawDivide ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+  src/tp5/mainDivide.cpp)
+add_executable(Tp5-drawUnions ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+  src/tp5/mainUnion.cpp)
+add_executable(Tp6 ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} ${MESHING_FILES}
+ src/tp6/mainOffReader.cpp)
+add_executable(Tp7-Sphere ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7Sphere.cpp)
+add_executable(Tp7-Cylinder ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+ ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7Cylinder.cpp)
+add_executable(Tp7-Gaussian ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+ ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7GaussianSphere.cpp)
+add_executable(Tp7-Active-Edges ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+ ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7Cylinder-active-edges.cpp)
+add_executable(Tp7-Sphere-Active-Edges ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+ ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7Sphere-active-edges.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -133,4 +155,8 @@ target_link_libraries(Tp5-drawIntercept ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp5-drawDivide ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp5-drawUnions ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp6 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
-target_link_libraries(Tp7 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp7-Sphere ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp7-Cylinder ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp7-Gaussian ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp7-Active-Edges ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp7-Sphere-Active-Edges ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )

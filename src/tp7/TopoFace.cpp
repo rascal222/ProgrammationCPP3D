@@ -35,16 +35,14 @@ prog_3D::Vector TopoFace::getNormal()
 std::vector<TopoPoint*> TopoFace::getVertices()
 {
     std::vector<TopoPoint*> p;
-    //TODO REMOVE DUPLICATE
     p.push_back(edges.at(0)->getPoints().at(0));
     p.push_back(edges.at(0)->getPoints().at(1));
     p.push_back(edges.at(1)->getPoints().at(0));
     p.push_back(edges.at(1)->getPoints().at(1));
     p.push_back(edges.at(2)->getPoints().at(0));
     p.push_back(edges.at(2)->getPoints().at(1));
-
-   // std::sort(p.begin(),p.end());
-    //auto last = std::unique(p.begin(),p.end());
-    //p.erase(last,p.end());
+    std::sort(p.begin(),p.end());
+    auto last = std::unique(p.begin(),p.end());
+    p.erase(last,p.end());
     return p;
 }

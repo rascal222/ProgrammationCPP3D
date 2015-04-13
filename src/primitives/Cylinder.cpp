@@ -94,4 +94,12 @@ namespace prog_3D {
 		double powR = pow(rayon, 2);
 		return minus - powR;
 	}
+
+	void Cylinder::setMeridians(int meridians) {
+		this->meridians = meridians;
+	}
+
+	int Cylinder::getMeridians() const {
+		return meridians;
+	}
 }

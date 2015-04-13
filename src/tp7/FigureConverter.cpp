@@ -117,7 +117,7 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
     idTri.clear();
     std::cout << "[DONE] SOUTH POLE"<<std::endl;
 
-    for(unsigned int i=0;i<max_meridians;++i)
+    for(unsigned int i = 0;i < max_meridians; ++i)
     {
         for (unsigned int k = 0; k < max_parallels; ++k)
         {
@@ -125,8 +125,38 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
 //            glPoint(matrix.at(k).at((i+1)));
 
             std::cout << "[DONE] INNER 0"<<std::endl;
-            std::cout <<  k * (max_meridians) +  i << std::endl;
-            idTri.push_back( k *(max_meridians) + i);
+            idTri.push_back( k *max_meridians + i + 1);
+            std::cout << "[DONE] INNER 1"<<std::endl;
+
+            if(idTri.size()==3)
+            {
+                prog_3D::IdTriangle tri(idTri.at(0),idTri.at(1),idTri.at(2));
+                m.idTriangles.push_back(tri);
+                idTri.erase(idTri.begin());//Remove first
+            }
+
+            std::cout << "[DONE] INNER 2"<<std::endl;
+            idTri.push_back( k *max_meridians + i+2);
+
+
+            std::cout << "[DONE] INNER 3"<<std::endl;
+            if(idTri.size()==3)
+            {
+                prog_3D::IdTriangle tri(idTri.at(0),idTri.at(1),idTri.at(2));
+                idTri.erase(idTri.begin());//Remove first
+            }
+        }
+        idTri.clear();
+    }
+    std::cout << "[DONE] INNER"<<std::endl;
+    idTri.clear();
+    //TODO INVERSION DES FACES
+    for(unsigned int i = 0;i < max_meridians; ++i)
+    {
+        for (unsigned int k = 0; k < max_parallels; ++k)
+        {
+            std::cout << "[DONE] INNER 0"<<std::endl;
+            idTri.push_back( (k) *max_meridians + i + 1);
 
             std::cout << "[DONE] INNER 1"<<std::endl;
 
@@ -138,30 +168,18 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
             }
 
             std::cout << "[DONE] INNER 2"<<std::endl;
-//            prog_3D::glPoint(m.points.at(offset+i));
-            idTri.push_back( k * (max_meridians) + (i+1));
-            std::cout <<  k * (max_meridians) + (i+1 )<< std::endl;
+            idTri.push_back( (k+1) *max_meridians + i + 0);
 
 
             std::cout << "[DONE] INNER 3"<<std::endl;
             if(idTri.size()==3)
             {
                 prog_3D::IdTriangle tri(idTri.at(0),idTri.at(1),idTri.at(2));
-                m.idTriangles.push_back(tri);
                 idTri.erase(idTri.begin());//Remove first
             }
         }
+        idTri.clear();
     }
-    std::cout << "[DONE] INNER"<<std::endl;
 
-    /*
-    glBegin(GL_TRIANGLE_STRIP);
-    for (unsigned int k = 1; k < matrix.size()-1; ++k)
-    {
-        glPoint(matrix.at(k).at(matrix.at(1).size()-1));
-        glPoint(matrix.at(k).at((0)));
-    }
-    glEnd();
-    */
     return m;
 }

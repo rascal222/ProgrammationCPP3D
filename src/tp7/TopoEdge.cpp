@@ -24,8 +24,6 @@ TopoEdge::~TopoEdge() {
 
 bool TopoEdge::havePoints(TopoPoint* p1, TopoPoint* p2) const
 {
-    std::cout << points[0] << p1 << ";" << points[1] << p2 << std::endl;
-
     return points[0] == p1 && points[1] == p2;
 }
 
@@ -33,4 +31,11 @@ bool TopoEdge::havePoints(TopoPoint* p1, TopoPoint* p2) const
 void TopoEdge::addFace(TopoFace* face)
 {
     faces.push_back(face);
+}
+
+bool TopoEdge::isActiveEdge(double threshold,bool showSideOne) {
+    if(getFaces().size()>=2)
+        return TopoFace::computeDihedralAngle(getFaces().at(0),getFaces().at(1))>=threshold;
+    else
+        return showSideOne;
 }

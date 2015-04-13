@@ -24,6 +24,10 @@ namespace prog_3D
         virtual double equation(const Point &point);
 
         std::vector<std::vector<Point>> compute();
+
+        void setMeridians(int meridians);
+
+        int getMeridians() const;
     };
 }
 

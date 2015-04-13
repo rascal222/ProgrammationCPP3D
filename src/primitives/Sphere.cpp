@@ -28,6 +28,7 @@ namespace prog_3D {
 		draw(false);
 	}
 
+
 	std::vector<std::vector<Point>> Sphere::compute()
 	{
 		std::vector<std::vector<Point>> matrix;
@@ -78,6 +79,7 @@ namespace prog_3D {
 
 		glColor3f(1.0f,1.0f,1.0f);
 		//NORTH POLE
+		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 		glBegin(GL_TRIANGLE_FAN);
 		glPoint(matrix.at(0).at(0));
 		for(int k=0;k<matrix.at(1).size();++k)

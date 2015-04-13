@@ -49,22 +49,19 @@ float deltaMove = 0;
 EulerCamera eulerCamera(0, 0, 0, 5);
 int xOrigin = -1;
 int yOrigin = -1;
+double threshold=0.0;
 
-//Ortho variables
-double left2 = -WIDTH/2;
-double right2 = WIDTH/2;
-double up = HEIGHT/2;
-double down = -HEIGHT/2;
-double near = -2.0;
-double far = 100;
-double meanX=0;
-double meanY=0;
-double meanZ=0;
-double borderSize=WIDTH/2;
-
-
+bool showSideOne = false;
+bool debug = false;
 AutoCenter autoMeshCentering;
+Point pK(0, 0, 0);
+Mesh m;
+std::string file("bunny.off");
+TopoMesh* tm = nullptr;
 
+unsigned int* elements= nullptr;
+float* points=nullptr;
+float* normal=nullptr;
 
 void mouseButton(int button, int state, int x, int y) {
     // only start motion if the left button is pressed
@@ -155,8 +152,14 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
             autoMeshCentering.setFactor(autoMeshCentering.getFactor()-0.5);
             break; // --
         case 97: // a
+            debug = !debug;
+            break;
         case 122: // z
+            threshold+=0.2;
+            break;
         case 101: // e
+            showSideOne = !showSideOne;
+            break;
         case 114: // r
         case 111: // o
         case 108: // l
@@ -164,6 +167,8 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
         case 109: // k (droite)
         case 113: // q
         case 115: // s
+            threshold-=0.2;
+            break;
         default:
             printf ("La touche %c (%d) n´est pas active.\n", key,key);
             break;
@@ -173,9 +178,7 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
 
 
 
-Point pK(0, 0, 0);
-Mesh m;
-std::string file("bunny.off");
+
 void
 initLightAndMaterial(void)
 {
@@ -184,7 +187,7 @@ initLightAndMaterial(void)
     static float diffuse[] =
             {0.5, 1.0, 1.0, 1.0};
     static float position[] =
-            {(float)borderSize,(float)borderSize,(float)borderSize, 0.0};
+            {(float)autoMeshCentering.getCachedBorderSize(),(float)autoMeshCentering.getCachedBorderSize(),(float)autoMeshCentering.getCachedBorderSize(), 0.0};
 
     static float front_mat_shininess[] =
             {60.0};
@@ -223,18 +226,6 @@ initLightAndMaterial(void)
     glShadeModel(GL_SMOOTH);
 }
 
-void lighting() {
-    static int LightPos[4] = {0, 4, 3, 1};
-    static int MatSpec[4] = {1, 1, 1, 1};
-    // Clear Color and Depth Buffers
-    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
-    static float LightDif[4] = {.5f, .5f, 1.f, 1.f};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
-    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
-    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
-}
-
 
 int main(int argc, char **argv)
 {
@@ -242,14 +233,13 @@ int main(int argc, char **argv)
 
     if(argc==2)
     {
-        file.clear();
-        file.append(argv[1]);
+        threshold = atof(argv[2]);
     }
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100,100);
     glutInitWindowSize(WIDTH,HEIGHT);
-    glutCreateWindow("TP6");
+    glutCreateWindow("TP7 - Cylinder");
     initGL();
     //initLightAndMaterial();
     init_scene();
@@ -305,19 +295,18 @@ GLvoid initGL()
 
 
 
+
 void init_scene()
 {
-    OffManipulator off;
     prog_3D::Point p = prog_3D::Point::Origin;
     prog_3D::Cylinder c(10.0f,30,30,p);
     prog_3D::Sphere s(20.0f,8,8,p);
-//    m = FigureConverter::cylinderToMesh(c);
-    m = FigureConverter::sphereToMesh(s);
+    m = FigureConverter::cylinderToMesh(c);
+    tm = new TopoMesh(m);
     //init
-    autoMeshCentering.setM(m);
+    autoMeshCentering.setMesh(m);
     autoMeshCentering.computeBetterSize();
     autoMeshCentering.setFactor(2.0);
-    borderSize=autoMeshCentering.getCachedBorderSize();
     eulerCamera.setXTarget(autoMeshCentering.getCenter().getX());
     eulerCamera.setYTarget(autoMeshCentering.getCenter().getY());
     eulerCamera.setZTarget(autoMeshCentering.getCenter().getZ());
@@ -332,7 +321,6 @@ GLvoid window_display()
     //Setting projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //TODO LINK THIS IN FUNCTION OF MESH
     autoMeshCentering.placeOrtho();
     //Setting Model viewer
     glMatrixMode(GL_MODELVIEW);
@@ -380,48 +368,47 @@ void reper() {
 
 
 
-unsigned int* elements= nullptr;
-float* points=nullptr;
-float* normal=nullptr;
-
 void renderScene()
 {
     // Set the camera
     glColor3f(1.0f,1.0f,1.0f);
-
-    for(unsigned long i=0;i<m.idTriangles.size();++i)
+  for(unsigned long i=0;i<m.idTriangles.size();++i)
     {
-        prog_3D::wireframeTriangle
-                (
-                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
-                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),
-                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(2))
-                );
+        if(debug) {
+            glDisable(GL_LIGHTING);
+            prog_3D::wireframeTriangle
+                    (
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(0)),
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(1)),
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(2))
+                    );
+        } else
+        {
+            glEnable(GL_LIGHTING);
+            prog_3D::fillTriangle
+                    (
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(0)),
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(1)),
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(2))
+                    );
+        }
     }
 
-    if(elements== nullptr)
-    {
-        elements = m.getIdVector();//Return triangle indexes
-        points = m.getPointVector();//Return 3coordinates points
-        normal = m.getNormalVector();//Return 3coordinates normals
-    }
-    /*
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(3, GL_FLOAT,0,points);
-    glNormalPointer (GL_FLOAT, 0,normal);
- //   glDrawElements(GL_TRIANGLES,3*m.idTriangles.size(),GL_UNSIGNED_INT​,elements);
-    glDrawElements(GL_TRIANGLES,3 * m.idTriangles.size(),GL_UNSIGNED_INT,elements);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    int vao;
-    glGenVertexArrays(1,&vao)
-    glbindVertexArray(&vao);
-    */
+    glDisable(GL_LIGHTING);
     glColor3f(1.0f,.0f,.0f);
-    drawPoint(Point::Origin);
-    glColor3f(.0f,1.0f,.0f);
-    glColor3f(.0f,1.0f,1.0f);
+
+    for(TopoEdge* edge : tm->getEdges()) {
+        if (edge->isActiveEdge(threshold,showSideOne)) {
+            Point p1 = *(edge->getPoints().at(0));
+            drawPoint(p1);
+            Point p2 = *edge->getPoints().at(1);
+            drawPoint(p2);
+
+            drawLine(p1,p2);
+        }
+    }
+    glLineWidth(1.0f);
+
 
     reper();
 

@@ -30,6 +30,8 @@ public:
     }
 
     void addFace(TopoFace* face);
+
+    virtual bool isActiveEdge(double threshold,bool showSideOne);
 };
 
 

@@ -26,7 +26,7 @@ public:
         return m;
     }
 
-    void setM(Mesh const &m) {
+    void setMesh(Mesh const &m) {
         AutoCenter::m = m;
     }
 

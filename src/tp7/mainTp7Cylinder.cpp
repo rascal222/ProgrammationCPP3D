@@ -1,13 +1,25 @@
+//
+// Created by sbeugnon on 30/03/15.
+//
+#include <string>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
-#include <GL/glut.h>
+
+#include "../core/Point.hpp"
+#include "../meshing/Mesh.hpp"
+#include "../primitives/Cylinder.hpp"
+#include "../primitives/Sphere.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-
+#include "FigureConverter.hpp"
 #include "../glWrappers/EulerCamera.hpp"
 
 #include "../meshing/Mesh.hpp"
 #include "../meshing/OffManipulator.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../meshing/AutoCenter.h"
+#include "TopoMesh.h"
 #include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -38,19 +50,7 @@ EulerCamera eulerCamera(0, 0, 0, 5);
 int xOrigin = -1;
 int yOrigin = -1;
 
-//Ortho variables
-double left2 = -WIDTH/2;
-double right2 = WIDTH/2;
-double up = HEIGHT/2;
-double down = -HEIGHT/2;
-double near = -2.0;
-double far = 100;
-double meanX=0;
-double meanY=0;
-double meanZ=0;
-double borderSize=WIDTH/2;
-
-
+bool debug = false;
 AutoCenter autoMeshCentering;
 
 
@@ -122,14 +122,17 @@ void window_special_key(int key, int x, int y) {
             //eulerCamera.setZTarget(eulerCamera.getZtarget()+0.01f);
             break;
         case GLUT_KEY_DOWN :
-           // eulerCamera.setZTarget(eulerCamera.getZtarget()-0.01f);
+            // eulerCamera.setZTarget(eulerCamera.getZtarget()-0.01f);
             break;
     }
     //glutPostRedisplay(); // just update here....
 }
 
 
-
+Point pK(0, 0, 0);
+Mesh m;
+prog_3D::Point p = prog_3D::Point::Origin;
+prog_3D::Cylinder c(10.0f,30,30,p);
 
 GLvoid window_normal_key(unsigned char key, int x, int y)
 {
@@ -143,8 +146,17 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
             autoMeshCentering.setFactor(autoMeshCentering.getFactor()-0.5);
             break; // --
         case 97: // a
+            debug = !debug;
+            break;
         case 122: // z
+            c.setMeridians(c.getMeridians() + 1);
+            m = FigureConverter::cylinderToMesh(c);
+            break;
         case 101: // e
+            if(c.getMeridians()-1 != 0)
+                c.setMeridians(c.getMeridians() - 1);
+            m = FigureConverter::cylinderToMesh(c);
+            break;
         case 114: // r
         case 111: // o
         case 108: // l
@@ -161,9 +173,7 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
 
 
 
-Point pK(0, 0, 0);
-Mesh m;
-std::string file("bunny.off");
+
 void
 initLightAndMaterial(void)
 {
@@ -171,21 +181,21 @@ initLightAndMaterial(void)
             {0.1, 0.1, 0.1, 1.0};
     static float diffuse[] =
             {0.5, 1.0, 1.0, 1.0};
-static float position[] =
-        {(float)borderSize,(float)borderSize,(float)borderSize, 0.0};
+    static float position[] =
+            {(float)autoMeshCentering.getCachedBorderSize(),(float)autoMeshCentering.getCachedBorderSize(),(float)autoMeshCentering.getCachedBorderSize(), 0.0};
 
-static float front_mat_shininess[] =
-        {60.0};
-static float front_mat_specular[] =
-        {0.2, 0.2, 0.2, 1.0};
-static float front_mat_diffuse[] =
-        {0.5, 0.5, 0.28, 1.0};
-static float back_mat_shininess[] =
-        {60.0};
-static float back_mat_specular[] =
-        {0.5, 0.5, 0.2, 1.0};
-static float back_mat_diffuse[] =
-        {1.0, 0.2, 0.2, 1.0};
+    static float front_mat_shininess[] =
+            {60.0};
+    static float front_mat_specular[] =
+            {0.2, 0.2, 0.2, 1.0};
+    static float front_mat_diffuse[] =
+            {0.5, 0.5, 0.28, 1.0};
+    static float back_mat_shininess[] =
+            {60.0};
+    static float back_mat_specular[] =
+            {0.5, 0.5, 0.2, 1.0};
+    static float back_mat_diffuse[] =
+            {1.0, 0.2, 0.2, 1.0};
 
     static float lmodel_ambient[] =
             {1.0, 1.0, 1.0, 1.0};
@@ -228,16 +238,12 @@ int main(int argc, char **argv)
 {
     // init GLUT and create window
 
-    if(argc==2)
-    {
-        file.clear();
-        file.append(argv[1]);
-    }
+
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100,100);
     glutInitWindowSize(WIDTH,HEIGHT);
-    glutCreateWindow("TP6");
+    glutCreateWindow("TP7 - Cylinder");
     initGL();
     //initLightAndMaterial();
     init_scene();
@@ -295,13 +301,14 @@ GLvoid initGL()
 
 void init_scene()
 {
-    OffManipulator off;
-    m = off.read(file);
+
+
+    m = FigureConverter::cylinderToMesh(c);
+//    m = FigureConverter::sphereToMesh(s);
     //init
     autoMeshCentering.setMesh(m);
     autoMeshCentering.computeBetterSize();
     autoMeshCentering.setFactor(2.0);
-    borderSize=autoMeshCentering.getCachedBorderSize();
     eulerCamera.setXTarget(autoMeshCentering.getCenter().getX());
     eulerCamera.setYTarget(autoMeshCentering.getCenter().getY());
     eulerCamera.setZTarget(autoMeshCentering.getCenter().getZ());
@@ -375,12 +382,24 @@ void renderScene()
 
     for(unsigned long i=0;i<m.idTriangles.size();++i)
     {
-        prog_3D::wireframeTriangle
-                (
-                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
-                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),
-                        m.points.at((unsigned long)m.idTriangles.at(i).getPointId(2))
-                );
+        if(debug) {
+            glDisable(GL_LIGHTING);
+            prog_3D::wireframeTriangle
+                    (
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(0)),
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(1)),
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(2))
+                    );
+        } else
+        {
+            glEnable(GL_LIGHTING);
+            prog_3D::fillTriangle
+                    (
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(0)),
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(1)),
+                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(2))
+                    );
+        }
     }
 
     if(elements== nullptr)
