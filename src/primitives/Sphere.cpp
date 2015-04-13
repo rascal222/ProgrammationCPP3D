@@ -36,7 +36,7 @@ namespace prog_3D {
 		std::vector<Point> vnorth;
 		std::vector<Point> vsouth;
 		vnorth.push_back(north.toCartesian());
-
+		matrix.push_back(vnorth);
 		for (int i = 1; i < meridians-1; ++i)
 		{
 			std::vector<Point> down;
@@ -50,6 +50,7 @@ namespace prog_3D {
 			matrix.push_back(down);
 		}
 		vsouth.push_back(south.toCartesian());
+		matrix.push_back(vsouth);
 		return matrix;
 	}
 

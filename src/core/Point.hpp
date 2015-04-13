@@ -61,6 +61,7 @@ namespace prog_3D {
     * \return the stream
     */
     std::ostream &operator<<( std::ostream &stream, const Point& point);
+    std::ostream &operator<<( std::ostream &stream, const Point* point);
 }
 
 #endif

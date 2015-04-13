@@ -95,6 +95,11 @@ namespace prog_3D {
 		stream <<"Point{"<< point.getX()<<";"<<point.getY()<<";"<<point.getZ()<<"}";
 		return stream;
 	}
+	std::ostream& operator<<( std::ostream &stream,const Point* point)
+	{
+		stream <<"Point{"<< point->getX()<<";"<<point->getY()<<";"<<point->getZ()<<"}";
+		return stream;
+	}
 
 	void Point::set(double x, double y, double z) {
 		setX(x);

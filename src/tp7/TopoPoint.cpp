@@ -6,22 +6,24 @@
 #include "TopoPoint.h"
 #include "TopoFace.h"
 #include "TopoEdge.h"
-
+#include <algorithm>
 
 TopoPoint::TopoPoint(prog_3D::Point& point) : prog_3D::Point(point)
 {
 
 }
 
-TopoPoint::~TopoPoint(){}
+TopoPoint::~TopoPoint()
+{
+}
 
 prog_3D::Vector TopoPoint::getNormal()
 {
     prog_3D::Vector v;
-    std::vector<TopoFace> faces = getFaces();
+    std::vector<TopoFace*> faces = getFaces();
     for(int i=0;i<faces.size();++i)
     {
-        prog_3D::Vector v2 = faces.at(i).getNormal();
+        prog_3D::Vector v2 = faces.at(i)->getNormal();
         v.setX(v.getX()+v2.getX());
         v.setY(v.getY()+v2.getY());
         v.setZ(v.getZ()+v2.getZ());
@@ -33,12 +35,13 @@ prog_3D::Vector TopoPoint::getNormal()
 
     return v;
 }
-std::vector<TopoFace> TopoPoint::getFaces()
+std::vector<TopoFace*> TopoPoint::getFaces() const
 {
-    std::vector<TopoFace> faces;
+    std::vector<TopoFace*> faces;
     //TODO DOUBLE FACE MUST REMOVE DUPLICATE
     for(int i=0;i<getEdges().size();++i)
-        faces.insert(faces.end(),getEdges().at(i).getFaces().begin(),getEdges().at(i).getFaces().end());
-
+        faces.insert(faces.end(),getEdges().at(i)->getFaces().begin(),getEdges().at(i)->getFaces().end());
+    std::sort( faces.begin(), faces.end() );
+    faces.erase( std::unique( faces.begin(), faces.end() ), faces.end() );
     return faces;
 }

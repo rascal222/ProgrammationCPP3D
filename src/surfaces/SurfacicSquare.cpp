@@ -1,6 +1,7 @@
 #include "SurfacicSquare.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
 #include <iostream>
+
 namespace prog_3D {
     SurfacicSquare::SurfacicSquare(int nbU, int nbV) : Surface(nbU,nbV){}
 

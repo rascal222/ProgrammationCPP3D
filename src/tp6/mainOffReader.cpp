@@ -7,6 +7,7 @@
 #include "../meshing/Mesh.hpp"
 #include "../meshing/OffManipulator.hpp"
 #include "../primitives/Sphere.hpp"
+#include "../meshing/AutoCenter.h"
 #include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -48,10 +49,9 @@ double meanX=0;
 double meanY=0;
 double meanZ=0;
 double borderSize=WIDTH/2;
-double factor = 1.5;
-Point center,meanCenter;
 
 
+AutoCenter autoMeshCentering;
 
 
 void mouseButton(int button, int state, int x, int y) {
@@ -137,10 +137,10 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
         case KEY_ESC:
             exit(1); break;
         case 43:
-            factor+=0.5;
+            autoMeshCentering.setFactor(autoMeshCentering.getFactor()+0.5);
             break; // +
         case 45:
-            factor-=0.5;
+            autoMeshCentering.setFactor(autoMeshCentering.getFactor()-0.5);
             break; // --
         case 97: // a
         case 122: // z
@@ -298,90 +298,15 @@ void init_scene()
     OffManipulator off;
     m = off.read(file);
     //init
-    //CREATE MESH_CAMERA_BASED
-    //TODO PUT THIS IN A CLASS FOR ANY MESH
-    left2 = m.points.at(0).getX();
-    right2 = m.points.at(0).getX();
-    up = m.points.at(0).getY();
-    down = m.points.at(0).getY();
-    far = m.points.at(0).getZ();
-    near = m.points.at(0).getZ();
-
-    //Compute Clipping plan
-    for(int i=1;i<m.points.size();++i)
-    {
-        //Most left negative
-        if(m.points.at(i).getX() < left2)
-            left2 = m.points.at(i).getX();
-
-        //Most right positive
-        if(m.points.at(i).getX() > right2)
-            right2 = m.points.at(i).getX();
-
-        if(m.points.at(i).getY() < down)
-            down = m.points.at(i).getY();
-
-        if(m.points.at(i).getY() > up)
-            up = m.points.at(i).getY();
-
-        if(m.points.at(i).getZ() < near)
-            near = m.points.at(i).getZ();
-
-        if(m.points.at(i).getZ() > far)
-            far = m.points.at(i).getZ();
-
-        //Compute mean center
-        meanX += m.points.at(i).getX();
-        meanY += m.points.at(i).getY();
-        meanZ += m.points.at(i).getZ();
-    }
-    //Give mean center
-    meanX/=m.points.size();
-    meanY/=m.points.size();
-    meanZ/=m.points.size();
-
-    meanCenter.set(meanX,meanY,meanZ);
-    //Center
-    double centerX =  (right2 + left2) / 2.0;
-    double centerY = (up + down) / 2.0;
-    double centerZ = (far + near) / 2.0;
-    Point k (centerX,centerY,centerZ);
-    center = k;
-    std::cout << "Mean coordinates : " << meanX <<";"<<meanY<<";"<<meanZ<< std::endl;
-    std::cout << "Center coordinates (Max+Min/2.0) : "<< centerX <<";"<<centerY<<";"<<centerZ<< std::endl;
-    std::cout << "minX : " << left2 << std::endl;
-    std::cout << "maxX : " << right2 << std::endl;
-    std::cout << "minY : " << down << std::endl;
-    std::cout << "maxY : " << up << std::endl;
-    std::cout << "near : " << near << std::endl;
-    std::cout << "far : " << far << std::endl;
-    std::cout << -(right2-left2)
-            << std::endl << (right2-left2) <<std::endl
-    << -(up-down) << std::endl << (up-down)<< std::endl <<-(far-near)<<std::endl<<(far-near)<<std::endl;
-    //Compute the border size of mesh in function of center
-    borderSize = 0;
-    Vector v(center.getX(),center.getY(),center.getZ());
-    v*=-1.0;
-    for(int i=0;i<m.points.size();++i)
-    {
-        Point p = m.points.at(i).translate(v);
-        if(fabs(p.getX()) > borderSize)
-            borderSize = fabs(p.getX());
-        if(fabs(p.getY())> borderSize)
-            borderSize = fabs(p.getY());
-        if(fabs(p.getZ())> borderSize)
-            borderSize = fabs(p.getZ());
-    }
-
-
-    std::cout << "bestSize" << borderSize << std::endl;
-    //Prepare Camera
-
-    eulerCamera.setXTarget(centerX);
-    eulerCamera.setYTarget(centerY);
-    eulerCamera.setZTarget(centerZ);
+    autoMeshCentering.setM(m);
+    autoMeshCentering.computeBetterSize();
+    autoMeshCentering.setFactor(2.0);
+    borderSize=autoMeshCentering.getCachedBorderSize();
+    eulerCamera.setXTarget(autoMeshCentering.getCenter().getX());
+    eulerCamera.setYTarget(autoMeshCentering.getCenter().getY());
+    eulerCamera.setZTarget(autoMeshCentering.getCenter().getZ());
     eulerCamera.setYViewport(1);
-    eulerCamera.setDist(borderSize/2);
+    eulerCamera.setDist(autoMeshCentering.getCachedBorderSize()/2.0);
 }
 
 
@@ -392,7 +317,7 @@ GLvoid window_display()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     //TODO LINK THIS IN FUNCTION OF MESH
-    glOrtho(-factor*borderSize, factor*borderSize,-factor*borderSize,factor*borderSize,-factor*borderSize,factor*borderSize);
+    autoMeshCentering.placeOrtho();
     //Setting Model viewer
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -450,7 +375,7 @@ void renderScene()
 
     for(unsigned long i=0;i<m.idTriangles.size();++i)
     {
-        prog_3D::fillTriangle
+        prog_3D::wireframeTriangle
                 (
                         m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
                         m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),
@@ -480,11 +405,8 @@ void renderScene()
     glColor3f(1.0f,.0f,.0f);
     drawPoint(Point::Origin);
     glColor3f(.0f,1.0f,.0f);
-    drawPoint(meanCenter);
     glColor3f(.0f,1.0f,1.0f);
 
-
-    drawPoint(center);
     reper();
 
     glutSwapBuffers();

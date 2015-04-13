@@ -6,6 +6,7 @@
 #include "AdaptativeOctree.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
 
+
 void AdaptativeOctree::compute() {
     if (shape->isOnVoxelBorder(center)) {
         if (resolution > 1) {
