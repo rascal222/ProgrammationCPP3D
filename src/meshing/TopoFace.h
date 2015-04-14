@@ -17,7 +17,7 @@ private:
     std::vector<TopoEdge*> edges;
 public:
 
-    TopoFace(TopoEdge* t1,TopoEdge* t2, TopoEdge* t3);
+    TopoFace(TopoEdge* t1,TopoEdge* t2, TopoEdge* t3,prog_3D::Vector normal);
     virtual ~TopoFace();
 
     virtual std::vector<TopoEdge*>& getEdges(){ return edges; }
@@ -26,13 +26,22 @@ public:
 
     virtual std::vector<TopoPoint*> getVertices();
 
+    virtual std::vector<TopoFace*> getNeighbours();
+
+    virtual prog_3D::Point getCenter();
+
 
     static double computeDihedralAngle(TopoFace* face1, TopoFace* face2)
     {
         prog_3D::Vector n1 = face1->getNormal();
         prog_3D::Vector n2 = face2->getNormal();
-        return fabs(n1.getAngle(n2));
+        prog_3D::Vector cross = n1.cross(n2);
+      //  cross.normalize();
+//        return fabs(atan2(cross.scalar(n2),n1.scalar(n2)));
+        return n1.getAngle(n2);
     }
+
+    prog_3D::Vector n;
 };
 
 

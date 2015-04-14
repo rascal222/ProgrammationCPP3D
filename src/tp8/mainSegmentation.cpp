@@ -1,26 +1,14 @@
-//
-// Created by sbeugnon on 30/03/15.
-//
-#include <string>
-#include <iostream>
-#include <vector>
-#include <algorithm>
 
-
-#include "../core/Point.hpp"
-#include "../meshing/Mesh.hpp"
-#include "../primitives/Cylinder.hpp"
-#include "../primitives/Sphere.hpp"
+#include <GL/glut.h>
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "FigureConverter.hpp"
+
 #include "../glWrappers/EulerCamera.hpp"
 
 #include "../meshing/Mesh.hpp"
 #include "../meshing/OffManipulator.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../meshing/AutoCenter.h"
-#include "TopoMesh.h"
-#include "../meshing/FigureConverter.hpp"
+#include "../meshing/TopoMesh.h"
 #include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -51,9 +39,16 @@ EulerCamera eulerCamera(0, 0, 0, 5);
 int xOrigin = -1;
 int yOrigin = -1;
 
-bool debug = false;
-AutoCenter autoMeshCentering;
 
+bool debug = false;
+bool showNormal = false;
+double threshold = 90.0f;
+bool showTest = false;
+bool showOneFace = false;
+
+
+AutoCenter autoMeshCentering;
+TopoMesh* tm = nullptr;
 
 void mouseButton(int button, int state, int x, int y) {
     // only start motion if the left button is pressed
@@ -130,16 +125,14 @@ void window_special_key(int key, int x, int y) {
 }
 
 
-Point pK(0, 0, 0);
-Mesh m;
-prog_3D::Point p = prog_3D::Point::Origin;
-prog_3D::Cylinder c(10.0f,30,30,p);
+
+int cursor = 0;
 
 GLvoid window_normal_key(unsigned char key, int x, int y)
 {
     switch (key) {
         case KEY_ESC:
-            exit(1); break;
+            exit(1);
         case 43:
             autoMeshCentering.setFactor(autoMeshCentering.getFactor()+0.5);
             break; // +
@@ -150,21 +143,34 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
             debug = !debug;
             break;
         case 122: // z
-            c.setMeridians(c.getMeridians() + 1);
-            m = FigureConverter::cylinderToMesh(c);
+           // threshold+=10;
+           // std::cout << "Threshold " << threshold << std::endl;
             break;
+
         case 101: // e
-            if(c.getMeridians()-1 != 0)
-                c.setMeridians(c.getMeridians() - 1);
-            m = FigureConverter::cylinderToMesh(c);
+//            showSideOne=!showSideOne;
             break;
         case 114: // r
+            showNormal= !showNormal;
+            std::cout <<"show Normal : " << ((showNormal)?"On":"Off")<<std::endl;
+            break;
         case 111: // o
+            cursor++;
+            break;
         case 108: // l
+            if(cursor>0)
+                cursor--;
+            break;
         case 107: // k
+//            showTest = !showTest;
+            break;
         case 109: // k (droite)
         case 113: // q
         case 115: // s
+//            threshold-=10;
+//            std::cout << "Threshold " << threshold << std::endl;
+
+            break;
         default:
             printf ("La touche %c (%d) n´est pas active.\n", key,key);
             break;
@@ -173,8 +179,9 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
 }
 
 
-
-
+Point pK(0, 0, 0);
+Mesh m;
+std::string file("bunny.off");
 void
 initLightAndMaterial(void)
 {
@@ -183,16 +190,10 @@ initLightAndMaterial(void)
     static float diffuse[] =
             {0.5, 1.0, 1.0, 1.0};
     static float position[] =
-            {(float)autoMeshCentering.getCachedBorderSize(),
-             (float)autoMeshCentering.getCachedBorderSize(),
-             (float)autoMeshCentering.getCachedBorderSize(), 0};
-//    static float position[] =
-//            {(float)0,
-//             (float)0,
-//             (float)0, 0};
+            {(float)autoMeshCentering.getCachedBorderSize(),(float)autoMeshCentering.getCachedBorderSize(),(float)autoMeshCentering.getCachedBorderSize(), 0.0};
 
     static float front_mat_shininess[] =
-            {30.0};
+            {60.0};
     static float front_mat_specular[] =
             {0.2, 0.2, 0.2, 1.0};
     static float front_mat_diffuse[] =
@@ -228,29 +229,25 @@ initLightAndMaterial(void)
     glShadeModel(GL_SMOOTH);
 }
 
-void lighting() {
-    static int LightPos[4] = {0, 4, 3, 1};
-    static int MatSpec[4] = {1, 1, 1, 1};
-    // Clear Color and Depth Buffers
-    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
-    static float LightDif[4] = {.5f, .5f, 1.f, 1.f};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
-    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
-    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
-}
-
 
 int main(int argc, char **argv)
 {
     // init GLUT and create window
 
-
+    if(argc>=2)
+    {
+        file.clear();
+        file.append(argv[1]);
+        if(argc>2)
+        {
+            threshold = atof(argv[2]);
+        }
+    }
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100,100);
     glutInitWindowSize(WIDTH,HEIGHT);
-    glutCreateWindow("TP7 - Cylinder");
+    glutCreateWindow("TP8");
     initGL();
     //initLightAndMaterial();
     init_scene();
@@ -308,10 +305,37 @@ GLvoid initGL()
 
 void init_scene()
 {
+    OffManipulator off;
+    m = off.read(file);
+    tm =  new TopoMesh(m);
+    int* tab = tm->giveNeighboringFaceTab();
+    //TODO DO SOME EXPANSION
+
+    int* area = new int[tm->getFaces().size()];
+    for(int i=0;i<tm->getFaces().size();++i)
+        area[i]=i;
+
+    for(int i=0;i<tm->getFaces().size();++i)
+    {
+        for(int j=0;j<3;++j)
+        {
+            if(tab[i*3+j]!=-1)
+            {
+                if(! (TopoFace::computeDihedralAngle(tm->getFaces().at(i),tm->getFaces().at(tab[i*3+j]))>=threshold) )
+                {
+                    //UnActive Edge
+                    int id = area[i];
+                    for(int k=0;k<tm->getFaces().size();++k)
+                    {
+                        if(area[k]==id)
+                            area[k] = area[tab[i*3+j]];
+                    }
+                }
+            }
+        }
+    }
 
 
-    m = FigureConverter::cylinderToMesh(c);
-//    m = FigureConverter::sphereToMesh(s);
     //init
     autoMeshCentering.setMesh(m);
     autoMeshCentering.computeBetterSize();
@@ -377,11 +401,6 @@ void reper() {
 }
 
 
-
-unsigned int* elements= nullptr;
-float* points=nullptr;
-float* normal=nullptr;
-
 void renderScene()
 {
     // Set the camera
@@ -409,12 +428,23 @@ void renderScene()
         }
     }
 
-    if(elements== nullptr)
+    glColor3f(1.0f,.0f,.0f);
+    for(TopoEdge* edge : tm->getEdges())
     {
-        elements = m.getIdVector();//Return triangle indexes
-        points = m.getPointVector();//Return 3coordinates points
-        normal = m.getNormalVector();//Return 3coordinates normals
+        if(edge->isActiveEdge(threshold,showOneFace))
+        {
+            drawPoint(*edge->getPoints().at(0));
+            drawPoint(*edge->getPoints().at(1));
+            drawLine(*edge->getPoints().at(0),*edge->getPoints().at(1));
+        }
     }
+
+    if(showNormal) {
+        for (auto face : tm->getFaces()) {
+            drawLine(face->getCenter(), face->getNormal());
+        }
+    }
+    glColor3f(1.0f,1.0f,1.0f);
     reper();
 
     glutSwapBuffers();

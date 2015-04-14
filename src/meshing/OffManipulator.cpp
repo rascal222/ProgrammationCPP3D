@@ -22,11 +22,12 @@ Mesh OffManipulator::read(std::string name)
     }
     std::string header;
     std::getline(input,header);
-    if(header.compare("OFF")!=0)
-    {
-        std::cout << "Not Off Format File"<<std::endl;
-        exit(2);
-    }
+//    std::cout << header << std::endl;
+//    if(header.compare("OFF")!=0)
+//    {
+//        std::cout << "Not Off Format File"<<std::endl;
+//        exit(2);
+//    }
 
     std::string values;
     std::getline(input,values);
@@ -79,7 +80,7 @@ Mesh OffManipulator::read(std::string name)
         m.points.push_back(p);
     }
 
-    for(int i=0;i<triangleNb-1;++i)
+    for(int i=0;i<triangleNb;++i)
     {
         values.clear();
         ss.clear();

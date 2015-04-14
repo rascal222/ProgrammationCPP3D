@@ -86,21 +86,17 @@ src/meshing/Mesh.cpp
 src/meshing/Mesh.hpp
 src/meshing/AutoCenter.h
 src/meshing/AutoCenter.cpp
+src/meshing/FigureConverter.hpp
+src/meshing/FigureConverter.cpp
+src/meshing/TopoEdge.cpp
+src/meshing/TopoEdge.h
+src/meshing/TopoMesh.h
+src/meshing/TopoMesh.cpp
+src/meshing/TopoFace.h
+src/meshing/TopoFace.cpp
+src/meshing/TopoPoint.cpp
+src/meshing/TopoPoint.h
 )
-
-set(TP7_FILES
-src/tp7/FigureConverter.hpp
-src/tp7/FigureConverter.cpp
-src/tp7/TopoEdge.cpp
-src/tp7/TopoEdge.h
-src/tp7/TopoMesh.h
-src/tp7/TopoMesh.cpp
-src/tp7/TopoFace.h
-src/tp7/TopoFace.cpp
-src/tp7/TopoPoint.cpp
-src/tp7/TopoPoint.h
-)
-
 
 add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRAPPER_FILES}
 src/tp/TP_OPENGL.cpp)
@@ -129,16 +125,17 @@ add_executable(Tp5-drawUnions ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SUR
 add_executable(Tp6 ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES} ${MESHING_FILES}
  src/tp6/mainOffReader.cpp)
 add_executable(Tp7-Sphere ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
-${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7Sphere.cpp)
+${MESHING_FILES}  src/tp7/mainTp7Sphere.cpp)
 add_executable(Tp7-Cylinder ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
- ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7Cylinder.cpp)
+ ${MESHING_FILES}  src/tp7/mainTp7Cylinder.cpp)
 add_executable(Tp7-Gaussian ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
- ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7GaussianSphere.cpp)
+ ${MESHING_FILES}  src/tp7/mainTp7GaussianSphere.cpp)
 add_executable(Tp7-Active-Edges ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
- ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7Cylinder-active-edges.cpp)
+ ${MESHING_FILES}  src/tp7/mainTp7Cylinder-active-edges.cpp)
 add_executable(Tp7-Sphere-Active-Edges ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
- ${MESHING_FILES} ${TP7_FILES} src/tp7/mainTp7Sphere-active-edges.cpp)
-
+ ${MESHING_FILES} src/tp7/mainTp7Sphere-active-edges.cpp)
+add_executable(Tp8-Segmentation ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+ ${MESHING_FILES} src/tp8/mainSegmentation.cpp)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )

@@ -12,15 +12,12 @@
 #include "../primitives/Cylinder.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "FigureConverter.hpp"
 #include "../glWrappers/EulerCamera.hpp"
 
-#include "../meshing/Mesh.hpp"
 #include "../meshing/OffManipulator.hpp"
-#include "../primitives/Sphere.hpp"
 #include "../meshing/AutoCenter.h"
-#include "TopoMesh.h"
-#include <string>
+#include "../meshing/FigureConverter.hpp"
+#include "../meshing/TopoMesh.h"
 // Définition de la taille de la fenêtre
 #define WIDTH  480
 #define HEIGHT 480
@@ -303,11 +300,11 @@ void init_scene()
 	prog_3D::Point p = prog_3D::Point::Origin;
 	prog_3D::Cylinder c(10.0f,30,30,p);
 	prog_3D::Sphere s(1.0f,12,12,p);
-	prog_3D::Sphere s2(10.0f,12,12,p);
+	prog_3D::Sphere s2(10.0f,50,50,p);
 //    m = FigureConverter::cylinderToMesh(c);
 	m = FigureConverter::sphereToMesh(s);
 	//init
-	Mesh m2 = FigureConverter::sphereToMesh(s2);
+	Mesh m2 = FigureConverter::cylinderToMesh(c);
 	TopoMesh tm(m2);
 	ps = tm.computeGaussianPointCloud();
 	autoMeshCentering.setMesh(m);

@@ -12,14 +12,13 @@
 #include "../primitives/Cylinder.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "FigureConverter.hpp"
 #include "../glWrappers/EulerCamera.hpp"
 
 #include "../meshing/Mesh.hpp"
 #include "../meshing/OffManipulator.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../meshing/AutoCenter.h"
-#include "TopoMesh.h"
+#include "../meshing/FigureConverter.hpp"
 #include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -207,10 +206,10 @@ initLightAndMaterial(void)
     static float diffuse[] =
             {0.5, 1.0, 1.0, 1.0};
     static float position[] =
-            {(float)borderSize,(float)borderSize,(float)borderSize, 0.0};
+            {(float)borderSize*autoMeshCentering.getFactor(),(float)borderSize*autoMeshCentering.getFactor(),(float)borderSize, 0.0};
 
     static float front_mat_shininess[] =
-            {60.0};
+            {30.0};
     static float front_mat_specular[] =
             {0.2, 0.2, 0.2, 1.0};
     static float front_mat_diffuse[] =
@@ -244,18 +243,6 @@ initLightAndMaterial(void)
     glLightModelfv(GL_LIGHT_MODEL_TWO_SIDE, lmodel_twoside);
 
     glShadeModel(GL_SMOOTH);
-}
-
-void lighting() {
-    static int LightPos[4] = {0, 4, 3, 1};
-    static int MatSpec[4] = {1, 1, 1, 1};
-    // Clear Color and Depth Buffers
-    glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
-    static float LightDif[4] = {.5f, .5f, 1.f, 1.f};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDif);
-    glMaterialiv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpec);
-    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .01f);
 }
 
 
@@ -426,25 +413,6 @@ void renderScene()
         }
     }
 
-    if(elements== nullptr)
-    {
-        elements = m.getIdVector();//Return triangle indexes
-        points = m.getPointVector();//Return 3coordinates points
-        normal = m.getNormalVector();//Return 3coordinates normals
-    }
-    /*
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(3, GL_FLOAT,0,points);
-    glNormalPointer (GL_FLOAT, 0,normal);
- //   glDrawElements(GL_TRIANGLES,3*m.idTriangles.size(),GL_UNSIGNED_INT​,elements);
-    glDrawElements(GL_TRIANGLES,3 * m.idTriangles.size(),GL_UNSIGNED_INT,elements);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    int vao;
-    glGenVertexArrays(1,&vao)
-    glbindVertexArray(&vao);
-    */
     glColor3f(1.0f,.0f,.0f);
     drawPoint(Point::Origin);
     glColor3f(.0f,1.0f,.0f);

@@ -34,8 +34,12 @@ void TopoEdge::addFace(TopoFace* face)
 }
 
 bool TopoEdge::isActiveEdge(double threshold,bool showSideOne) {
-    if(getFaces().size()>=2)
-        return TopoFace::computeDihedralAngle(getFaces().at(0),getFaces().at(1))>=threshold;
+    if(getFaces().size()==2)
+    {
+        double rad = TopoFace::computeDihedralAngle(getFaces().at(0), getFaces().at(1));
+        double degree = rad  / M_PI * 180;
+        return  degree >= threshold;
+    }
     else
         return showSideOne;
 }

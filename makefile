@@ -34,8 +34,6 @@ OCTREE_OBJECTS = $(patsubst $(OCTREE_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_OCTREE))
 SRC_MESHING = $(wildcard $(MESHING_DIR)/*.cpp)
 MESHING_OBJECTS = $(patsubst $(MESHING_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_MESHING))
 
-SRC_TP7 = $(wildcard $(TP7_DIR)/*.cpp)
-TP7_OBJECTS = $(patsubst $(TP7_DIR)/%.cpp,$(BUILDDIR)/%.o,$(SRC_TP7))
 
 all:
 	g++-4.8 -std=c++11 src/tp/TP_OPENGL.cpp src/core/*.cpp -lGL -lglut -lGLU -lm
@@ -118,6 +116,27 @@ tp6/offReader: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_O
 	make dir
 	$(CC) $(F_FLAGS) $^ -o offReader.out $(L_FLAGS)
 
-tp7/TopoMeshing: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(TP7_OBJECTS)
+
+tp7/TopoCylinder: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(SOURCE_DIR)/tp7/mainTp7Cylinder.cpp
 	make dir
-	$(CC) $(F_FLAGS) $^ -o topo.out $(L_FLAGS)
+	$(CC) $(F_FLAGS) $^ -o topoCylinder.out $(L_FLAGS)
+
+tp7/TopoCylinderActiveEdge: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(SOURCE_DIR)/tp7/mainTp7Cylinder-active-edges.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o topoCylinderActiveEdge.out $(L_FLAGS)
+
+tp7/TopoSphere: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(SOURCE_DIR)/tp7/mainTp7Sphere.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o topoSphereActiveEdge.out $(L_FLAGS)
+
+tp7/TopoSphere: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(SOURCE_DIR)/tp7/mainTp7Sphere-active-edges.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o topoSphereActiveEdge.out $(L_FLAGS)
+
+tp7/TopoGaussianCylinder: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(SOURCE_DIR)/tp7/mainTp7GaussianSphere.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o topoGaussianCylinder.out $(L_FLAGS)
+
+tp8/SegmentationByActiveEdge: $(CORE_OBJECTS) $(SURFACE_OBJECTS) $(CURVE_OBJECTS) $(PRIMITIVE_OBJECTS) $(GLWRAPPERS_OBJECTS) $(OCTREE_OBJECTS) $(MESHING_OBJECTS) $(SOURCE_DIR)/tp8/mainSegmentation.cpp
+	make dir
+	$(CC) $(F_FLAGS) $^ -o tp8Segmentation.out $(L_FLAGS)

@@ -16,20 +16,22 @@ Mesh FigureConverter::cylinderToMesh(prog_3D::Cylinder& cylinder)
     std::vector<int> idTri;
     for(int i=0;i< offset;++i)
     {
-//
-//            prog_3D::glPoint(m.points.at(i));
+        //top
         idTri.push_back(i);
-        if(idTri.size()==3)
+        if(idTri.size() == 3)
         {
             prog_3D::IdTriangle tri(idTri.at(0),idTri.at(1),idTri.at(2));
             m.idTriangles.push_back(tri);
+
             idTri.erase(idTri.begin());//Remove first
         }
-//            prog_3D::glPoint(m.points.at(offset+i));
+
+        //down
         idTri.push_back(offset+i);
-        if(idTri.size()==3)
+
+        if(idTri.size() == 3)
         {
-            prog_3D::IdTriangle tri(idTri.at(0),idTri.at(1),idTri.at(2));
+            prog_3D::IdTriangle tri(idTri.at(2),idTri.at(1),idTri.at(0));
             m.idTriangles.push_back(tri);
             idTri.erase(idTri.begin());//Remove first
         }
@@ -41,7 +43,7 @@ Mesh FigureConverter::cylinderToMesh(prog_3D::Cylinder& cylinder)
     idTri.erase(idTri.begin());
 //        prog_3D::glPoint(offset);
     idTri.push_back(offset);
-    prog_3D::IdTriangle tri2(idTri.at(0),idTri.at(1),idTri.at(2));
+    prog_3D::IdTriangle tri2(idTri.at(2),idTri.at(1),idTri.at(0));
     m.idTriangles.push_back(tri2);
 
 
@@ -71,7 +73,7 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
         idTri.push_back(1+k);
         if(idTri.size()==3)
         {
-            prog_3D::IdTriangle tri(idTri.at(0),idTri.at(1),idTri.at(2));
+            prog_3D::IdTriangle tri(idTri.at(1),idTri.at(2),idTri.at(0));
             m.idTriangles.push_back(tri);
             int id = idTri.back();
             idTri.pop_back();
@@ -81,7 +83,7 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
     }
     {
         idTri.push_back(1);
-        prog_3D::IdTriangle tri(idTri.at(0), idTri.at(1), idTri.at(2));
+        prog_3D::IdTriangle tri(idTri.at(1), idTri.at(2), idTri.at(0));
         m.idTriangles.push_back(tri);
     }
     idTri.clear();
@@ -98,7 +100,7 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
         idTri.push_back(1 + (max_parallels-1) * max_meridians + k);
         if(idTri.size()==3)
         {
-            prog_3D::IdTriangle tri(idTri.at(0),idTri.at(1),idTri.at(2));
+            prog_3D::IdTriangle tri(idTri.at(2),idTri.at(1),idTri.at(0));
             m.idTriangles.push_back(tri);
             int id = idTri.back();
             idTri.pop_back();
@@ -109,7 +111,7 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
     }
     {
         idTri.push_back(1 + (max_parallels-1) * max_meridians );
-        prog_3D::IdTriangle tri(idTri.at(0), idTri.at(1), idTri.at(2));
+        prog_3D::IdTriangle tri(idTri.at(2), idTri.at(1), idTri.at(0));
         m.idTriangles.push_back(tri);
     }
 //    glPoint(matrix.at(matrix.size()-2).at(0));
@@ -130,7 +132,7 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
 
             if(idTri.size()==3)
             {
-                prog_3D::IdTriangle tri(idTri.at(0),idTri.at(1),idTri.at(2));
+                prog_3D::IdTriangle tri(idTri.at(2),idTri.at(1),idTri.at(0));
                 m.idTriangles.push_back(tri);
                 idTri.erase(idTri.begin());//Remove first
             }
@@ -150,6 +152,7 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
     }
     std::cout << "[DONE] INNER"<<std::endl;
     idTri.clear();
+
     //TODO INVERSION DES FACES
     for(unsigned int i = 0;i < max_meridians; ++i)
     {
@@ -180,6 +183,7 @@ Mesh FigureConverter::sphereToMesh(prog_3D::Sphere& sphere)
         }
         idTri.clear();
     }
+
 
     return m;
 }

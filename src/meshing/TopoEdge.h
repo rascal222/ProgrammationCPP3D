@@ -21,6 +21,11 @@ public:
     virtual const std::vector<TopoFace*>& getFaces() const{ return faces; };
     virtual const std::vector<TopoPoint*>& getPoints() const{ return points; };
 
+    virtual bool havePoint(TopoPoint* p1) const
+    {
+        return points[0] == p1 || points[1]==p1;
+    }
+
     virtual bool havePoints(TopoPoint* p1, TopoPoint* p2) const;
     virtual bool havePointsIgnoreOrder(TopoPoint* p1, TopoPoint* p2) const { return havePoints(p1,p2) || havePoints(p2,p1) ; }
 

@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "TopoMesh.h"
-
+#include <algorithm>
 
 TopoMesh::TopoMesh(Mesh & mesh)
 {
@@ -104,7 +104,10 @@ TopoMesh::TopoMesh(Mesh & mesh)
         std::cout <<"[DONE]" <<" Creating Edges for triangle "<<i << std::endl;
         //Face
         std::cout <<"[START]" <<" Creating Face for triangle "<<i << std::endl;
-        TopoFace* tf = new TopoFace(te12,te23,te13);
+        prog_3D::Vector v1(*tp1,*tp2);
+        prog_3D::Vector v2(*tp1,*tp3);
+        prog_3D::Vector n = v1.cross(v2);
+        TopoFace* tf = new TopoFace(te12,te23,te13,n);
 
         this->faces.push_back(tf);
         std::cout <<"[DONE]" <<" Creating Face for triangle "<<i << std::endl;
@@ -144,4 +147,28 @@ std::vector<prog_3D::Point> TopoMesh::computeGaussianPointCloud()
     }
 
     return vect;
+}
+
+int *TopoMesh::giveNeighboringFaceTab() {
+    int* tab = new int[faces.size()*3];
+    for(unsigned int i=0;i<faces.size();++i)
+    {
+        for(unsigned int k=0;k<3;++k)
+            tab[3 * i + k]=-1;
+
+
+        std::vector<TopoFace*> neigh = faces.at(i)->getNeighbours();
+        for(int k=0;k<neigh.size();++k)
+        {
+            if(k>2)
+            {
+                std::cerr<< "Face has "<< neigh.size() <<" neighbours !"<<std::endl;
+                break;
+            }
+            auto index = std::find_if(faces.begin(), faces.end(), [neigh,k](TopoFace* n){return n == neigh.at(k);});
+            if(index!= faces.end())
+                tab[3 * i + k] = index - faces.begin();
+        }
+    }
+    return tab;
 }

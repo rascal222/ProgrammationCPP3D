@@ -375,7 +375,7 @@ void renderScene()
 
     for(unsigned long i=0;i<m.idTriangles.size();++i)
     {
-        prog_3D::wireframeTriangle
+        prog_3D::fillTriangle
                 (
                         m.points.at((unsigned long)m.idTriangles.at(i).getPointId(0)),
                         m.points.at((unsigned long)m.idTriangles.at(i).getPointId(1)),

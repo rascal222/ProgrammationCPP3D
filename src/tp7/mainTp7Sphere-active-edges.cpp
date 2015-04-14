@@ -12,14 +12,16 @@
 #include "../primitives/Cylinder.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "FigureConverter.hpp"
 #include "../glWrappers/EulerCamera.hpp"
 
 #include "../meshing/Mesh.hpp"
 #include "../meshing/OffManipulator.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../meshing/AutoCenter.h"
-#include "TopoMesh.h"
+#include "../meshing/TopoPoint.h"
+#include "../meshing/TopoFace.h"
+#include "../meshing/TopoMesh.h"
+#include "../meshing/FigureConverter.hpp"
 #include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -42,6 +44,8 @@ GLvoid changeSize(GLsizei width, GLsizei height);
 GLvoid window_key(unsigned char key, int x, int y);
 GLvoid window_special_key(int key, int x, int y);
 
+void drawCurrentEdge();
+
 //Camera variables
 float deltaAngle1 = 0.0f;
 float deltaAngle2 = 0.0f;
@@ -52,7 +56,9 @@ int yOrigin = -1;
 double threshold=0.1;
 
 bool showSideOne = false;
+bool showNormal = false;
 bool debug = false;
+bool showTest = false;
 AutoCenter autoMeshCentering;
 
 
@@ -132,12 +138,13 @@ void window_special_key(int key, int x, int y) {
 
 
 
+int cursor = 0;
 
 GLvoid window_normal_key(unsigned char key, int x, int y)
 {
     switch (key) {
         case KEY_ESC:
-            exit(1); break;
+            exit(1);
         case 43:
             autoMeshCentering.setFactor(autoMeshCentering.getFactor()+0.5);
             break; // +
@@ -148,19 +155,32 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
             debug = !debug;
             break;
         case 122: // z
-            threshold+=0.2;
+            threshold+=10;
+            std::cout << "Threshold " << threshold << std::endl;
             break;
+
         case 101: // e
             showSideOne=!showSideOne;
             break;
         case 114: // r
+            showNormal= !showNormal;
+            break;
         case 111: // o
+            cursor++;
+            break;
         case 108: // l
+            if(cursor>0)
+                cursor--;
+            break;
         case 107: // k
+            showTest = !showTest;
+            break;
         case 109: // k (droite)
         case 113: // q
         case 115: // s
-            threshold-=0.2;
+            threshold-=10;
+            std::cout << "Threshold " << threshold << std::endl;
+
             break;
         default:
             printf ("La touche %c (%d) n´est pas active.\n", key,key);
@@ -398,8 +418,24 @@ void renderScene()
 
     glDisable(GL_LIGHTING);
     glColor3f(1.0f,.0f,.0f);
+    int cpt = 0;
     for(TopoEdge* edge : tm->getEdges()) {
-        if (edge->isActiveEdge(threshold,showSideOne)) {
+
+
+
+        if (edge->isActiveEdge(threshold,showSideOne))
+        {
+            if(cursor == cpt) {
+
+                if(edge->getFaces().size()==1 && showSideOne) {
+                          std::cout << cpt << " is active because we show edge with one face " << std::endl;
+                }
+                else
+                {
+                    double angle = TopoFace::computeDihedralAngle(edge->getFaces().at(0),edge->getFaces().at(1));
+                    std::cout << cpt << " is active with a angle "<< angle/M_PI * 180 << std::endl;
+                }
+            }
             Point p1 = *(edge->getPoints().at(0));
             drawPoint(p1);
             Point p2 = *edge->getPoints().at(1);
@@ -407,10 +443,40 @@ void renderScene()
 
             drawLine(p1,p2);
         }
+
+        drawCurrentEdge();
+
+
+        cpt++;
+    }
+
+    if(showNormal) {
+        for (auto face : tm->getFaces()) {
+            drawLine(face->getCenter(), face->getNormal());
+        }
     }
 
 
     reper();
 
     glutSwapBuffers();
+}
+
+void drawCurrentEdge() {
+    if(showTest && cursor<tm->getEdges().size())
+    {
+        TopoEdge* edge = tm->getEdges().at(cursor);
+        glColor3f(0.f, 1.0f, 0.f);
+        std::vector<TopoPoint*> tri1 = edge->getFaces().at(0)->getVertices();
+        fillTriangle(*tri1.at(0), *tri1.at(1), *tri1.at(2));
+        glColor3f(.0f, .0f, 1.0f);
+        if (edge->getFaces().size() == 2) {
+            tri1 = edge->getFaces().at(1)->getVertices();
+            fillTriangle(*tri1.at(0), *tri1.at(1), *tri1.at(2));
+        }
+        else
+        {
+            std::cout << "is alone !"<<std::endl;
+        }
+    }
 }
