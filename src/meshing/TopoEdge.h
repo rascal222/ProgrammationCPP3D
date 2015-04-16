@@ -18,8 +18,8 @@ public:
     TopoEdge(TopoPoint* tp1, TopoPoint* tp2);
 
     virtual ~TopoEdge();
-    virtual const std::vector<TopoFace*>& getFaces() const{ return faces; };
-    virtual const std::vector<TopoPoint*>& getPoints() const{ return points; };
+    virtual std::vector<TopoFace*>& getFaces() { return faces; };
+    virtual std::vector<TopoPoint*>& getPoints() { return points; };
 
     virtual bool havePoint(TopoPoint* p1) const
     {

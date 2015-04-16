@@ -172,3 +172,15 @@ int *TopoMesh::giveNeighboringFaceTab() {
     }
     return tab;
 }
+
+float *TopoMesh::getPointNormals() {
+    float* norms = new float[3*getPoints().size()];
+    for(int i=0;i<getPoints().size();++i)
+    {
+        prog_3D::Vector n = getPoints().at(i)->getNormal();
+        norms[i+0] =n.getX();
+        norms[i+1] =n.getY();
+        norms[i+2] =n.getZ();
+    }
+    return norms;
+}

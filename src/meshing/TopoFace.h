@@ -15,6 +15,7 @@ class TopoFace {
 
 private:
     std::vector<TopoEdge*> edges;
+    int region = -1;
 public:
 
     TopoFace(TopoEdge* t1,TopoEdge* t2, TopoEdge* t3,prog_3D::Vector normal);
@@ -30,6 +31,14 @@ public:
 
     virtual prog_3D::Point getCenter();
 
+
+    int getRegion() const {
+        return region;
+    }
+
+    void setRegion(int region) {
+        TopoFace::region = region;
+    }
 
     static double computeDihedralAngle(TopoFace* face1, TopoFace* face2)
     {

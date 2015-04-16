@@ -33,8 +33,10 @@ namespace prog_3D
     void wireframeSquare(Point &p, Point &p2, Point &p3, Point &p4);
 
     void fillTriangle(Point &p, Point &p2, Point &p3);
+    void fillTriangle(Point &p, Point &p2, Point &p3, Vector& n);
 
     void fillSquare(Point &p, Point &p2, Point &p3, Point &p4);
+
 }
 
 #endif

@@ -31,6 +31,7 @@ public:
     virtual std::vector<prog_3D::Point> computeGaussianPointCloud();
 
     int* giveNeighboringFaceTab();
+    float* getPointNormals();
 };
 
 

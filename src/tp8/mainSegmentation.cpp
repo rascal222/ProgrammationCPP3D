@@ -1,5 +1,11 @@
-
+#include <random>
 #include <GL/glut.h>
+#include <GL/glx.h>
+#include <GLES3/gl3.h>
+#include <GLES3/gl31.h>
+#include <GL/glext.h>
+#include <GLES3/gl3ext.h>
+
 #include "../glWrappers/GlCoreRendering.hpp"
 
 #include "../glWrappers/EulerCamera.hpp"
@@ -9,6 +15,7 @@
 #include "../primitives/Sphere.hpp"
 #include "../meshing/AutoCenter.h"
 #include "../meshing/TopoMesh.h"
+#include "../segmentation/Propagation.hpp"
 #include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -31,6 +38,12 @@ GLvoid changeSize(GLsizei width, GLsizei height);
 GLvoid window_key(unsigned char key, int x, int y);
 GLvoid window_special_key(int key, int x, int y);
 
+GLuint createVBO(const void* data, int dataSize, GLenum target=GL_ARRAY_BUFFER_ARB, GLenum usage=GL_STATIC_DRAW_ARB);
+void deleteVBO(const GLuint vboId){glDeleteBuffers(1, &vboId);}
+void cleanSharedMem();
+
+
+
 //Camera variables
 float deltaAngle1 = 0.0f;
 float deltaAngle2 = 0.0f;
@@ -42,13 +55,30 @@ int yOrigin = -1;
 
 bool debug = false;
 bool showNormal = false;
-double threshold = 90.0f;
+double threshold = 80.0f;
 bool showTest = false;
 bool showOneFace = false;
+bool showActive = false;
+bool vboUsed = false;
+
+
+GLubyte**color3i = nullptr;
+GLfloat* vertices = nullptr;
+GLfloat* normals = nullptr;
+GLfloat* colors = nullptr;
+GLuint* triangles = nullptr;
+
+
+GLuint vboId_1 = 0;                   // ID of VBO for vertex arrays
+GLuint vboId_normal = 0;
+GLuint vboId_color = 0;
+GLuint vboId_indices = 0;
+
 
 
 AutoCenter autoMeshCentering;
 TopoMesh* tm = nullptr;
+Propagation* p = nullptr;
 
 void mouseButton(int button, int state, int x, int y) {
     // only start motion if the left button is pressed
@@ -126,7 +156,7 @@ void window_special_key(int key, int x, int y) {
 
 
 
-int cursor = 0;
+unsigned long cursor = 0;
 
 GLvoid window_normal_key(unsigned char key, int x, int y)
 {
@@ -143,12 +173,16 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
             debug = !debug;
             break;
         case 122: // z
-           // threshold+=10;
-           // std::cout << "Threshold " << threshold << std::endl;
+            threshold+=10;
+            std::cout << "Threshold " << threshold << std::endl;
             break;
-
         case 101: // e
-//            showSideOne=!showSideOne;
+            showActive= !showActive;
+            break;
+        case 178://²
+            vboUsed= !vboUsed;
+            std::cout <<"show vbo : " << ((vboUsed)?"On":"Off")<<std::endl;
+
             break;
         case 114: // r
             showNormal= !showNormal;
@@ -162,14 +196,16 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
                 cursor--;
             break;
         case 107: // k
-//            showTest = !showTest;
+            showTest = !showTest;
             break;
-        case 109: // k (droite)
+        case 109: // m (droite)
+            p->propagationStep();
+            break;
         case 113: // q
+            break;
         case 115: // s
-//            threshold-=10;
-//            std::cout << "Threshold " << threshold << std::endl;
-
+            threshold-=10;
+            std::cout << "Threshold " << threshold << std::endl;
             break;
         default:
             printf ("La touche %c (%d) n´est pas active.\n", key,key);
@@ -241,6 +277,7 @@ int main(int argc, char **argv)
         if(argc>2)
         {
             threshold = atof(argv[2]);
+            std::cout << "THRESHOLD == " << threshold << std::endl;
         }
     }
     glutInit(&argc, argv);
@@ -309,32 +346,8 @@ void init_scene()
     m = off.read(file);
     tm =  new TopoMesh(m);
     int* tab = tm->giveNeighboringFaceTab();
-    //TODO DO SOME EXPANSION
-
-    int* area = new int[tm->getFaces().size()];
-    for(int i=0;i<tm->getFaces().size();++i)
-        area[i]=i;
-
-    for(int i=0;i<tm->getFaces().size();++i)
-    {
-        for(int j=0;j<3;++j)
-        {
-            if(tab[i*3+j]!=-1)
-            {
-                if(! (TopoFace::computeDihedralAngle(tm->getFaces().at(i),tm->getFaces().at(tab[i*3+j]))>=threshold) )
-                {
-                    //UnActive Edge
-                    int id = area[i];
-                    for(int k=0;k<tm->getFaces().size();++k)
-                    {
-                        if(area[k]==id)
-                            area[k] = area[tab[i*3+j]];
-                    }
-                }
-            }
-        }
-    }
-
+    p = new Propagation(tm,threshold);
+    // regionTab = p->propagation();
 
     //init
     autoMeshCentering.setMesh(m);
@@ -401,51 +414,209 @@ void reper() {
 }
 
 
-void renderScene()
+void fillTriangle(TopoFace* topoFace)
 {
+    std::vector<TopoPoint*> v = topoFace->getVertices();
+    prog_3D::Vector n = topoFace->getNormal();
+    prog_3D::fillTriangle(
+            *v.at(0),
+            *v.at(1),
+            *v.at(2),n);
+}
+
+void drawEdge(TopoEdge* edge)
+{
+    drawLine(*edge->getPoints().at(0),*edge->getPoints().at(1));
+}
+GLfloat CubeArray[48] = {
+        1.0f, 0.0f, 0.0f, -1.0f, 1.0f, -1.0f,
+        1.0f, 0.0f, 1.0f, -1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, -1.0f, -1.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 0.0f, 1.0f, 1.0f, -1.0f,
+        1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f
+};
+
+GLuint IndiceArray[36] = {
+        0,1,2,2,1,3,
+        4,5,6,6,5,7,
+        3,1,5,5,1,7,
+        0,2,6,6,2,4,
+        6,7,0,0,7,1,
+        2,3,4,4,3,5
+};
+
+bool first = true;
+void drawMeshByVBO()
+{
+    if (!debug) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    }
+    if(first)
+    {
+        first = false;
+        //Compute vertices
+        std::cout<<"init vbo"<<std::endl;
+        vertices = m.getPointVector();
+        normals = tm->getPointNormals();
+        triangles = m.getIdVector();
+        std::cout<<"end global init"<<std::endl;
+
+//        colors = new GLfloat[m.idTriangles.size()];
+//        for(int i=0;i<m.idTriangles.size();i+=3) {
+//            colors[i + 0] = (float) color3i[i][0] / 255.0f;
+//            colors[i + 1] = (float) color3i[i][1] / 255.0f;
+//            colors[i + 2] = (float) color3i[i][2] / 255.0f;
+//        }
+        std::cout<<"before vbo gen"<<std::endl;
+
+        glGenBuffers(1, &vboId_1);
+        glGenBuffers(1, &vboId_indices);
+        int bufferSize=0;
+        std::cout<<"before vbo bind"<<std::endl;
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboId_1);
+        glBufferData(GL_ARRAY_BUFFER, 3*sizeof(float)*2*tm->getPoints().size(), 0, GL_STREAM_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 3*sizeof(float)*tm->getPoints().size(), vertices);
+        glBufferSubData(GL_ARRAY_BUFFER, 3*sizeof(float)*tm->getPoints().size(), 3*sizeof(float)*tm->getPoints().size(), normals);
+        std::cout<<"after vbo bind array"<<std::endl;
+
+        glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
+        std::cout << "Vertex and Normal Array in VBO: " << bufferSize << " bytes ("<< tm->getPoints().size()*sizeof(float)*3*2 <<")\n";
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId_indices);                    // activate vbo id to use
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(unsigned int)*m.idTriangles.size(), triangles, GL_STATIC_DRAW); // upload data to video card
+        bufferSize=0;
+        glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
+        std::cout << "Indice Array in VBO: " << bufferSize << " bytes ("<< m.idTriangles.size()*sizeof(unsigned int)*3 <<")\n";
+        if(3*sizeof(unsigned int)*m.idTriangles.size() != bufferSize)
+        {
+            glDeleteBuffers(1, &vboId_indices);
+            glDeleteBuffers(1, &vboId_1);
+            vboId_indices = 0;
+            std::cout << bufferSize << std::endl;
+            std::cout << "[createVBO()] Data size is mismatch with input array\n";
+            exit(120);
+        }
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, vboId_1);
+    glNormalPointer(GL_FLOAT,0,(void*)(3*sizeof(float)*tm->getPoints().size()));
+    glVertexPointer(3, GL_FLOAT, 0,0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId_indices);
+    glIndexPointer(GL_UNSIGNED_INT,0,0);
+    // enable vertex arrays
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDrawElements( GL_TRIANGLES,3*m.idTriangles.size(), GL_UNSIGNED_INT, (GLuint*)0+0 );
+    glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void drawMeshByClassicMethod()
+{
+    if(!showTest) {
+        for (unsigned long i = 0; i < tm->getFaces().size(); ++i) {
+            glColor3ub(color3i[tm->getFaces().at(i)->getRegion()][0],
+                       color3i[tm->getFaces().at(i)->getRegion()][1],
+                       color3i[tm->getFaces().at(i)->getRegion()][2]);
+            if (!debug) {
+                fillTriangle(tm->getFaces().at(i));
+            }
+            else {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                fillTriangle(tm->getFaces().at(i));
+            }
+
+        }
+    }
+
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    if(showTest)
+    {
+        glColor3f(1.0f,1.0f,1.0f);
+        if(cursor < tm->getFaces().size())
+        {
+            TopoFace* face = tm->getFaces().at(cursor);
+            fillTriangle(face);
+            std::vector<TopoFace*> neigh = face->getNeighbours();
+            glColor3f(0.0f,0.0f,1.0f);
+            for(unsigned int i=0;i<neigh.size() ;++i)
+            {
+                TopoFace* f2 = neigh.at(i);
+                fillTriangle(f2);
+            }
+
+            std::vector<TopoEdge*> edges = face->getEdges();
+            glColor3f(1.0f,.0f,.0f);
+            for(unsigned int i=0;i<edges.size();++i)
+            {
+                if(edges.at(i)->isActiveEdge(threshold,false))
+                    drawEdge(edges.at(i));
+            }
+        }
+    }
+
+    if(showActive){
+        glColor3f(1.0f,.0f,.0f);
+        for(unsigned int i=0;i<tm->getEdges().size();++i)
+            if(tm->getEdges().at(i)->isActiveEdge(threshold,false))
+                drawEdge(tm->getEdges().at(i));
+
+    }
+
+    if(showNormal)
+    {
+        glColor3f(1.0f,.0f,.0f);
+        for(unsigned int i=0;i<tm->getFaces().size();++i)
+        {
+            drawLine(tm->getFaces().at(i)->getCenter(),tm->getFaces().at(i)->getNormal());
+        }
+    }
+}
+
+void renderScene() {
+
+    glDisable(GL_LIGHTING);
     // Set the camera
     glColor3f(1.0f,1.0f,1.0f);
-
-    for(unsigned long i=0;i<m.idTriangles.size();++i)
-    {
-        if(debug) {
-            glDisable(GL_LIGHTING);
-            prog_3D::wireframeTriangle
-                    (
-                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(0)),
-                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(1)),
-                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(2))
-                    );
-        } else
-        {
-            glEnable(GL_LIGHTING);
-            prog_3D::fillTriangle
-                    (
-                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(0)),
-                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(1)),
-                            m.points.at((unsigned long) m.idTriangles.at(i).getPointId(2))
-                    );
+    if(color3i == nullptr) {
+        srand(time(NULL));
+        color3i =new GLubyte*[tm->getFaces().size()];
+        for(int i=0;i<tm->getFaces().size();++i) {
+            color3i[i] = new GLubyte[3];
+            color3i[i][0] = rand()%255;
+            color3i[i][1] = rand()%255;
+            color3i[i][2] = rand()%255;
         }
+        p->fullPropagation();
     }
+    if(vboUsed)
+        drawMeshByVBO();
 
-    glColor3f(1.0f,.0f,.0f);
-    for(TopoEdge* edge : tm->getEdges())
-    {
-        if(edge->isActiveEdge(threshold,showOneFace))
-        {
-            drawPoint(*edge->getPoints().at(0));
-            drawPoint(*edge->getPoints().at(1));
-            drawLine(*edge->getPoints().at(0),*edge->getPoints().at(1));
-        }
-    }
+    else
+        drawMeshByClassicMethod();
 
-    if(showNormal) {
-        for (auto face : tm->getFaces()) {
-            drawLine(face->getCenter(), face->getNormal());
-        }
-    }
+
+
     glColor3f(1.0f,1.0f,1.0f);
     reper();
 
     glutSwapBuffers();
+}
+
+void cleanSharedMem()
+{
+    deleteVBO(vboId_1);
+    deleteVBO(vboId_indices);
 }
