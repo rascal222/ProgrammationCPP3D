@@ -98,6 +98,11 @@ src/meshing/TopoPoint.cpp
 src/meshing/TopoPoint.h
 )
 
+set(SEGMENTATION_FILES
+src/segmentation/Propagation.cpp
+src/segmentation/Propagation.hpp
+)
+
 add_executable(Tp2 ${CORE_FILES} ${CURVE_FILES} ${GLWRAPPER_FILES}
 src/tp/TP_OPENGL.cpp)
 add_executable(Tp3-drawCylinder ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${GLWRAPPER_FILES}
@@ -135,10 +140,14 @@ add_executable(Tp7-Active-Edges ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${S
 add_executable(Tp7-Sphere-Active-Edges ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
  ${MESHING_FILES} src/tp7/mainTp7Sphere-active-edges.cpp)
 add_executable(Tp8-Segmentation ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
- ${MESHING_FILES} src/tp8/mainSegmentation.cpp)
+ ${MESHING_FILES} ${SEGMENTATION_FILES} src/tp8/mainSegmentation.cpp)
+
+
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
-include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
+
+
+include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS})
 target_link_libraries(Tp2 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp3-drawCylinder ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp3-drawRuledSurface ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
@@ -157,3 +166,4 @@ target_link_libraries(Tp7-Cylinder ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp7-Gaussian ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp7-Active-Edges ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp7-Sphere-Active-Edges ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp8-Segmentation ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )

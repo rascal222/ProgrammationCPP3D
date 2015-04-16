@@ -59,7 +59,7 @@ double threshold = 80.0f;
 bool showTest = false;
 bool showOneFace = false;
 bool showActive = false;
-bool vboUsed = false;
+bool vboUsed = true;
 
 
 GLubyte**color3i = nullptr;
@@ -469,23 +469,25 @@ void drawMeshByVBO()
         triangles = m.getIdVector();
         std::cout<<"end global init"<<std::endl;
 
-//        colors = new GLfloat[m.idTriangles.size()];
-//        for(int i=0;i<m.idTriangles.size();i+=3) {
-//            colors[i + 0] = (float) color3i[i][0] / 255.0f;
-//            colors[i + 1] = (float) color3i[i][1] / 255.0f;
-//            colors[i + 2] = (float) color3i[i][2] / 255.0f;
-//        }
+        colors = new GLfloat[3*m.idTriangles.size()];
+        for(int i=0;i<m.idTriangles.size();i+=3) {
+            colors[i + 0] = (float) color3i[i][0] / 255.0f;
+            colors[i + 1] = (float) color3i[i][1] / 255.0f;
+            colors[i + 2] = (float) color3i[i][2] / 255.0f;
+        }
         std::cout<<"before vbo gen"<<std::endl;
 
         glGenBuffers(1, &vboId_1);
         glGenBuffers(1, &vboId_indices);
+        glGenBuffers(1, &vboId_color);
         int bufferSize=0;
         std::cout<<"before vbo bind"<<std::endl;
 
         glBindBuffer(GL_ARRAY_BUFFER, vboId_1);
-        glBufferData(GL_ARRAY_BUFFER, 3*sizeof(float)*2*tm->getPoints().size(), 0, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 2*sizeof(float)*3*tm->getPoints().size(), 0, GL_STREAM_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, 3*sizeof(float)*tm->getPoints().size(), vertices);
         glBufferSubData(GL_ARRAY_BUFFER, 3*sizeof(float)*tm->getPoints().size(), 3*sizeof(float)*tm->getPoints().size(), normals);
+//        glBufferSubData(GL_ARRAY_BUFFER, 2*3*sizeof(float)*tm->getPoints().size(), 3*sizeof(float)*tm->getPoints().size(), colors);
         std::cout<<"after vbo bind array"<<std::endl;
 
         glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
@@ -508,14 +510,22 @@ void drawMeshByVBO()
 
     glBindBuffer(GL_ARRAY_BUFFER, vboId_1);
     glNormalPointer(GL_FLOAT,0,(void*)(3*sizeof(float)*tm->getPoints().size()));
+//    glColorPointer(3,GL_FLOAT,0,(void*)(2*3*sizeof(float)*tm->getPoints().size()));
     glVertexPointer(3, GL_FLOAT, 0,0);
+    //glBindBuffer(GL_ARRAY_BUFFER,vboId_color);
+    //glColorPointer(3,GL_FLOAT,0,0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId_indices);
     glIndexPointer(GL_UNSIGNED_INT,0,0);
+
     // enable vertex arrays
     glEnableClientState(GL_NORMAL_ARRAY);
+//    glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_VERTEX_ARRAY);
     glDrawElements( GL_TRIANGLES,3*m.idTriangles.size(), GL_UNSIGNED_INT, (GLuint*)0+0 );
+    //for(int i=0;i<3*m.idTriangles.size();++i)
+      //  glDrawElements( GL_TRIANGLES,2, GL_UNSIGNED_INT, (GLuint*)0+i );
     glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
+//    glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
 
