@@ -64,6 +64,12 @@ src/primitives/Grid.cpp
 src/primitives/Grid.cpp
 src/primitives/Shape.cpp
 src/primitives/Shape.hpp
+src/primitives/Grid.cpp
+src/primitives/Grid.h
+src/primitives/GridVoxel.cpp
+src/primitives/GridVoxel.h
+src/primitives/GridDecimer.h
+src/primitives/GridDecimer.cpp
 )
 
 set(OCTREE_FILES
