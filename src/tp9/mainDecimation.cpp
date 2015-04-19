@@ -24,6 +24,7 @@
 #include "../meshing/AutoCenter.h"
 #include "../meshing/TopoMesh.h"
 #include "../primitives/Grid.h"
+#include "../primitives/GridDecimer.h"
 #include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -269,6 +270,10 @@ initLightAndMaterial(void)
 int main(int argc, char **argv)
 {
     // init GLUT and create window
+    if(argc==2){
+        file.clear();
+        file = std::string(argv[1]);
+    }
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100,100);
@@ -340,6 +345,8 @@ void init_scene()
     autoMeshCentering.setMesh(m);
     autoMeshCentering.computeBetterSize();
     autoMeshCentering.setFactor(2.0);
+    GridDecimer gd(&autoMeshCentering,tm);
+    Mesh m = gd.reduceMesh();
     eulerCamera.setXTarget(autoMeshCentering.getCenter().getX());
     eulerCamera.setYTarget(autoMeshCentering.getCenter().getY());
     eulerCamera.setZTarget(autoMeshCentering.getCenter().getZ());
@@ -420,6 +427,7 @@ void drawEdge(TopoEdge* edge)
 bool first = true;
 void drawMeshByVBO()
 {
+
     if (!debug) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
@@ -438,17 +446,12 @@ void drawMeshByVBO()
         triangles = m.getIdVector();
         std::cout<<"end global init"<<std::endl;
 
-        colors = new GLfloat[3*m.idTriangles.size()];
-        for(int i=0;i<m.idTriangles.size();i+=3) {
-            colors[i + 0] = (float) color3i[i][0] / 255.0f;
-            colors[i + 1] = (float) color3i[i][1] / 255.0f;
-            colors[i + 2] = (float) color3i[i][2] / 255.0f;
-        }
+
         std::cout<<"before vbo gen"<<std::endl;
 
         glGenBuffers(1, &vboId_1);
         glGenBuffers(1, &vboId_indices);
-        glGenBuffers(1, &vboId_color);
+//        glGenBuffers(1, &vboId_color);
         int bufferSize=0;
         std::cout<<"before vbo bind"<<std::endl;
 
@@ -477,6 +480,7 @@ void drawMeshByVBO()
         }
     }
 
+
     glBindBuffer(GL_ARRAY_BUFFER, vboId_1);
     glNormalPointer(GL_FLOAT,0,(void*)(3*sizeof(float)*tm->getPoints().size()));
 //    glColorPointer(3,GL_FLOAT,0,(void*)(2*3*sizeof(float)*tm->getPoints().size()));
@@ -502,21 +506,28 @@ void drawMeshByVBO()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void fillTriangle(Mesh& m, IdTriangle& triangle){
+    prog_3D::fillTriangle(m.points.at(triangle.getPointId(0)),m.points.at(triangle.getPointId(1)),m.points.at(triangle.getPointId(2)));
+}
+
 void drawMeshByClassicMethod()
 {
+    std::cout << "here" << std::endl;
+
     if(!showTest) {
-        for (unsigned long i = 0; i < tm->getFaces().size(); ++i) {
+        for (unsigned long i = 0; i < m.idTriangles.size(); ++i) {
             if (!debug) {
-                fillTriangle(tm->getFaces().at(i));
+
+                fillTriangle(m,m.idTriangles.at(i));
             }
             else {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                fillTriangle(tm->getFaces().at(i));
+                fillTriangle(m,m.idTriangles.at(i));
             }
 
         }
     }
-
+    std::cout << "here" << std::endl;
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     if(showTest)
     {
@@ -551,16 +562,6 @@ void renderScene() {
     glDisable(GL_LIGHTING);
     // Set the camera
     glColor3f(1.0f,1.0f,1.0f);
-    if(color3i == nullptr) {
-        srand(time(NULL));
-        color3i =new GLubyte*[tm->getFaces().size()];
-        for(int i=0;i<tm->getFaces().size();++i) {
-            color3i[i] = new GLubyte[3];
-            color3i[i][0] = rand()%255;
-            color3i[i][1] = rand()%255;
-            color3i[i][2] = rand()%255;
-        }
-    }
     if(vboUsed)
         drawMeshByVBO();
     else
@@ -569,6 +570,7 @@ void renderScene() {
 
 
     glColor3f(1.0f,1.0f,1.0f);
+    //autoMeshCentering.draw();
     reper();
 
     glutSwapBuffers();
