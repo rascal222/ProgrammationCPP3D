@@ -9,8 +9,6 @@
 #include <functional>
 
 
-
-
 int* Propagation::fullPropagation() {
     initPropagation();
     while(!passiveHull.empty())
@@ -54,6 +52,7 @@ void Propagation::propagationStep() {
 
 void Propagation::initPropagation() {
     std::cout << "init propagation"<<std::endl;
+    step++;
     for(int i=0;i<getTopoMesh()->getFaces().size();++i)
         getTopoMesh()->getFaces().at(i)->setRegion(i);
 
