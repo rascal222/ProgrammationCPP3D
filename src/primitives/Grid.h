@@ -9,23 +9,26 @@
 #include "../meshing/AutoCenter.h"
 #include "../primitives/Voxel.hpp"
 #include <vector>
+#include <map>
+#include <algorithm>
+#include "GridVoxel.h"
 
 class Grid : public virtual AutoCenter {
 private:
-    prog_3D::Voxel* v=nullptr;
-    std::vector<prog_3D::Voxel> voxels;
+    GridVoxel* v=nullptr;
+    std::vector<GridVoxel*> voxels;
     int nb;
 
 
 public:
-    Grid() : AutoCenter(), nb(10) {};
+    Grid() : AutoCenter(), nb(1) {};
     virtual double computeBetterSize() override;
     virtual ~Grid(){
         delete v;
     };
     void draw();
 
-    std::vector<prog_3D::Voxel> const &getVoxels() const {
+    std::vector<GridVoxel*> const &getVoxels() const {
         return voxels;
     }
 
@@ -37,6 +40,8 @@ public:
         Grid::nb = nb;
         computeBetterSize();
     }
+
+    virtual std::vector<GridVoxel*> extract();
 };
 
 

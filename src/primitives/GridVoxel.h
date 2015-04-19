@@ -7,26 +7,36 @@
 
 #include <vector>
 #include "Voxel.hpp"
+#include "../meshing/TopoPoint.h"
 
 class GridVoxel : public virtual prog_3D::Voxel {
 
 private:
-    std::vector<GridPoint*> gridPoints;
+    std::vector<TopoPoint*> gridPoints;
+
 public:
-    GridPoint *getMasterPoint() const {
-        return masterPoint;
-    }
 
-    void setMasterPoint(GridPoint *masterPoint) {
-        GridPoint::masterPoint = masterPoint;
-    }
+    GridVoxel(const prog_3D::Point& center, double length) : prog_3D::Voxel(center,length) {};
 
-    const std::vector<GridPoint *>& getGridPoints() const {
+    const std::vector<TopoPoint *>& getInPoints() const {
         return gridPoints;
     }
 
-    void setGridPoints(std::vector<GridPoint *>& gridPoints) {
-        GridPoint::gridPoints = gridPoints;
+    virtual void addTopoPoint(TopoPoint* tp){
+        gridPoints.push_back(tp);
+    }
+
+
+    std::vector<GridVoxel*> cut2();
+
+    virtual bool havePoint();
+
+    prog_3D::Point *getGridCenter();
+
+    bool isConnected(GridVoxel* v2, GridVoxel* v3);
+
+    bool operator<(const GridVoxel& voxel) const {
+        return getCenter() < voxel.getCenter();
     }
 };
 

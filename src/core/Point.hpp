@@ -53,6 +53,13 @@ namespace prog_3D {
 
         bool operator==(const Point& point) const;
 
+        bool operator<(const Point& point) const{
+            return getX() < point.getX()
+                   || (getX() == point.getX() && getY() < point.getY())
+                    || (getX() == point.getX() && getY() == point.getY() && getZ() < point.getZ());
+
+        }
+
     };
     /**
     * \brief Override the operator << for an instance of ostream and a point
