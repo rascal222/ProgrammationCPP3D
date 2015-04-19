@@ -60,6 +60,8 @@ src/primitives/Sphere.cpp
 src/primitives/Sphere.hpp
 src/primitives/Voxel.cpp
 src/primitives/Voxel.hpp
+src/primitives/Grid.cpp
+src/primitives/Grid.cpp
 src/primitives/Shape.cpp
 src/primitives/Shape.hpp
 )
@@ -141,7 +143,8 @@ add_executable(Tp7-Sphere-Active-Edges ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FIL
  ${MESHING_FILES} src/tp7/mainTp7Sphere-active-edges.cpp)
 add_executable(Tp8-Segmentation ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
  ${MESHING_FILES} ${SEGMENTATION_FILES} src/tp8/mainSegmentation.cpp)
-
+add_executable(Tp9-FusionCube ${OCTREE_FILES} ${CORE_FILES} ${CURVE_FILES} ${SURFACE_FILES} ${PRIMITIVE_FILES} ${GLWRAPPER_FILES}
+ ${MESHING_FILES} ${SEGMENTATION_FILES} src/tp9/mainCubeFusionTest.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -167,3 +170,4 @@ target_link_libraries(Tp7-Gaussian ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp7-Active-Edges ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp7-Sphere-Active-Edges ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 target_link_libraries(Tp8-Segmentation ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Tp9-FusionCube ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
