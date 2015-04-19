@@ -176,4 +176,34 @@ namespace prog_3D
 		return center;
 	}
 
+	bool Voxel::inVoxel(Point &point) {
+
+		double x_min,y_min,z_min,x_max,y_max,z_max;
+		std::vector<Point> vertices = getVertices();
+		x_min = vertices.at(0).getX();
+		x_max = vertices.at(0).getX();
+		y_min = vertices.at(0).getY();
+		y_max = vertices.at(0).getY();
+		z_min = vertices.at(0).getZ();
+		z_max = vertices.at(0).getZ();
+
+		for(Point p : vertices) {
+			if(p.getX()<= x_min)
+				x_min = p.getX();
+			if(p.getX() >= x_max)
+				x_max = p.getX();
+			if(p.getY()<= y_min)
+				y_min = p.getY();
+			if(p.getY() >= y_max)
+				y_max = p.getY();
+			if(p.getZ()<= z_min)
+				z_min = p.getZ();
+			if(p.getZ() >= z_max)
+				z_max = p.getZ();
+		}
+
+		return x_min <= point.getX() <= x_max
+			   && y_min <= point.getY() <= y_max
+			   && z_min <= point.getZ() <= z_max;
+	}
 }

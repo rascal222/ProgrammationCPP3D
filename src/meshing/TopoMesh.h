@@ -28,6 +28,7 @@ public:
 
     virtual int getEdge(TopoPoint* p1,TopoPoint* p2);
     virtual bool haveEdge(TopoPoint* p1, TopoPoint* p2);
+    virtual void mergePoint(TopoPoint* p1, TopoPoint* p2);
     virtual std::vector<prog_3D::Point> computeGaussianPointCloud();
 
     int* giveNeighboringFaceTab();

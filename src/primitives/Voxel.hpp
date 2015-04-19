@@ -24,6 +24,8 @@ namespace prog_3D {
         virtual void draw(bool, bool);
 
         virtual std::vector<Voxel> cut();
+
+        virtual bool inVoxel(Point& point);
     };
 }
 #endif

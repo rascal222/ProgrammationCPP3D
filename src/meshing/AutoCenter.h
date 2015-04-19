@@ -48,7 +48,7 @@ public:
     AutoCenter() {}
     AutoCenter(Mesh const &m) : m(m) { }
 
-    double computeBetterSize()
+    virtual double computeBetterSize()
     {
         double left2 = m.points.at(0).getX();
         double right2 = m.points.at(0).getX();

@@ -1,8 +1,4 @@
 //
-// Created by beugnon on 16/04/15.
-//
-
-//
 // Created by beugnon on 19/04/15.
 //
 
@@ -23,7 +19,6 @@
 #include "../primitives/Sphere.hpp"
 #include "../meshing/AutoCenter.h"
 #include "../meshing/TopoMesh.h"
-#include "../primitives/Grid.h"
 #include <string>
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -83,7 +78,7 @@ GLuint vboId_indices = 0;
 
 
 
-Grid autoMeshCentering;
+AutoCenter autoMeshCentering;
 TopoMesh* tm = nullptr;
 
 void mouseButton(int button, int state, int x, int y) {
@@ -273,7 +268,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100,100);
     glutInitWindowSize(WIDTH,HEIGHT);
-    glutCreateWindow("TP9-Decimation");
+    glutCreateWindow("TP9-CubeFusionTest");
     initGL();
     //initLightAndMaterial();
     init_scene();

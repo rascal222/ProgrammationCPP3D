@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <algorithm>
 #include "TopoMesh.h"
 #include "TopoPoint.h"
 #include "TopoFace.h"
@@ -42,4 +43,27 @@ bool TopoEdge::isActiveEdge(double threshold,bool showSideOne) {
     }
     else
         return showSideOne;
+}
+
+void TopoEdge::replace(TopoPoint *p1, TopoPoint *p2) {
+
+    if(std::find(getPoints().begin(),getPoints().end(),p1)==getPoints().end())
+        return;
+
+    if(getPoints().at(0)==p1) {
+        TopoPoint *t = getPoints().back();
+        getPoints().pop_back();
+        getPoints().pop_back();
+        getPoints().push_back(p2);
+        getPoints().push_back(t);
+    }
+    else
+    {
+        getPoints().pop_back();
+        getPoints().push_back(p2);
+    }
+}
+
+void TopoEdge::removeFace(TopoFace *face) {
+    std::remove_if(getFaces().begin(),getFaces().end(),[face](TopoFace* tf){return tf == face;});
 }

@@ -28,7 +28,7 @@ public:
 
     virtual bool havePoints(TopoPoint* p1, TopoPoint* p2) const;
     virtual bool havePointsIgnoreOrder(TopoPoint* p1, TopoPoint* p2) const { return havePoints(p1,p2) || havePoints(p2,p1) ; }
-
+    virtual void replace(TopoPoint* p1, TopoPoint* p2);
     bool operator==(TopoEdge& edge)
     {
         return havePointsIgnoreOrder(edge.points.at(0),edge.points.at(1));
@@ -37,6 +37,8 @@ public:
     void addFace(TopoFace* face);
 
     virtual bool isActiveEdge(double threshold,bool showSideOne);
+
+    void removeFace(TopoFace *face);
 };
 
 

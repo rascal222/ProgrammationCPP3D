@@ -77,3 +77,25 @@ prog_3D::Point TopoFace::getCenter() {
                 center.getZ() + (1.0/3.0) * s.at(i)->getZ());
     return center;
 }
+
+TopoPoint *TopoFace::getThirdPoint(TopoPoint *p1, TopoPoint *p2) {
+    std::vector<TopoPoint*> points = getVertices();
+    int i=0;
+   while(i <points.size() && !(points.at(0)== p1 || p2))
+       i++;
+    if(i==points.size())
+        return nullptr;
+    else return points.at(i);
+}
+
+prog_3D::Vector TopoFace::computeNormal() {
+
+    prog_3D::Vector v(*getVertices().at(0),*getVertices().at(1));
+    prog_3D::Vector v2(*getVertices().at(0),*getVertices().at(2));
+    return v.cross(v2);
+}
+
+void TopoFace::setNormal(prog_3D::Vector &vector) {
+    n = vector;
+}
+

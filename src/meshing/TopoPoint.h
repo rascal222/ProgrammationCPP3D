@@ -31,8 +31,9 @@ public:
 
     virtual prog_3D::Vector getNormal();
     virtual std::vector<TopoFace*> getFaces() const;
+    virtual std::vector<TopoPoint*> getNeighbours() const;
 
-
+    void removeEdge(TopoEdge *pEdge);
 };
 
 

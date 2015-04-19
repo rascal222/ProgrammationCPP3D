@@ -31,6 +31,8 @@ public:
 
     virtual prog_3D::Point getCenter();
 
+    virtual TopoPoint* getThirdPoint(TopoPoint* p1, TopoPoint* p2);
+
 
     int getRegion() const {
         return region;
@@ -51,6 +53,11 @@ public:
     }
 
     prog_3D::Vector n;
+
+    prog_3D::Vector computeNormal();
+
+    void setNormal(prog_3D::Vector &vector);
+
 };
 
 

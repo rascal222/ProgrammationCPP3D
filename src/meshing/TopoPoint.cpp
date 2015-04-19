@@ -7,6 +7,7 @@
 #include "TopoFace.h"
 #include "TopoEdge.h"
 #include <algorithm>
+#include <vector>
 #include <iostream>
 
 TopoPoint::TopoPoint(prog_3D::Point& point) : prog_3D::Point(point)
@@ -45,4 +46,21 @@ std::vector<TopoFace*> TopoPoint::getFaces() const
     std::sort( faces.begin(), faces.end() );
     faces.erase( std::unique( faces.begin(), faces.end() ), faces.end() );
     return faces;
+}
+
+std::vector<TopoPoint *> TopoPoint::getNeighbours() const {
+    std::vector<TopoPoint *> neigh;
+
+    for(int i=0;i<getEdges().size();++i)
+        neigh.insert(neigh.end(),getEdges().at(i)->getPoints().begin(),getEdges().at(i)->getPoints().end());
+
+    std::sort(neigh.begin(),neigh.end());
+    neigh.erase(std::unique(neigh.begin(),neigh.end()),neigh.end());
+    const TopoPoint* thi = this;
+    std::remove_if(neigh.begin(),neigh.end(),[thi](TopoPoint* tp){return tp==thi;});
+    return neigh;
+}
+
+void TopoPoint::removeEdge(TopoEdge *pEdge) {
+    std::remove_if(edges.begin(),edges.end(),[pEdge](TopoEdge* te){return te==pEdge;});
 }
