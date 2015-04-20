@@ -12,14 +12,14 @@
 #include "../primitives/Cylinder.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../glWrappers/GlCoreRendering.hpp"
-#include "FigureConverter.hpp"
+#include "../meshing/FigureConverter.hpp"
 #include "../glWrappers/EulerCamera.hpp"
 
 #include "../meshing/Mesh.hpp"
 #include "../meshing/OffManipulator.hpp"
 #include "../primitives/Sphere.hpp"
 #include "../meshing/AutoCenter.h"
-#include "TopoMesh.h"
+#include "../meshing/TopoMesh.h"
 #include "../meshing/FigureConverter.hpp"
 #include <string>
 // Définition de la taille de la fenêtre

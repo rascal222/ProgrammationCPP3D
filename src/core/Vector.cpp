@@ -85,6 +85,7 @@ namespace prog_3D
 
     Vector Vector::cross(const Vector& vector) const
     {
+        std::cout << getY()<< std::endl;
         double x = getY()* vector.getZ() - getZ()* vector.getY();
         double y = getZ()* vector.getX() - getX()* vector.getZ();
         double z = getX()* vector.getY() - getY()* vector.getX();

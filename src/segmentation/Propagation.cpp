@@ -17,9 +17,8 @@ int* Propagation::fullPropagation() {
 
 void Propagation::propagationStep() {
     if(step==0)
-    {
         initPropagation();
-    }
+
     step++;
     if(passiveHull.empty())
         return;

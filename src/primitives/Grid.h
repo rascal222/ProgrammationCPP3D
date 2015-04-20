@@ -21,7 +21,7 @@ private:
 
 
 public:
-    Grid() : AutoCenter(), nb(1) {};
+    Grid() : AutoCenter(), nb(0) {};
     virtual double computeBetterSize() override;
     virtual ~Grid(){
         delete v;
@@ -37,7 +37,7 @@ public:
     }
 
     void setNb(int nb) {
-        Grid::nb = nb;
+        Grid::nb = nb;std::cout << "nb:->"<< nb<<std::endl;
         computeBetterSize();
     }
 

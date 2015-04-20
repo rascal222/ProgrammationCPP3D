@@ -25,7 +25,7 @@ namespace prog_3D {
 
         virtual std::vector<Voxel> cut();
 
-        virtual bool inVoxel(Point& point);
+        virtual bool inVoxel(Point* point);
     };
 }
 #endif

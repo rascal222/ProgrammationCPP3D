@@ -31,17 +31,18 @@ prog_3D::Point *GridVoxel::getGridCenter() {
 }
 
 bool GridVoxel::isConnected(GridVoxel* v2, GridVoxel* v3) {
-    for(TopoPoint* tp : getInPoints()) {
-        std::vector<TopoPoint*> tps = tp->getNeighbours();
-        for(TopoPoint* tp2 : v2->getInPoints()) {
-            if(std::find(tps.begin(),tps.end(),tp2)!=tps.end())
-            for(TopoPoint* tp3 : v3->getInPoints()) {
-                if(std::find(tps.begin(),tps.end(),tp3)!=tps.end()) {
-                    return true;
-                }
-
-            }
-        }
-    }
+//    for(TopoPoint* tp : getInPoints()) {
+//        std::vector<TopoPoint*> tps = tp->getNeighbours();
+//        for(TopoPoint* tp2 : v2->getInPoints()) {
+//            if(std::find(tps.begin(),tps.end(),tp2)!=tps.end())
+//                for(TopoPoint* tp3 : v3->getInPoints()) {
+//                    if(std::find(tps.begin(),tps.end(),tp3)!=tps.end()) {
+//                        std::cout << "found one"<<std::endl;
+//                        return true;
+//                    }
+//
+//                }
+//        }
+//    }
     return false;
 }

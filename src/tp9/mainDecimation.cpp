@@ -83,9 +83,16 @@ GLuint vboId_color = 0;
 GLuint vboId_indices = 0;
 
 
+bool first = true;
+unsigned long cursor = 0;
+
+Point pK(0, 0, 0);
+Mesh* m;
+std::string file("cube.off");
 
 Grid autoMeshCentering;
 TopoMesh* tm = nullptr;
+Mesh original;
 
 void mouseButton(int button, int state, int x, int y) {
     // only start motion if the left button is pressed
@@ -161,9 +168,25 @@ void window_special_key(int key, int x, int y) {
     //glutPostRedisplay(); // just update here....
 }
 
+void reduceMesh(int id) {
+    if(id==0)
+        autoMeshCentering.setNb(autoMeshCentering.getNb()+1);
+    else
+        if(autoMeshCentering.getNb()>0)
+            autoMeshCentering.setNb(autoMeshCentering.getNb()-1);
+
+    GridDecimer gd(&autoMeshCentering,&original);
+    m = gd.reduceMesh();
+    cleanSharedMem();
+    first=true;
+    delete vertices;
+    delete normals;
+    delete triangles;
+    delete tm;
+    tm = new TopoMesh(*m);
+}
 
 
-unsigned long cursor = 0;
 
 GLvoid window_normal_key(unsigned char key, int x, int y)
 {
@@ -180,7 +203,8 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
             debug = !debug;
             break;
         case 122: // z
-            tm->mergePoint(tm->getPoints().at(0),tm->getPoints().at(0)->getNeighbours().at(0));
+            //TODO REDUCE MESH
+           reduceMesh(0);
             break;
         case 101: // e
             showActive= !showActive;
@@ -208,6 +232,7 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
         case 113: // q
             break;
         case 115: // s
+            reduceMesh(1);
             break;
         default:
             printf ("La touche %c (%d) n´est pas active.\n", key,key);
@@ -216,9 +241,6 @@ GLvoid window_normal_key(unsigned char key, int x, int y)
 }
 
 
-Point pK(0, 0, 0);
-Mesh m;
-std::string file("cube.off");
 void
 initLightAndMaterial(void)
 {
@@ -337,16 +359,19 @@ GLvoid initGL()
 void init_scene()
 {
     OffManipulator off;
-    m = off.read(file);
-    tm =  new TopoMesh(m);
-    int* tab = tm->giveNeighboringFaceTab();
+    original = off.read(file);
+
 
     //init
-    autoMeshCentering.setMesh(m);
-    autoMeshCentering.computeBetterSize();
+    autoMeshCentering.setMesh(original);
     autoMeshCentering.setFactor(2.0);
-    GridDecimer gd(&autoMeshCentering,tm);
-    Mesh m = gd.reduceMesh();
+    autoMeshCentering.computeBetterSize();
+
+    GridDecimer gd(&autoMeshCentering,&original);
+    m = gd.reduceMesh();
+    tm = new TopoMesh(*m);
+    std::cout <<"points:"<< m->points.size() << std::endl;
+    std::cout <<"triangles:"<< m->idTriangles.size()<<std::endl;
     eulerCamera.setXTarget(autoMeshCentering.getCenter().getX());
     eulerCamera.setYTarget(autoMeshCentering.getCenter().getY());
     eulerCamera.setZTarget(autoMeshCentering.getCenter().getZ());
@@ -423,8 +448,6 @@ void drawEdge(TopoEdge* edge)
     drawLine(*edge->getPoints().at(0),*edge->getPoints().at(1));
 }
 
-
-bool first = true;
 void drawMeshByVBO()
 {
 
@@ -441,9 +464,9 @@ void drawMeshByVBO()
         first = false;
         //Compute vertices
         std::cout<<"init vbo"<<std::endl;
-        vertices = m.getPointVector();
+        vertices = m->getPointVector();
         normals = tm->getPointNormals();
-        triangles = m.getIdVector();
+        triangles = m->getIdVector();
         std::cout<<"end global init"<<std::endl;
 
 
@@ -456,20 +479,20 @@ void drawMeshByVBO()
         std::cout<<"before vbo bind"<<std::endl;
 
         glBindBuffer(GL_ARRAY_BUFFER, vboId_1);
-        glBufferData(GL_ARRAY_BUFFER, 2*sizeof(float)*3*tm->getPoints().size(), 0, GL_STREAM_DRAW);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, 3*sizeof(float)*tm->getPoints().size(), vertices);
-        glBufferSubData(GL_ARRAY_BUFFER, 3*sizeof(float)*tm->getPoints().size(), 3*sizeof(float)*tm->getPoints().size(), normals);
+        glBufferData(GL_ARRAY_BUFFER, 2*sizeof(float)*3* m->points.size(), 0, GL_STREAM_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 3*sizeof(float)* m->points.size(), vertices);
+        glBufferSubData(GL_ARRAY_BUFFER, 3*sizeof(float)* m->points.size(), 3*sizeof(float)* m->points.size(), normals);
 //        glBufferSubData(GL_ARRAY_BUFFER, 2*3*sizeof(float)*tm->getPoints().size(), 3*sizeof(float)*tm->getPoints().size(), colors);
         std::cout<<"after vbo bind array"<<std::endl;
 
         glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
-        std::cout << "Vertex and Normal Array in VBO: " << bufferSize << " bytes ("<< tm->getPoints().size()*sizeof(float)*3*2 <<")\n";
+        std::cout << "Vertex and Normal Array in VBO: " << bufferSize << " bytes ("<< m->points.size()*sizeof(float)*3*2 <<")\n";
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId_indices);                    // activate vbo id to use
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(unsigned int)*m.idTriangles.size(), triangles, GL_STATIC_DRAW); // upload data to video card
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(unsigned int)*m->idTriangles.size(), triangles, GL_STATIC_DRAW); // upload data to video card
         bufferSize=0;
         glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
-        std::cout << "Indice Array in VBO: " << bufferSize << " bytes ("<< m.idTriangles.size()*sizeof(unsigned int)*3 <<")\n";
-        if(3*sizeof(unsigned int)*m.idTriangles.size() != bufferSize)
+        std::cout << "Indice Array in VBO: " << bufferSize << " bytes ("<< m->idTriangles.size()*sizeof(unsigned int)*3 <<")\n";
+        if(3*sizeof(unsigned int)*m->idTriangles.size() != bufferSize)
         {
             glDeleteBuffers(1, &vboId_indices);
             glDeleteBuffers(1, &vboId_1);
@@ -482,7 +505,7 @@ void drawMeshByVBO()
 
 
     glBindBuffer(GL_ARRAY_BUFFER, vboId_1);
-    glNormalPointer(GL_FLOAT,0,(void*)(3*sizeof(float)*tm->getPoints().size()));
+    glNormalPointer(GL_FLOAT,0,(void*)(3*sizeof(float)*m->points.size()));
 //    glColorPointer(3,GL_FLOAT,0,(void*)(2*3*sizeof(float)*tm->getPoints().size()));
     glVertexPointer(3, GL_FLOAT, 0,0);
     //glBindBuffer(GL_ARRAY_BUFFER,vboId_color);
@@ -494,7 +517,7 @@ void drawMeshByVBO()
     glEnableClientState(GL_NORMAL_ARRAY);
 //    glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glDrawElements( GL_TRIANGLES,3*m.idTriangles.size(), GL_UNSIGNED_INT, (GLuint*)0+0 );
+    glDrawElements( GL_TRIANGLES,3*m->idTriangles.size(), GL_UNSIGNED_INT, (GLuint*)0+0 );
     //for(int i=0;i<3*m.idTriangles.size();++i)
     //  glDrawElements( GL_TRIANGLES,2, GL_UNSIGNED_INT, (GLuint*)0+i );
     glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
@@ -512,39 +535,20 @@ void fillTriangle(Mesh& m, IdTriangle& triangle){
 
 void drawMeshByClassicMethod()
 {
-    std::cout << "here" << std::endl;
-
     if(!showTest) {
-        for (unsigned long i = 0; i < m.idTriangles.size(); ++i) {
+        for (unsigned long i = 0; i < m->idTriangles.size(); ++i) {
             if (!debug) {
 
-                fillTriangle(m,m.idTriangles.at(i));
+                fillTriangle(*m,m->idTriangles.at(i));
             }
             else {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                fillTriangle(m,m.idTriangles.at(i));
+                fillTriangle(*m,m->idTriangles.at(i));
             }
 
         }
     }
-    std::cout << "here" << std::endl;
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-    if(showTest)
-    {
-        glColor3f(1.0f,1.0f,1.0f);
-        if(cursor < tm->getFaces().size())
-        {
-            TopoFace* face = tm->getFaces().at(cursor);
-            fillTriangle(face);
-            std::vector<TopoFace*> neigh = face->getNeighbours();
-            glColor3f(0.0f,0.0f,1.0f);
-            for(unsigned int i=0;i<neigh.size() ;++i)
-            {
-                TopoFace* f2 = neigh.at(i);
-                fillTriangle(f2);
-            }
-        }
-    }
 
     if(showNormal)
     {
@@ -555,6 +559,20 @@ void drawMeshByClassicMethod()
         }
     }
 
+}
+
+void drawMesh(Mesh* mesh) {
+    for (unsigned long i = 0; i < mesh->idTriangles.size(); ++i) {
+        if (!debug) {
+
+            fillTriangle(*mesh,mesh->idTriangles.at(i));
+        }
+        else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            fillTriangle(*mesh,mesh->idTriangles.at(i));
+        }
+
+    }
 }
 
 void renderScene() {
@@ -568,9 +586,14 @@ void renderScene() {
         drawMeshByClassicMethod();
 
 
+    if(showActive) {
+        drawMesh(&original);
+    }
+
 
     glColor3f(1.0f,1.0f,1.0f);
-    //autoMeshCentering.draw();
+    if(showTest)
+        autoMeshCentering.draw();
     reper();
 
     glutSwapBuffers();

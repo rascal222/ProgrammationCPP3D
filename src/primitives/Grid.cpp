@@ -26,7 +26,6 @@ std::vector<GridVoxel*> recursive_grid(GridVoxel* v, int nb) {
 
 double Grid::computeBetterSize() {
     double value =  AutoCenter::computeBetterSize();
-    AutoCenter::getM();
     double min = getM().points.at(0).getX();
     double max = getM().points.at(0).getX();
     for(Point p : getM().points){
@@ -46,7 +45,7 @@ double Grid::computeBetterSize() {
     }
 
     if(v== nullptr)
-        v = new GridVoxel(AutoCenter::getCenter(),(max-min));
+        v = new GridVoxel(AutoCenter::getCenter(),abs(max)+abs(min));
 
     voxels = recursive_grid(v,nb);
 

@@ -6,24 +6,26 @@
 #define PROGRAMMATION3D_GRIDPOINT_H
 
 #include <vector>
+#include <set>
+#include <iostream>
 #include "Voxel.hpp"
 #include "../meshing/TopoPoint.h"
 
 class GridVoxel : public virtual prog_3D::Voxel {
 
 private:
-    std::vector<TopoPoint*> gridPoints;
+    std::vector<int> gridPoints;
 
 public:
 
     GridVoxel(const prog_3D::Point& center, double length) : prog_3D::Voxel(center,length) {};
 
-    const std::vector<TopoPoint *>& getInPoints() const {
+    const std::vector<int>& getInPoints() const {
         return gridPoints;
     }
 
-    virtual void addTopoPoint(TopoPoint* tp){
-        gridPoints.push_back(tp);
+    virtual void addPoint(int id){
+        gridPoints.push_back(id);
     }
 
 

@@ -41,6 +41,19 @@ namespace prog_3D {
             return &points[0];
         }
 
+        bool havePoint(int id) {
+            return points[0]== id || points[1] == id || points[2]==id;
+        }
+
+        void replace(int id, int id2){
+            if(points[0] == id)
+                points[0] =id2;
+            else if(points[1] == id)
+                points[1]= id2;
+            else if(points[2] == id)
+                points[2] = id2;
+        }
+
         std::array <std::pair<int, int>, 3> getEdges();
 
         bool isNeighbours(IdTriangle& triangle);

@@ -87,7 +87,6 @@ public:
         double centerY = (up + down) / 2.0;
         double centerZ = (far + near) / 2.0;
         center.set(centerX,centerY,centerZ);
-        std::cout << center << std::endl;
         //Compute the border size of mesh in function of center
         cachedBorderSize = 0;
         prog_3D::Vector v(center.getX(),center.getY(),center.getZ());
